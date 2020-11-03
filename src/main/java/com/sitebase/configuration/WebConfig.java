@@ -13,8 +13,11 @@ import org.springframework.web.servlet.config.annotation.*;
 @ComponentScan(basePackages = "com.sitebase")
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
     private Environment env;
+
+    WebConfig(Environment env) {
+        this.env = env;
+    }
 
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
