@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     private Environment env;
 
-    WebConfig(Environment env) {
+    public WebConfig(Environment env) {
         this.env = env;
     }
 

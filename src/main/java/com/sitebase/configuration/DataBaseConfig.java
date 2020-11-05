@@ -22,7 +22,7 @@ public class DataBaseConfig {
 
     private Environment env;
 
-    DataBaseConfig(Environment env) {
+    public DataBaseConfig(Environment env) {
         this.env = env;
     }
 
@@ -30,7 +30,7 @@ public class DataBaseConfig {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean localSessionFactory = new LocalSessionFactoryBean();
         localSessionFactory.setDataSource(dataSource());
-        localSessionFactory.setPackagesToScan("");
+        localSessionFactory.setPackagesToScan("com.baeldung.hibernate.bootstrap.model");
 
         return localSessionFactory;
     }
@@ -42,7 +42,7 @@ public class DataBaseConfig {
         ds.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
         ds.setUsername(env.getProperty("database.user"));
         ds.setPassword(env.getProperty("database.password"));
-        ds.setJdbcUrl("localhost");
+        ds.setJdbcUrl(env.getProperty("database.url"));
 
         return ds;
     }
