@@ -1,7 +1,6 @@
 package com.sitebase.configuration;
 
 import org.springframework.boot.web.servlet.view.MustacheViewResolver;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -38,13 +37,13 @@ public class WebConfig implements WebMvcConfigurer {
         registry.viewResolver(viewResolver());
     }
 
-    @Bean
     public MustacheViewResolver viewResolver() {
         MustacheViewResolver resolver = new MustacheViewResolver();
 
         resolver.setContentType("html/text; charset=utf-8");
         resolver.setSuffix(".mustache");
-        resolver.setPrefix(env.getProperty("template.root", "file:./template"));
+        resolver.setPrefix("classpath:/templates/");
+        resolver.setCache(false);
 
         return resolver;
     }
