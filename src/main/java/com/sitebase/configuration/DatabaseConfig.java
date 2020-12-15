@@ -10,15 +10,18 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-public class DatabaseConfig {
+public class DatabaseConfig implements TransactionManagementConfigurer {
 
     private Environment env;
 
@@ -45,15 +48,15 @@ public class DatabaseConfig {
         config.setDriverClassName("org.postgresql.Driver");
         config.setJdbcUrl("jdbc:postgresql://localhost:5432/sitebase");
         HikariDataSource ds = new HikariDataSource(config);
-
         return ds;
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory().getObject());
-        return new DataSourceTransactionManager(dataSource());
+    public JpaTransactionManager transactionManager() {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setDataSource(dataSource());
+
+        return transactionManager;
     }
 
     private final Properties hibernateProperties() {
@@ -64,7 +67,13 @@ public class DatabaseConfig {
         hibernateProperties.setProperty("hibernate.format_sql", "true");
         hibernateProperties.setProperty("hibernate.use_sql_comments", "true");
         hibernateProperties.setProperty("hibernate.id.new_generator_mappings", "true");
+        hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
 
         return hibernateProperties;
+    }
+
+    @Override
+    public TransactionManager annotationDrivenTransactionManager() {
+        return transactionManager();
     }
 }
