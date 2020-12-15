@@ -1,6 +1,7 @@
 package com.sitebase.dao;
 
 import com.sitebase.entity.Book;
+import com.sitebase.repository.BookRepository;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.Table;
 import javax.sql.DataSource;
 
 @RunWith(SpringRunner.class)

@@ -1,7 +1,7 @@
 package com.sitebase.service;
 
-import com.sitebase.dao.BookDao;
 import com.sitebase.entity.Book;
+import com.sitebase.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 public class BookService {
 
     @Autowired
-    private BookDao dao;
+    private BookRepository repository;
 
     @Transactional
     public void create() {
@@ -21,11 +21,6 @@ public class BookService {
 
         System.out.println("Service Call");
 
-        dao.save(book);
-        //dao.test();
-    }
-
-    public Book get(int id) {
-        return dao.get(id);
+        repository.save(book);
     }
 }
