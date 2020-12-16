@@ -2,26 +2,18 @@ package com.sitebase.configuration;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.hibernate.Session;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
-import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-public class DatabaseConfig implements TransactionManagementConfigurer {
+public class DatabaseConfig {
 
     private Environment env;
 
@@ -40,7 +32,7 @@ public class DatabaseConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
-    public DataSource dataSource() {
+    public HikariDataSource dataSource() {
         HikariConfig config = new HikariConfig();
 
         config.setUsername("junyu");
@@ -70,10 +62,5 @@ public class DatabaseConfig implements TransactionManagementConfigurer {
         hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
 
         return hibernateProperties;
-    }
-
-    @Override
-    public TransactionManager annotationDrivenTransactionManager() {
-        return transactionManager();
     }
 }
