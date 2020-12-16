@@ -1,21 +1,19 @@
 package com.sitebase.configuration;
 
-import org.springframework.boot.web.servlet.view.MustacheViewResolver;
+import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.*;
+
+import java.nio.charset.Charset;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.sitebase")
 public class WebConfig implements WebMvcConfigurer {
 
-    private Environment env;
-
-    public WebConfig(Environment env) {
-        this.env = env;
-    }
+    final String CLASSPATH_RESOURCE_LOCATIONS = "classpath:";
 
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -23,13 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-
-    }
-
-    @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/webapp");
+        registry.addResourceHandler("/assets/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS + "/assets/");
     }
 
     @Override
@@ -37,14 +30,15 @@ public class WebConfig implements WebMvcConfigurer {
         registry.viewResolver(viewResolver());
     }
 
-    public MustacheViewResolver viewResolver() {
-        MustacheViewResolver resolver = new MustacheViewResolver();
+    @Bean
+    public HandlebarsViewResolver viewResolver() {
+        HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
 
-        resolver.setContentType("html/text; charset=utf-8");
-        resolver.setSuffix(".mustache");
-        resolver.setPrefix("classpath:/templates/");
-        resolver.setCache(false);
+        viewResolver.setPrefix("classpath:/templates/");
+        viewResolver.setSuffix(".hbs");
+        viewResolver.setCache(false);
+        viewResolver.setCharset(Charset.forName("utf-8"));
 
-        return resolver;
+        return viewResolver;
     }
 }
