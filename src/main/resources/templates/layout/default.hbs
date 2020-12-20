@@ -5,8 +5,10 @@
     {{>layout/include/head}}
   </head>
   <body>
+    {{#if header}}
+      {{>layout/include/header}}
+    {{/if}}
     {{>layout/include/nav}}
-    {{>layout/include/header}}
     {{>contents}}
     {{>layout/include/footer}}
     {{>js}}
