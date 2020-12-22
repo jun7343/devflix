@@ -7,32 +7,32 @@
             <div class="card">
               <div class="card-header">회원 가입</div>
               <div class="card-body">
-                <form action="/login/join-us" method="post">
+                <form id="join-form" action="/login/join-us" method="post">
                   <div class="form-group row">
-                    <label for="email_address" class="col-md-4 col-form-label text-md-right">ID</label>
+                    <label for="email_address" class="col-md-4 col-form-label text-md-right">아이디</label>
                     <div class="col-md-6">
-                      <input type="text" id="email_address" class="form-control" name="userId" autofocus>
+                      <input type="text" id="email_address" class="form-control" name="id" autofocus>
                     </div>
                   </div>
 
                   <div class="form-group row">
-                    <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+                    <label for="password" class="col-md-4 col-form-label text-md-right">비밀번호</label>
                     <div class="col-md-6">
-                      <input type="password" id="password" class="form-control" name="password">
+                      <input type="password" id="password1" class="form-control" name="password">
                     </div>
                   </div>
 
                   <div class="form-group row">
-                    <label for="password" class="col-md-4 col-form-label text-md-right">Password Check</label>
+                    <label for="password" class="col-md-4 col-form-label text-md-right">비밀번호 확인</label>
                     <div class="col-md-6">
-                      <input type="password" id="password" class="form-control" name="password">
+                      <input type="password" id="password2" class="form-control" name="password2">
                     </div>
                   </div>
 
                   <div class="form-group row">
                     <label for="email_address" class="col-md-4 col-form-label text-md-right">이름</label>
                     <div class="col-md-6">
-                      <input type="text" class="form-control" name="userName">
+                      <input type="text" class="form-control" name="name">
                     </div>
                   </div>
 
@@ -50,5 +50,36 @@
     </main>
   {{/inline}}
   {{#*inline "js"}}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script>
+      $('#join-form').validate({
+        rules: {
+          user_id: "required",
+          password: {
+            required: true,
+            minlength: 6,
+            maxlength: 20
+          },
+          password2: {
+            required: true,
+            equalTo: "#password1"
+          },
+          user_name: "required"
+        },
+        messages: {
+          user_id: "아이디를 입력해 주세요",
+          password: {
+            required: "비밀번호를 입력해 주세요.",
+            minlength: "비밀번호는 최소 6자 이상 입니다.",
+            maxlength: "비밀번호는 최대 20자 입니다."
+          },
+          password2: {
+            required: "비밀번호 재확인 기입해 주세요.",
+            equalTo: "비밀번호와 맞지 않습니다."
+          },
+          user_name: "이름 기입해 주세요."
+        }
+      });
+    </script>
   {{/inline}}
 {{/layout/default}}
