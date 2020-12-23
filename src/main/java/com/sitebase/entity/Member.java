@@ -1,20 +1,19 @@
 package com.sitebase.entity;
 
-import lombok.*;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @ToString
-@TypeDef(
-        name = "list-array",
-        typeClass = ListArray
-)
+@TypeDef(name = "string-array", typeClass = StringArrayType.class)
 public class Member {
 
     @Id
@@ -30,7 +29,7 @@ public class Member {
     @Column(name = "user_name", nullable = false)
     private String userName;
 
+    @Type(type = "string-array")
     @Column(nullable = false, columnDefinition = "varchar[]")
-    @Type(type = "list-array")
-    private List<String> authority;
+    private String[] authority;
 }
