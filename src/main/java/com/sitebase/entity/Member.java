@@ -1,9 +1,7 @@
 package com.sitebase.entity;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -11,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @TypeDef(name = "string-array", typeClass = StringArrayType.class)
 public class Member {
@@ -32,4 +30,12 @@ public class Member {
     @Type(type = "string-array")
     @Column(nullable = false, columnDefinition = "varchar[]")
     private String[] authority;
+
+    @Builder
+    public Member(String userId, String password, String userName, String[] authority) {
+        this.userId = userId;
+        this.password = password;
+        this.userName = userName;
+        this.authority = authority;
+    }
 }
