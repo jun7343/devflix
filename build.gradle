@@ -17,6 +17,7 @@ dependencies {
     implementation 'pl.allegro.tech.boot:handlebars-spring-boot-starter:0.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'com.vladmihalcea:hibernate-types-52:2.10.1'
     implementation 'org.postgresql:postgresql:42.2.18'
     implementation 'junit:junit:4.12'
     compileOnly 'org.projectlombok:lombok'
