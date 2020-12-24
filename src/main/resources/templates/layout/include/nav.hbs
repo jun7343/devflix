@@ -10,9 +10,15 @@
         <li class="nav-item">
           <a class="nav-link" href="/post">게시판</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link btn btn-secondary" href="/login">로그인</a>
-        </li>
+        {{#if aaa}}
+          <li class="nav-item">
+            <a class="nav-link btn btn-secondary" href="/logout">로그아웃</a>
+          </li>
+        {{else}}
+          <li class="nav-item">
+            <a class="nav-link btn btn-secondary" href="/login">로그인</a>
+          </li>
+        {{/if}}
       </ul>
     </div>
   </div>
