@@ -28,11 +28,6 @@ public class LoginController {
         return "/login/index";
     }
 
-    @RequestMapping(path = "/login", method = RequestMethod.POST)
-    public String loginAction() {
-        return "redirect:home";
-    }
-
     @RequestMapping(path = "/login/join-us", method = RequestMethod.GET)
     public String JoinUsForm() {
         return "/login/join-us";
@@ -48,6 +43,8 @@ public class LoginController {
 
             return "redirect:/login/join-us";
         }
+
+        attrs.addFlashAttribute("msg", "회원가입 완료 하셨습니다.");
 
         return "redirect:/login";
     }
