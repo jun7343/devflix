@@ -59,7 +59,7 @@ public class DatabaseConfig {
         hibernateProperties.setProperty("hibernate.format_sql", "true");
         hibernateProperties.setProperty("hibernate.use_sql_comments", "true");
         hibernateProperties.setProperty("hibernate.id.new_generator_mappings", "true");
-        //hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "create");
+        hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "create");
 
         return hibernateProperties;
     }
