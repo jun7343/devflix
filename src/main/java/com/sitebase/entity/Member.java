@@ -18,24 +18,24 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", unique = true, nullable = false)
-    private String userId;
+    @Column(name = "user_name", unique = true, nullable = false)
+    private String userName;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "user_name", nullable = false)
-    private String userName;
+    @Column(nullable = false)
+    private String name;
 
     @Type(type = "string-array")
     @Column(nullable = false, columnDefinition = "varchar[]")
     private String[] authority;
 
     @Builder
-    public Member(String userId, String password, String userName, String[] authority) {
-        this.userId = userId;
-        this.password = password;
+    public Member(String userName, String password, String name, String[] authority) {
         this.userName = userName;
+        this.password = password;
+        this.name = name;
         this.authority = authority;
     }
 }
