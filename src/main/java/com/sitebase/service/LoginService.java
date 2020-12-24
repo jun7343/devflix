@@ -33,7 +33,7 @@ public class LoginService implements UserDetailsService {
 
     @Transactional
     public Result createMember(MemberCommand userCommand) {
-        Optional<Member> findUser = memberRepository.findByUserId(userCommand.getId());
+        Optional<Member> findUser = memberRepository.findByUserName(userCommand.getUserName());
 
         // 생성하려는 아이디가 존재하면 return false;
         if (findUser.isPresent()) {
@@ -47,8 +47,8 @@ public class LoginService implements UserDetailsService {
         }
 
         Member user = Member.builder()
-                .userId(userCommand.getId())
-                .userName(userCommand.getName())
+                .userName(userCommand.getUserName())
+                .name(userCommand.getName())
                 .password(passwordEncoder.encode(userCommand.getPassword()))
                 .authority(new String[] {RoleType.ROLE_USER.getRole()})
                 .build();
@@ -59,15 +59,16 @@ public class LoginService implements UserDetailsService {
     }
 
     @Transactional
-    public Boolean getUser(String userId) {
-        Optional<Member> user = memberRepository.findByUserId(userId);
+    public Boolean getUser(String userName) {
+        Optional<Member> user = memberRepository.findByUserName(userName);
 
         return user.isPresent();
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        Optional<Member> optional = memberRepository.findByUserId(userId);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Member> optional = memberRepository.findByUserName(username);
+
         Member member = optional.get();
 
         List<SimpleGrantedAuthority> list = new ArrayList<>();
@@ -76,6 +77,6 @@ public class LoginService implements UserDetailsService {
             list.add(new SimpleGrantedAuthority(str));
         }
 
-        return new User(member.getUserId(), member.getPassword(), list);
+        return new User(member.getUserName(), member.getPassword(), list);
     }
 }
