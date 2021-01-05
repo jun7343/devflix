@@ -33,10 +33,10 @@ public class LoginService implements UserDetailsService {
 
     @Transactional
     public Result createMember(MemberCommand userCommand) {
-        Optional<Member> findUser = memberRepository.findByUserName(userCommand.getUserName());
+        Member findUser = memberRepository.findByUsername(userCommand.getUsername());
 
         // 생성하려는 아이디가 존재하면 return false;
-        if (findUser.isPresent()) {
+        if (findUser != null) {
             return new Result(ResultType.ERROR, "이미 존재한 아이디 입니다.");
         }
 
@@ -47,7 +47,7 @@ public class LoginService implements UserDetailsService {
         }
 
         Member user = Member.builder()
-                .userName(userCommand.getUserName())
+                .username(userCommand.getUsername())
                 .name(userCommand.getName())
                 .password(passwordEncoder.encode(userCommand.getPassword()))
                 .authority(new String[] {RoleType.ROLE_USER.getRole()})
@@ -59,17 +59,17 @@ public class LoginService implements UserDetailsService {
     }
 
     @Transactional
-    public Boolean getUser(String userName) {
-        Optional<Member> user = memberRepository.findByUserName(userName);
+    public Boolean userPresent(String userName) {
+        Member member = memberRepository.findByUsername(userName);
 
-        return user.isPresent();
+        return member != null;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Member> optional = memberRepository.findByUserName(username);
+        Member member = memberRepository.findByUsername(username);
 
-        Member member = optional.get();
+        if (member == null) return null;
 
         List<SimpleGrantedAuthority> list = new ArrayList<>();
 
@@ -77,6 +77,6 @@ public class LoginService implements UserDetailsService {
             list.add(new SimpleGrantedAuthority(str));
         }
 
-        return new User(member.getUserName(), member.getPassword(), list);
+        return new User(member.getUsername(), member.getPassword(), list);
     }
 }
