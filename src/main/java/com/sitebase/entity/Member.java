@@ -18,8 +18,8 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_name", unique = true, nullable = false)
-    private String userName;
+    @Column(unique = true, nullable = false)
+    private String username;
 
     @Column(nullable = false)
     private String password;
@@ -32,8 +32,8 @@ public class Member {
     private String[] authority;
 
     @Builder
-    public Member(String userName, String password, String name, String[] authority) {
-        this.userName = userName;
+    public Member(String username, String password, String name, String[] authority) {
+        this.username = username;
         this.password = password;
         this.name = name;
         this.authority = authority;
