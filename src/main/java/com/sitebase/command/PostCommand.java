@@ -2,18 +2,15 @@ package com.sitebase.command;
 
 import com.sitebase.constant.ResultType;
 import com.sitebase.utils.Result;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
 import org.springframework.util.StringUtils;
 
-@Getter
-@ToString
+@Data
 public class PostCommand {
 
     private String title;
     private String content;
-
-
+    
     public Result validate() {
         if (StringUtils.isEmpty(title)) {
             return new Result(ResultType.ERROR, "제목 기입해 주세요.");
