@@ -50,10 +50,10 @@ public class LoginController {
     }
 
     // 아이디 중복 확인 API 아이디 중복 확인시 true 반환
-    @RequestMapping(path = "/login/id-check", method = RequestMethod.POST)
+    @RequestMapping(path = "/login/username-check", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Boolean> confirmUserId(@RequestParam(name = "id")String id) {
-        Boolean result = loginService.getUser(id);
+    public Map<String, Boolean> confirmUsername(@RequestParam(name = "username")String username) {
+        Boolean result = loginService.userPresent(username);
 
         Map<String, Boolean> map = new HashMap<>();
 

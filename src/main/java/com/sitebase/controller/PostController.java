@@ -25,7 +25,6 @@ public class PostController {
         System.out.println(postCommand.toString());
         System.out.println(writer.getName());
 
-
         return "redirect:/post";
     }
 }
