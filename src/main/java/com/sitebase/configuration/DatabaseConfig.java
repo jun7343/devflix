@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Properties;
 
-@Configuration
-@EnableTransactionManagement
+/*@Configuration
+@EnableTransactionManagement*/
 public class DatabaseConfig {
 
     private Environment env;
@@ -35,8 +35,8 @@ public class DatabaseConfig {
     public HikariDataSource dataSource() {
         HikariConfig config = new HikariConfig();
 
-        config.setUsername("junyu");
-        config.setPassword("zlsl7480");
+        config.setUsername("violet");
+        config.setPassword("violet1234");
         config.setDriverClassName("org.postgresql.Driver");
         config.setJdbcUrl("jdbc:postgresql://localhost:5432/sitebase");
         HikariDataSource ds = new HikariDataSource(config);
@@ -51,7 +51,7 @@ public class DatabaseConfig {
         return transactionManager;
     }
 
-    private final Properties hibernateProperties() {
+    private Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
         hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         hibernateProperties.setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
