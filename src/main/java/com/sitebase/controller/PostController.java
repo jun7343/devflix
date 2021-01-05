@@ -12,7 +12,7 @@ public class PostController {
 
     @RequestMapping(path = "/post", method = RequestMethod.GET)
     public String index() {
-        return "/post/index";
+        return "/post/list";
     }
 
     @RequestMapping(path = "/post/write", method = RequestMethod.GET)
