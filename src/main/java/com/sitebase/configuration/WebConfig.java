@@ -1,12 +1,14 @@
 package com.sitebase.configuration;
 
 import com.github.jknack.handlebars.springmvc.HandlebarsViewResolver;
+import com.sitebase.security.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebMvc
@@ -26,6 +28,11 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**").excludePathPatterns("/assets/**");
+    }
+
+    @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.viewResolver(viewResolver());
     }
@@ -37,7 +44,7 @@ public class WebConfig implements WebMvcConfigurer {
         viewResolver.setPrefix("classpath:/templates/");
         viewResolver.setSuffix(".hbs");
         viewResolver.setCache(false);
-        viewResolver.setCharset(Charset.forName("utf-8"));
+        viewResolver.setCharset(StandardCharsets.UTF_8);
 
         return viewResolver;
     }
