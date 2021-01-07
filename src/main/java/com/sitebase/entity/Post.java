@@ -15,6 +15,9 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(targetEntity = Member.class)
+    private Member writer;
+
     @Column
     private String title;
 
@@ -30,9 +33,10 @@ public class Post {
     private Date updatedDate;
 
     @Builder
-    public Post(String title, String content, Date createdDate, Date updatedDate) {
+    public Post(String title, Member writer, String content, Date createdDate, Date updatedDate) {
         this.title = title;
         this.content = content;
+        this.writer = writer;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
     }
