@@ -1,9 +1,11 @@
 create table post (
-	id serial primary key,
-	title varchar,
-	content text,
-	writer integer,
-	created_at timestamp with time zone not null default now(),
-	updated_at timestamp with time zone not null default now(),
-	foreign key (writer) references member(id)
+    id  bigserial not null,
+    content varchar(255),
+    created_date timestamp,
+    title varchar(255),
+    updated_date timestamp,
+    writer_id int8,
+    primary key (id)
 )
+
+alter table post add constraint FKh3voybp05rhyyvwlhflfrlti2 foreign key (writer_id) references member
