@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,8 @@ public class LoginService implements UserDetailsService {
                 .name(userCommand.getName())
                 .password(passwordEncoder.encode(userCommand.getPassword()))
                 .authority(new String[] {RoleType.ROLE_USER.getRole()})
+                .createdAt(new Date())
+                .updatedAt(new Date())
                 .build();
 
         memberRepository.save(user);
@@ -67,16 +70,6 @@ public class LoginService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByUsername(username);
-
-        if (member == null) return null;
-
-        List<SimpleGrantedAuthority> list = new ArrayList<>();
-
-        for (String str : member.getAuthority()) {
-            list.add(new SimpleGrantedAuthority(str));
-        }
-
-        return new User(member.getUsername(), member.getPassword(), list);
+        return memberRepository.findByUsername(username);
     }
 }
