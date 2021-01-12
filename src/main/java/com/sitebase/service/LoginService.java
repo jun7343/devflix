@@ -51,7 +51,7 @@ public class LoginService implements UserDetailsService {
                 .username(userCommand.getUsername())
                 .name(userCommand.getName())
                 .password(passwordEncoder.encode(userCommand.getPassword()))
-                .authority(new String[] {RoleType.ROLE_USER.getRole()})
+                .authority(new String[] {RoleType.USER})
                 .createdAt(new Date())
                 .updatedAt(new Date())
                 .build();
