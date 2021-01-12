@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Date;
 
-
+@Service
 public class PostService {
 
     private final PostRepository postRepository;
@@ -19,12 +19,15 @@ public class PostService {
     }
 
     @Transactional
-    public void writePost(PostCommand postCommand, Member writer) {
+    public Post write(PostCommand postCommand, Member writer) {
         Post post = Post.builder()
                 .title(postCommand.getTitle())
                 .content(postCommand.getContent())
+                .writer(writer)
                 .createdDate(new Date())
                 .updatedDate(new Date())
                 .build();
+
+        return postRepository.save(post);
     }
 }
