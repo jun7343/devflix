@@ -1,15 +1,8 @@
 package com.sitebase.constant;
 
-public enum RoleType {
-    ROLE_USER("ROLE_USER"), ROLE_MANAGER("ROLE_MANAGER"), ROLE_ADMIN("ROLE_ADMIN"), ROLE_ANONYMOUS("ROLE_ANONYMOUS");
-
-    private final String role;
-
-    RoleType(String role) {
-        this.role = role;
-    }
-
-    public String getRole() {
-        return role;
-    }
+public class RoleType {
+    public static final String USER = "ROLE_USER";
+    public static final String MANAGER = "ROLE_MANAGER";
+    public static final String ADMIN = "ROLE_ADMIN";
+    public static final String ANONYMOUS = "ROLE_ANONYMOUS";
 }
