@@ -1,4 +1,4 @@
-package com.sitebase.command;
+package com.sitebase.dto;
 
 import com.sitebase.constant.ResultType;
 import com.sitebase.utils.Result;
@@ -6,7 +6,7 @@ import lombok.Data;
 import org.springframework.util.StringUtils;
 
 @Data
-public class PostCommand {
+public class PostDto {
 
     private String title;
     private String content;

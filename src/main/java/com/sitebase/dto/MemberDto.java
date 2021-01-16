@@ -1,4 +1,4 @@
-package com.sitebase.command;
+package com.sitebase.dto;
 
 import com.sitebase.constant.ResultType;
 import com.sitebase.utils.Result;
@@ -6,7 +6,7 @@ import lombok.Data;
 import org.springframework.util.StringUtils;
 
 @Data
-public class MemberCommand {
+public class MemberDto {
 
     private String username;
     private String password;
