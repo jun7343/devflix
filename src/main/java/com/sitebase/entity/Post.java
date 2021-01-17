@@ -1,5 +1,6 @@
 package com.sitebase.entity;
 
+import com.sitebase.constant.PostStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,6 +16,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "post_status")
+    @Enumerated(EnumType.STRING)
+    private PostStatus postStatus;
+
     @ManyToOne(targetEntity = Member.class)
     private Member writer;
 
@@ -23,6 +28,9 @@ public class Post {
 
     @Column
     private String content;
+
+    @Column
+    private long views;
 
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
@@ -33,9 +41,11 @@ public class Post {
     private Date updatedDate;
 
     @Builder
-    public Post(String title, Member writer, String content, Date createdDate, Date updatedDate) {
+    public Post(String title, PostStatus postStatus, Member writer, String content, long views, Date createdDate, Date updatedDate) {
         this.title = title;
+        this.postStatus = postStatus;
         this.content = content;
+        this.views = views;
         this.writer = writer;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
