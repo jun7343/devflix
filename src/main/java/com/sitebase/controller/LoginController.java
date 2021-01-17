@@ -1,7 +1,6 @@
 package com.sitebase.controller;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.sitebase.command.MemberCommand;
+import com.sitebase.dto.MemberDto;
 import com.sitebase.service.LoginService;
 import com.sitebase.utils.Result;
 import org.springframework.stereotype.Controller;
@@ -34,7 +33,7 @@ public class LoginController {
     }
 
     @RequestMapping(path = "/login/join-us", method = RequestMethod.POST)
-    public String JoinUsAction(MemberCommand command, RedirectAttributes attrs) {
+    public String JoinUsAction(MemberDto command, RedirectAttributes attrs) {
         System.out.println(command.toString());
         Result result = loginService.createMember(command);
 

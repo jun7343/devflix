@@ -1,6 +1,6 @@
 package com.sitebase.service;
 
-import com.sitebase.command.PostCommand;
+import com.sitebase.dto.PostDto;
 import com.sitebase.entity.Member;
 import com.sitebase.entity.Post;
 import com.sitebase.repository.PostRepository;
@@ -19,10 +19,10 @@ public class PostService {
     }
 
     @Transactional
-    public Post write(PostCommand postCommand, Member writer) {
+    public Post write(PostDto postDto, Member writer) {
         Post post = Post.builder()
-                .title(postCommand.getTitle())
-                .content(postCommand.getContent())
+                .title(postDto.getTitle())
+                .content(postDto.getContent())
                 .writer(writer)
                 .createdDate(new Date())
                 .updatedDate(new Date())

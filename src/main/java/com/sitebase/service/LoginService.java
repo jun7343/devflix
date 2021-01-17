@@ -1,13 +1,11 @@
 package com.sitebase.service;
 
-import com.sitebase.command.MemberCommand;
+import com.sitebase.dto.MemberDto;
 import com.sitebase.constant.ResultType;
 import com.sitebase.constant.RoleType;
 import com.sitebase.entity.Member;
 import com.sitebase.repository.MemberRepository;
 import com.sitebase.utils.Result;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,10 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LoginService implements UserDetailsService {
@@ -33,7 +28,7 @@ public class LoginService implements UserDetailsService {
     }
 
     @Transactional
-    public Result createMember(MemberCommand userCommand) {
+    public Result createMember(MemberDto userCommand) {
         Member findUser = memberRepository.findByUsername(userCommand.getUsername());
 
         // 생성하려는 아이디가 존재하면 return false;
