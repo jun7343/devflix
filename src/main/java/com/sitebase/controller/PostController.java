@@ -33,16 +33,12 @@ public class PostController {
     @RequestMapping(path = "/post/write", method = RequestMethod.GET)
     @Secured(RoleType.USER)
     public String writeForm() {
-        logger.info("test");
-
         return "/post/write";
     }
 
     @RequestMapping(path = "/post/write", method = RequestMethod.POST)
     @Secured(RoleType.USER)
     public String writeAction(PostDto postDto, @AuthenticationPrincipal Member writer) {
-        logger.info(postDto.toString());
-
         return "redirect:/post";
     }
 }
