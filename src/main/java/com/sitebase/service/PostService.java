@@ -1,5 +1,6 @@
 package com.sitebase.service;
 
+import com.sitebase.constant.PostStatus;
 import com.sitebase.dto.PostDto;
 import com.sitebase.entity.Member;
 import com.sitebase.entity.Post;
@@ -21,8 +22,11 @@ public class PostService {
     @Transactional
     public Post write(PostDto postDto, Member writer) {
         Post post = Post.builder()
+                .postStatus(PostStatus.POST)
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
+                .pathBase(postDto.getPathBase())
+                .images(postDto.getImages())
                 .writer(writer)
                 .createdDate(new Date())
                 .updatedDate(new Date())

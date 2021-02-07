@@ -1,7 +1,10 @@
 package com.sitebase.entity;
 
 import com.sitebase.constant.PostStatus;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -10,6 +13,7 @@ import java.util.Date;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@TypeDef(name = "string-array", typeClass = StringArrayType.class)
 public class Post {
 
     @Id
@@ -32,6 +36,13 @@ public class Post {
     @Column
     private long views;
 
+    @Column(name = "path_base")
+    private String pathBase;
+
+    @Column(name = "images", columnDefinition = "varchar[]")
+    @Type(type = "string-array")
+    private String[] images;
+
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -41,11 +52,14 @@ public class Post {
     private Date updatedDate;
 
     @Builder
-    public Post(String title, PostStatus postStatus, Member writer, String content, long views, Date createdDate, Date updatedDate) {
+    public Post(String title, PostStatus postStatus, Member writer, String content, long views,
+                String pathBase, String[] images, Date createdDate, Date updatedDate) {
         this.title = title;
         this.postStatus = postStatus;
         this.content = content;
         this.views = views;
+        this.pathBase = pathBase;
+        this.images = images;
         this.writer = writer;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
