@@ -1,6 +1,5 @@
 package com.sitebase.controller;
 
-import com.nhncorp.lucy.security.xss.XssPreventer;
 import com.sitebase.dto.PostDto;
 import com.sitebase.service.PostService;
 import lombok.AllArgsConstructor;
@@ -26,6 +25,7 @@ public class PostController {
 
     @RequestMapping(path = "/post/write", method = RequestMethod.POST)
     public String writeAction(PostDto postDto) {
+        System.out.println(postDto.toString());
         return "redirect:/post";
     }
 }
