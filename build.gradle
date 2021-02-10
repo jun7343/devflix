@@ -42,10 +42,10 @@ css.source {
 
 combineCss {
     source = css.source.dev.css.files
-    dest = 'src/main/resources/assets/libs/css/simantic.min.css'
+    dest = 'src/main/resources/assets/libs/css/semantic.min.css'
 }
 
 minifyCss {
     source = combineCss
-    dest = 'src/main/resources/assets/libs/css/simantic.min.css'
+    dest = 'src/main/resources/assets/libs/css/semantic.min.css'
 }
