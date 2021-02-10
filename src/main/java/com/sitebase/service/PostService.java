@@ -28,8 +28,8 @@ public class PostService {
                 .pathBase(postDto.getPathBase())
                 .images(postDto.getImages())
                 .writer(writer)
-                .createdDate(new Date())
-                .updatedDate(new Date())
+                .createDate(new Date())
+                .updateDate(new Date())
                 .build();
 
         return postRepository.save(post);

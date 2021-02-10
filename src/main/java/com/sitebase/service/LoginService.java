@@ -1,12 +1,9 @@
 package com.sitebase.service;
 
-import com.sitebase.dto.MemberDto;
-import com.sitebase.constant.ResultType;
 import com.sitebase.constant.RoleType;
+import com.sitebase.dto.MemberDto;
 import com.sitebase.entity.Member;
 import com.sitebase.repository.MemberRepository;
-import com.sitebase.utils.Result;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,39 +25,28 @@ public class LoginService implements UserDetailsService {
     }
 
     @Transactional
-    public Result createMember(MemberDto userCommand) {
-        Member findUser = memberRepository.findByUsername(userCommand.getUsername());
+    public Member createMember(MemberDto dto) {
+        Member findUser = memberRepository.findByUsername(dto.getUsername());
 
-        // 생성하려는 아이디가 존재하면 return false;
         if (findUser != null) {
-            return new Result(ResultType.ERROR, "이미 존재한 아이디 입니다.");
-        }
-
-        Result result = userCommand.validate();
-
-        if (result.isERROR()) {
-            return result;
+            return null;
         }
 
         Member user = Member.builder()
-                .username(userCommand.getUsername())
-                .name(userCommand.getName())
-                .password(passwordEncoder.encode(userCommand.getPassword()))
+                .username(dto.getUsername())
+                .name(dto.getName())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .authority(new String[] {RoleType.USER})
-                .createdAt(new Date())
-                .updatedAt(new Date())
+                .createAt(new Date())
+                .updateAt(new Date())
                 .build();
 
-        memberRepository.save(user);
-
-        return new Result(ResultType.SUCCESS);
+        return memberRepository.save(user);
     }
 
     @Transactional
-    public Boolean userPresent(String userName) {
-        Member member = memberRepository.findByUsername(userName);
-
-        return member != null;
+    public Member findMember(String userName) {
+        return memberRepository.findByUsername(userName);
     }
 
     @Override
