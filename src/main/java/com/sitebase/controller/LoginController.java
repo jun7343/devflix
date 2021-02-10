@@ -1,8 +1,11 @@
 package com.sitebase.controller;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.sitebase.dto.MemberDto;
+import com.sitebase.entity.Member;
 import com.sitebase.service.LoginService;
-import com.sitebase.utils.Result;
+import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,13 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@AllArgsConstructor
 public class LoginController {
 
     private final LoginService loginService;
-
-    public LoginController(LoginService loginService) {
-        this.loginService = loginService;
-    }
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String loginForm() {
@@ -33,12 +33,11 @@ public class LoginController {
     }
 
     @RequestMapping(path = "/login/join-us", method = RequestMethod.POST)
-    public String JoinUsAction(MemberDto command, RedirectAttributes attrs) {
-        System.out.println(command.toString());
-        Result result = loginService.createMember(command);
+    public String JoinUsAction(MemberDto dto, RedirectAttributes attrs) {
+        Member user = loginService.createMember(dto);
 
-        if (result.isERROR()) {
-            attrs.addFlashAttribute("msg", result.getMessage());
+        if (user == null) {
+            attrs.addFlashAttribute("msg", "이미 생성된 아이디 입니다.");
 
             return "redirect:/login/join-us";
         }
@@ -49,15 +48,10 @@ public class LoginController {
     }
 
     // 아이디 중복 확인 API 아이디 중복 확인시 true 반환
-    @RequestMapping(path = "/login/username-check", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Boolean> confirmUsername(@RequestParam(name = "username")String username) {
-        Boolean result = loginService.userPresent(username);
+    @RequestMapping(path = "/login/username-confirm", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public JSONPObject confirmUsername(@RequestParam(name = "username")String username) {
+        Member member = loginService.findMember(username);
 
-        Map<String, Boolean> map = new HashMap<>();
-
-        map.put("result", result);
-
-        return map;
+        return new JSONPObject("result", member == null);
     }
 }
