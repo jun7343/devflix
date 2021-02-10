@@ -4,16 +4,16 @@ import lombok.*;
 
 @Getter
 @ToString
-@NoArgsConstructor
+@EqualsAndHashCode
 public class PostDto {
-    private Long id;
-    private String title;
-    private String content;
-    private String pathBase;
-    private String[] images;
+    private final Long id;
+    private final String title;
+    private final String content;
+    private final String pathBase;
+    private final String[] images;
 
-    @Builder(access = AccessLevel.PRIVATE)
-    private PostDto(Long id, @NonNull String title, @NonNull String content, String pathBase, String[] images) {
+    @Builder
+    public PostDto(final Long id, final String title, final String content, final String pathBase, final String[] images) {
         this.id = id;
         this.title = title;
         this.content = content;
