@@ -12,6 +12,7 @@ import java.util.Date;
 @Entity
 @Getter
 @ToString
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @TypeDef(name = "string-array", typeClass = StringArrayType.class)
 public class Post {
@@ -43,25 +44,25 @@ public class Post {
     @Type(type = "string-array")
     private String[] images;
 
-    @Column(name = "created_date")
+    @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private Date createDate;
 
-    @Column(name = "updated_date")
+    @Column(name = "update_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    private Date updateDate;
 
     @Builder
-    public Post(String title, PostStatus postStatus, Member writer, String content, long views,
-                String pathBase, String[] images, Date createdDate, Date updatedDate) {
-        this.title = title;
+    public Post(Long id, PostStatus postStatus, Member writer, String title, String content, long views, String pathBase, String[] images, Date createDate, Date updateDate) {
+        this.id = id;
         this.postStatus = postStatus;
+        this.writer = writer;
+        this.title = title;
         this.content = content;
         this.views = views;
         this.pathBase = pathBase;
         this.images = images;
-        this.writer = writer;
-        this.createdDate = createdDate;
-        this.updatedDate = updatedDate;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
     }
 }
