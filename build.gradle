@@ -40,12 +40,7 @@ css.source {
     }
 }
 
-combineCss {
-    source = css.source.dev.css.files
-    dest = 'src/main/resources/assets/libs/css/semantic.min.css'
-}
-
 minifyCss {
-    source = combineCss
+    source = 'src/main/resources/assets/libs/css/semantic.css'
     dest = 'src/main/resources/assets/libs/css/semantic.min.css'
 }
