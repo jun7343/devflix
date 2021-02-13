@@ -1,16 +1,26 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="no-js">
   <head>
-    <title>{{title}}</title>
     {{>layout/include/head}}
   </head>
-  <body>
-    {{#if header}}
-      {{>layout/include/header}}
-    {{/if}}
-    {{>layout/include/nav}}
-    {{>contents}}
+  <body class="main-page has-push-menu">
+    {{>layout/include/svg-icons}}
+    {{>layout/include/header}}
+	    <section class="content">
+		    {{>content}}
+	    </section>
     {{>layout/include/footer}}
+    <script>
+	    if (window.netlifyIdentity) {
+		    window.netlifyIdentity.on("init", function(user) {
+			    if (!user) {
+				    window.netlifyIdentity.on("login", function() {
+					    document.location.href = "/admin/";
+				    });
+			    }
+		    });
+	    }
+    </script>
     {{>js}}
   </body>
 </html>

@@ -1,11 +1,53 @@
-<!-- Footer -->
-<footer class="py-5 bg-dark">
-  <div class="container">
-    <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
-  </div>
-  <!-- /.container -->
+<footer>
+	<p>
+		<a href="https://github.com" title="Github">
+			<svg><use xlink:href="#icon-github"></use></svg>
+		</a>
+		<a href="https://www.facebook.com" title="Facebook">
+			<svg><use xlink:href="#icon-facebook"></use></svg>
+		</a>
+		<a href="https://twitter.com" title="Twitter">
+			<svg><use xlink:href="#icon-twitter"></use></svg>
+		</a>
+		<a href="https://medium.com" title="Medium">
+			<svg><use xlink:href="#icon-medium"></use></svg>
+		</a>
+		<a href="https://www.instagram.com" title="Instagram">
+			<svg><use xlink:href="#icon-instagram"></use></svg>
+		</a>
+		<a href="https://www.linkedin.com/in" title="LinkedIn">
+			<svg><use xlink:href="#icon-linkedin"></use></svg>
+		</a>
+	</p>
+
+	{{>layout/include/links}}
+
+	<p>
+		<span>Jekflix</span> was made with <svg class="love"><use xlink:href="#icon-heart"></use></svg> by <a href="https://rossener.com" target="_blank" class="creator">Thiago Rossener</a>
+	</p>
 </footer>
-<!-- Bootstrap core JavaScript -->
-<script src="/assets/libs/js/vendor/jquery.min.js"></script>
-<script src="/assets/libs/js/vendor/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "준준",
+  "description": "",
+  "url": "/",
+  "logo": {
+      "@type": "ImageObject",
+      "url": "/assets/img/icons/mediumtile.png",
+      "width": "600",
+      "height": "315"
+  },
+  "sameAs": [
+    "ㄴㅁㅇ"
+  ]
+}
+</script>
+
+<!-- Include the script that allows Netlify CMS login -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+<!-- Include the website scripts -->
+<script src="/assets/libs/js/scripts.min.js"></script>
