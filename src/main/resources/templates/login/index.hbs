@@ -1,63 +1,36 @@
-{{#> layout/default title="로그인" }}
-  {{#*inline "contents"}}
-    <main class="login-form m-5">
-      <div class="cotainer">
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <div class="card">
-              <div class="card-header">Register</div>
-              <div class="card-body">
-                <form action="/login" method="post">
-                  <div class="form-group row">
-                    <label for="email_address" class="col-md-4 col-form-label text-md-right">ID</label>
-                    <div class="col-md-6">
-                      <input type="text" id="email_address" class="form-control" name="username" autofocus>
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
-                    <div class="col-md-6">
-                      <input type="password" id="password" class="form-control" name="password">
-                    </div>
-                  </div>
-
-                  <div class="form-group row">
-                    <div class="col-md-6 offset-md-4">
-                      <div class="checkbox">
-                        <label>
-                          <input type="checkbox" name="remember"> Remember Me
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6 offset-md-4">
-                    <button type="submit" class="btn btn-primary">
-                      로그인
-                    </button>
-                    <a href="/login/join-us" class="btn btn-secondary">
-                      회원 가입
-                    </a>
-                    <a href="/login/find" class="btn btn-link">
-                      Forgot Your Password?
-                    </a>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  {{/inline}}
-  {{#*inline "js"}}
-    {{#if msg}}
-      <script>
-        $(function() {
-          alert('{{msg}}');
-        })
-      </script>
-    {{/if}}
-  {{/inline}}
+{{#> layout/default title="Login"}}
+	{{#*inline "content"}}
+		<div class="post">
+			<article class="post-content fullwidth">
+				<style type="text/css" media="screen">
+					.container {
+						margin: 0px auto;
+						max-width: 600px;
+					}
+				</style>
+				<div class="container">
+					<div id="form" class="contact-form">
+						<h1>Login</h1>
+						<form method="post" action="/login">
+							<div class="form-group">
+								<label for="username">ID</label>
+								<input type="text" id="username" name="username" class="form-control" placeholder="ID">
+							</div>
+							<div class="form-group">
+								<label for="password">Password</label>
+								<input type="password" id="password" name="password" class="form-control" placeholder="Password">
+							</div>
+							<button type="button" class="btn btn-danger">Login</button>
+						</form>
+						<div class="row">
+							<a class="col-sm" href="">Forgot Username?</a>
+							<a class="col-sm" href="">Join Us</a>
+						</div>
+					</div>
+				</div>
+			</article>
+		</div>
+	{{/inline}}
+	{{#*inline "js"}}
+	{{/inline}}
 {{/layout/default}}
