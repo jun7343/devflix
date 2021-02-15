@@ -4,19 +4,52 @@
 	</a>
 	<h1 class="logo">
 		<a href="/">
-			{{>layout/include/logo}}
-			<!--site name <span class="version">site name</span>-->
+			Devflix <span class="version">v1.0.0</span>
 		</a>
 	</h1>
-	<a id="search" class="dosearch" role="button">
-		<svg class="icon-search"><use xlink:href="#icon-search"></use></svg>
-	</a>
-	<a href="https://github.com/thiagorossener/jekflix-template" class="get-theme" role="button">
-		Get this theme!
-	</a>
+	{{#if isAuthentication}}
+		<div class="dropdown header-profile">
+			<a id="profile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<img src="/assets/img/user.jpg" class="icon-profile">
+			</a>
+			<div class="dropdown-menu" aria-labelledby="profile">
+				<a class="dropdown-item" href="#">Action</a>
+				<a class="dropdown-item" href="#">Another action</a>
+				<a class="dropdown-item" href="#">Something else here</a>
+			</div>
+		</div>
+	{{else}}
+		<div class="header-profile">
+			<a id="profile" role="button" href="/login">
+				<img src="/assets/img/user.jpg" class="icon-profile">
+			</a>
+		</div>
+	{{/if}}
+	{{#if isAuthentication}}
+		<div class="dropdown header-menu">
+			<a id="alert" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<svg class="icon-alert"><use xlink:href="#icon-alert"></use></svg>
+				<span class="alert-dots"></span>
+			</a>
+			<div class="dropdown-menu" aria-labelledby="alert">
+				<a class="dropdown-item" href="#">Action</a>
+				<a class="dropdown-item" href="#">Another action</a>
+				<a class="dropdown-item" href="#">Something else here</a>
+			</div>
+		</div>
+	{{else}}
+		<div class="header-menu">
+			<a id="alert" role="button">
+				<svg class="icon-alert"><use xlink:href="#icon-alert"></use></svg>
+			</a>
+		</div>
+	{{/if}}
+	<div class="header-menu">
+		<a id="search" class="dosearch" role="button">
+			<svg class="icon-search"><use xlink:href="#icon-search"></use></svg>
+		</a>
+	</div>
 </header>
-
 <div id="mask" class="overlay"></div>
-
 {{>layout/include/menu}}
 {{>layout/include/search}}
