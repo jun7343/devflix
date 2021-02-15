@@ -31,6 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .failureHandler((request, response, exception) -> {
                     if (exception instanceof BadCredentialsException) {
                         request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, new BadCredentialsException("아이디 또는 비밀번호가 다릅니다."));
