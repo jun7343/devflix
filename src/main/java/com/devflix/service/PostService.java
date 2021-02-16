@@ -1,10 +1,10 @@
-package com.sitebase.service;
+package com.devflix.service;
 
-import com.sitebase.constant.PostStatus;
-import com.sitebase.dto.PostDto;
-import com.sitebase.entity.Member;
-import com.sitebase.entity.Post;
-import com.sitebase.repository.PostRepository;
+import com.devflix.constant.PostStatus;
+import com.devflix.dto.PostDto;
+import com.devflix.entity.Member;
+import com.devflix.entity.Post;
+import com.devflix.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

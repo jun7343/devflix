@@ -1,4 +1,4 @@
-package com.sitebase.entity;
+package com.devflix.entity;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.*;

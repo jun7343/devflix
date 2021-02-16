@@ -1,4 +1,4 @@
-package com.sitebase.security.config;
+package com.devflix.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

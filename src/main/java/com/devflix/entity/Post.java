@@ -1,6 +1,6 @@
-package com.sitebase.entity;
+package com.devflix.entity;
 
-import com.sitebase.constant.PostStatus;
+import com.devflix.constant.PostStatus;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.*;
 import org.hibernate.annotations.Type;

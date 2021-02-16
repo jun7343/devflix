@@ -1,9 +1,9 @@
-package com.sitebase.service;
+package com.devflix.service;
 
-import com.sitebase.constant.RoleType;
-import com.sitebase.dto.MemberDto;
-import com.sitebase.entity.Member;
-import com.sitebase.repository.MemberRepository;
+import com.devflix.constant.RoleType;
+import com.devflix.dto.MemberDto;
+import com.devflix.entity.Member;
+import com.devflix.repository.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;

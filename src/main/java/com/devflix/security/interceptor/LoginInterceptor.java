@@ -1,6 +1,6 @@
-package com.sitebase.security.interceptor;
+package com.devflix.security.interceptor;
 
-import com.sitebase.constant.RoleType;
+import com.devflix.constant.RoleType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

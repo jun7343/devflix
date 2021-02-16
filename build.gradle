@@ -7,7 +7,7 @@ plugins {
 
 apply plugin: 'css'
 
-group 'com.sitebase'
+group 'com.devflix'
 version '1.0-SNAPSHOT'
 
 repositories {

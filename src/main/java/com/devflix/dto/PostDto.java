@@ -1,4 +1,4 @@
-package com.sitebase.dto;
+package com.devflix.dto;
 
 import lombok.*;
 

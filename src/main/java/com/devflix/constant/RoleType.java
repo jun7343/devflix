@@ -1,4 +1,4 @@
-package com.sitebase.constant;
+package com.devflix.constant;
 
 public class RoleType {
     public static final String USER = "ROLE_USER";

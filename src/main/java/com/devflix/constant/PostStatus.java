@@ -1,4 +1,4 @@
-package com.sitebase.constant;
+package com.devflix.constant;
 
 public enum PostStatus {
     DELETE, HIDDEN, NOTICE, POST

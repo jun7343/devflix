@@ -1,4 +1,4 @@
-package com.sitebase.config;
+package com.devflix.config;
 
 import com.github.jknack.handlebars.Options;
 import org.apache.commons.lang3.ObjectUtils;

@@ -1,7 +1,7 @@
-package com.sitebase.config;
+package com.devflix.config;
 
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
-import com.sitebase.security.interceptor.LoginInterceptor;
+import com.devflix.security.interceptor.LoginInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,8 +13,8 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.sitebase")
-@EnableJpaRepositories(basePackages = "com.sitebase.repository")
+@ComponentScan(basePackages = "com.devflix")
+@EnableJpaRepositories(basePackages = "com.devflix.repository")
 public class WebConfig implements WebMvcConfigurer {
 
     @Override

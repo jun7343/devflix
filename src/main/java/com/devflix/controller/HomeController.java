@@ -1,4 +1,4 @@
-package com.sitebase.controller;
+package com.devflix.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

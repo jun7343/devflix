@@ -1,6 +1,6 @@
-package com.sitebase.repository;
+package com.devflix.repository;
 
-import com.sitebase.entity.Post;
+import com.devflix.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

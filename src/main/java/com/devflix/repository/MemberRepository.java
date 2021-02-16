@@ -1,10 +1,8 @@
-package com.sitebase.repository;
+package com.devflix.repository;
 
-import com.sitebase.entity.Member;
+import com.devflix.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {

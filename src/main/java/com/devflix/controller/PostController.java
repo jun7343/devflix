@@ -1,7 +1,7 @@
-package com.sitebase.controller;
+package com.devflix.controller;
 
-import com.sitebase.dto.PostDto;
-import com.sitebase.service.PostService;
+import com.devflix.dto.PostDto;
+import com.devflix.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

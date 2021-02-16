@@ -1,9 +1,9 @@
-package com.sitebase.controller;
+package com.devflix.controller;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.sitebase.dto.MemberDto;
-import com.sitebase.entity.Member;
-import com.sitebase.service.LoginService;
+import com.devflix.dto.MemberDto;
+import com.devflix.entity.Member;
+import com.devflix.service.LoginService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
