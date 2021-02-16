@@ -18,17 +18,6 @@
 				<a class="dropdown-item" href="#">Something else here</a>
 			</div>
 		</div>
-	{{else}}
-		<div class="dropdown header-profile">
-			<a id="profile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<img src="/assets/img/user.jpg" class="icon-profile">
-			</a>
-			<div class="dropdown-menu" aria-labelledby="profile">
-				<a class="dropdown-item" href="/login">Login</a>
-			</div>
-		</div>
-	{{/if}}
-	{{#if isAuthentication}}
 		<div class="dropdown header-menu">
 			<a id="alert" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<svg class="icon-alert"><use xlink:href="#icon-alert"></use></svg>
@@ -42,8 +31,8 @@
 		</div>
 	{{else}}
 		<div class="header-menu">
-			<a id="alert" role="button">
-				<svg class="icon-alert"><use xlink:href="#icon-alert"></use></svg>
+			<a id="login" role="button" href="/login">
+				<svg class="icon-login"><use xlink:href="#icon-login"></use></svg>
 			</a>
 		</div>
 	{{/if}}
