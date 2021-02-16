@@ -48,11 +48,9 @@ public class Member implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> array = new ArrayList<>();
-
         for (String auth : authority) {
             array.add(() -> auth);
         }
-
         return array;
     }
 

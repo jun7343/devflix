@@ -19,10 +19,13 @@
 			</div>
 		</div>
 	{{else}}
-		<div class="header-profile">
-			<a id="profile" role="button" href="/login">
+		<div class="dropdown header-profile">
+			<a id="profile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<img src="/assets/img/user.jpg" class="icon-profile">
 			</a>
+			<div class="dropdown-menu" aria-labelledby="profile">
+				<a class="dropdown-item" href="/login">Login</a>
+			</div>
 		</div>
 	{{/if}}
 	{{#if isAuthentication}}
