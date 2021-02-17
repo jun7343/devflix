@@ -2,6 +2,6 @@
 .idea
 build
 src/test
-deploy.sh
 src/main/resources/application-local.properties
 src/main/resources/application-dev.properties
+deploy.sh
