@@ -1,9 +1,11 @@
 package com.devflix.service;
 
 import com.devflix.constant.RoleType;
-import com.devflix.dto.MemberDto;
+import com.devflix.domain.JoinUsDomain;
 import com.devflix.entity.Member;
 import com.devflix.repository.MemberRepository;
+import com.google.common.collect.ImmutableList;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,32 +27,33 @@ public class LoginService implements UserDetailsService {
     }
 
     @Transactional
-    public Member createMember(MemberDto dto) {
-        Member findUser = memberRepository.findByUsername(dto.getUsername());
+    public void createMember(final JoinUsDomain domain) {
+        final Member user = memberRepository.findByEmail(domain.getEmail());
 
-        if (findUser != null) {
-            return null;
+        if (user != null) {
+            return;
         }
 
-        Member user = Member.builder()
-                .username(dto.getUsername())
-                .name(dto.getName())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .authority(new String[] {RoleType.USER})
+        Member joinUser = Member.builder()
+                .email(domain.getEmail())
+                .password(passwordEncoder.encode(domain.getPassword()))
+                .username(domain.getUsername())
+                .authority(ImmutableList.of(RoleType.USER))
                 .createAt(new Date())
                 .updateAt(new Date())
                 .build();
 
-        return memberRepository.save(user);
-    }
-
-    @Transactional
-    public Member findMember(String userName) {
-        return memberRepository.findByUsername(userName);
+        memberRepository.save(joinUser);
     }
 
     @Override
-    public Member loadUserByUsername(String username) throws UsernameNotFoundException {
-        return memberRepository.findByUsername(username);
+    public Member loadUserByUsername(final String email) throws UsernameNotFoundException {
+        final Member user = memberRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new InternalAuthenticationServiceException("user not found");
+        }
+
+        return user;
     }
 }

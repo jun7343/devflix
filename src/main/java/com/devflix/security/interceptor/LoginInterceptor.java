@@ -20,6 +20,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         if (modelAndView != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+            if (authentication == null) return;
+
             AtomicBoolean isAuthentication = new AtomicBoolean(true);
 
             authentication.getAuthorities().forEach(grantedAuthority -> {
