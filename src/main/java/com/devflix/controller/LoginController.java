@@ -74,4 +74,8 @@ public class LoginController {
 
         return "redirect:/login";
     }
+
+    @RequestMapping(path = "/login/join-us/email-validate", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public void emailValidate(@RequestParam(value = "email", required = false)String email) {
+    }
 }

@@ -1,5 +1,6 @@
 package com.devflix.service;
 
+import com.devflix.constant.MemberStatus;
 import com.devflix.constant.RoleType;
 import com.devflix.domain.JoinUsDomain;
 import com.devflix.entity.Member;
@@ -36,6 +37,7 @@ public class LoginService implements UserDetailsService {
 
         Member joinUser = Member.builder()
                 .email(domain.getEmail())
+                .status(MemberStatus.ACTIVE)
                 .password(passwordEncoder.encode(domain.getPassword()))
                 .username(domain.getUsername())
                 .authority(ImmutableList.of(RoleType.USER))
@@ -48,7 +50,8 @@ public class LoginService implements UserDetailsService {
 
     @Override
     public Member loadUserByUsername(final String email) throws UsernameNotFoundException {
-        final Member user = memberRepository.findByEmail(email);
+        System.out.println(email);
+        final Member user = memberRepository.findByEmailEquals(email);
 
         if (user == null) {
             throw new InternalAuthenticationServiceException("user not found");
