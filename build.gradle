@@ -22,6 +22,7 @@ dependencies {
     implementation 'org.springframework.session:spring-session-jdbc'
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'com.vladmihalcea:hibernate-types-52:2.10.1'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
     implementation 'org.postgresql:postgresql:42.2.18'
     implementation 'com.navercorp.lucy:lucy-xss-servlet:2.0.0'
     implementation 'junit:junit:4.12'
