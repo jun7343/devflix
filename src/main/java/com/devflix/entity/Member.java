@@ -1,5 +1,6 @@
 package com.devflix.entity;
 
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -11,31 +12,32 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@TypeDef(name = "string-array", typeClass = StringArrayType.class)
+@TypeDef(name = "list-array", typeClass = ListArrayType.class)
 public class Member implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String username;
+    @Column(unique = true)
+    private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false)
-    private String name;
+    @Column
+    private String username;
 
-    @Type(type = "string-array")
+    @Type(type = "list-array")
     @Column(nullable = false, columnDefinition = "varchar[]")
-    private String[] authority;
+    private List<String> authority;
 
     @Column(name = "create_at", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -89,11 +91,12 @@ public class Member implements UserDetails {
     }
 
     @Builder
-    public Member(Long id, String username, String password, String name, String[] authority, Date createAt, Date updateAt) {
+    public Member(final Long id, final String email, final String password, final String username,
+                  final List<String> authority, final Date createAt, final Date updateAt) {
         this.id = id;
-        this.username = username;
+        this.email = email;
         this.password = password;
-        this.name = name;
+        this.username = username;
         this.authority = authority;
         this.createAt = createAt;
         this.updateAt = updateAt;
