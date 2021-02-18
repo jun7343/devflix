@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/")
-                .usernameParameter("username")
+                .usernameParameter("email")
                 .passwordParameter("password")
                 .failureHandler((request, response, exception) -> {
                     if (exception instanceof BadCredentialsException) {
