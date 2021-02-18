@@ -1,5 +1,6 @@
 package com.devflix.entity;
 
+import com.devflix.constant.MemberStatus;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.*;
@@ -25,6 +26,10 @@ public class Member implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status;
 
     @Column(unique = true)
     private String email;
@@ -91,9 +96,10 @@ public class Member implements UserDetails {
     }
 
     @Builder
-    public Member(final Long id, final String email, final String password, final String username,
+    public Member(final Long id, final MemberStatus status, final String email, final String password, final String username,
                   final List<String> authority, final Date createAt, final Date updateAt) {
         this.id = id;
+        this.status = status;
         this.email = email;
         this.password = password;
         this.username = username;
