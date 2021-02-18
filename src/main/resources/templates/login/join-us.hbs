@@ -1,0 +1,104 @@
+{{#> layout/default title="Join Us"}}
+	{{#*inline "content"}}
+		<div class="post">
+			<article class="post-content fullwidth">
+				<style type="text/css" media="screen">
+					.container {
+						margin: 0px auto;
+						max-width: 600px;
+					}
+					label.error {
+						margin-top: 5px;
+						color: red;
+						font-size: small;
+					}
+					input.error {
+						border-width: 3px;
+						border-style: inset;
+						border-color: red;
+					}
+					.alert-danger {
+						text-align: center;
+					}
+				</style>
+				<div class="container">
+					<div id="form" class="contact-form">
+						<h1>Join Us</h1>
+						{{#if errorMessage}}
+						<div class="row">
+							<div class="alert alert-danger col-md-12" role="alert">
+								{{errorMessage}}
+							</div>
+						</div>
+						{{/if}}
+						<form id="join-us-form" method="post" action="/login/join-us" class="needs-validation">
+							<div class="row">
+								<div class="form-group col-md-12">
+									<label for="username">Email</label>
+									<input type="text" id="email" name="email" class="form-control" placeholder="Email">
+								</div>
+								<div class="form-group col-md-12">
+									<label for="username">User name</label>
+									<input type="text" id="username" name="username" class="form-control" placeholder="User name">
+								</div>
+								<div class="form-group col-md-6">
+									<label for="password">Password</label>
+									<input type="password" id="password" name="password" class="form-control" placeholder="Password">
+								</div>
+								<div class="form-group col-md-6">
+									<label for="password">Password Confirm</label>
+									<input type="password" id="password-confirm" name="password-confirm" class="form-control" placeholder="Password Confirm">
+								</div>
+								<button type="submit" class="btn btn-primary">Join Us</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</article>
+		</div>
+	{{/inline}}
+	{{#*inline "js"}}
+		<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+		<script>
+			$(function () {
+			    $("#join-us-form").validate({
+				    rules: {
+			        'email': {
+		            required: true,
+				        email: true
+			        },
+					    'username': {
+		            required: true
+					    },
+					    'password': {
+						    required: true,
+						    'password-check': true
+					    },
+					    'password-confirm': {
+						    equalTo: ':password'
+					    }
+				    },
+				    messages: {
+			        'email': {
+		            required: '이메일을 기입해 주세요.',
+				        email: '이메일 형식이 올바르지 않습니다.'
+			        },
+					    'username': {
+		            required: '유저 이름 기입해 주세요.'
+					    },
+					    'password': {
+		            required: '패스워드 기입해 주세요.'
+					    },
+					    'password-confirm': {
+						    equalTo: '패스워드와 똑같이 기입해 주세요.'
+					    }
+				    }
+			    });
+
+				$.validator.addMethod('password-check',  function(value, element) {
+					return this.optional(element) ||  /^.*(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/.test(value);
+				}, '비밀번호는 영문자, 숫자, 특수문자 조합해 주세요.');
+			})
+		</script>
+	{{/inline}}
+{{/layout/default}}
