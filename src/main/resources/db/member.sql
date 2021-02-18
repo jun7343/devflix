@@ -1,5 +1,6 @@
 create table "member" (
   id serial,
+  status varchar(50) not null,
   email varchar(300) not null,
   username varchar(200) not null,
   password varchar(300) not null,
