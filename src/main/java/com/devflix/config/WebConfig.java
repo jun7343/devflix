@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost");
+        registry.addMapping("/**").allowedOrigins("http://localhost", "http://15.164.231.154");
     }
 
     @Bean
