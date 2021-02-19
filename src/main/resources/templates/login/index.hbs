@@ -7,11 +7,21 @@
 						margin: 0px auto;
 						max-width: 600px;
 					}
+					label.error {
+						margin-top: 5px;
+						color: red;
+						font-size: small;
+					}
+					input.error {
+						border-width: 3px;
+						border-style: inset;
+						border-color: red;
+					}
 				</style>
 				<div class="container">
 					<div id="form" class="contact-form">
 						<h1>Login</h1>
-						<form method="post" action="/login">
+						<form id="login-form" method="post" action="/login">
 							<div class="form-group">
 								<label for="username">Email</label>
 								<input type="text" id="email" name="email" class="form-control" placeholder="Email">
@@ -32,5 +42,28 @@
 		</div>
 	{{/inline}}
 	{{#*inline "js"}}
+		<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+		<script>
+			$(function () {
+		    $('#login-form').validate({
+			    rules: {
+		        'email': {
+	            required: true
+		        },
+			      'password': {
+	            required: true
+			      }
+			    },
+			    messages: {
+		        'email': {
+	            required: '이메일 기입해 주세요.'
+		        },
+				    'password': {
+					    required: '패스워드 기입해 주세요.'
+				    }
+			    }
+		    });
+			})
+		</script>
 	{{/inline}}
 {{/layout/default}}
