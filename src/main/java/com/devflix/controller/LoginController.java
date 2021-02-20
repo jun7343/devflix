@@ -1,28 +1,29 @@
 package com.devflix.controller;
 
 import com.devflix.domain.JoinUsDomain;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.devflix.dto.MemberDto;
 import com.devflix.entity.Member;
-import com.devflix.service.LoginService;
+import com.devflix.service.MemberService;
+import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LoginController {
 
-    private final LoginService loginService;
+    private final MemberService memberService;
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String loginForm() {
@@ -30,12 +31,21 @@ public class LoginController {
     }
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
-    public String loginAction(HttpServletRequest request, RedirectAttributes attrs) {
+    public String loginAction(HttpServletRequest request, @RequestParam(name = "email", required = false)String email,
+                              @RequestParam(name = "password", required = false)String password, RedirectAttributes attrs) {
+        if (StringUtils.isBlank(email)) {
+            attrs.addFlashAttribute("errorMessage", "이메일 기입해 주세요.");
+
+            return "redirect:/login?error";
+        } else if (StringUtils.isBlank(password)) {
+            attrs.addFlashAttribute("errorMessage", "패스워드 기입해 주세요.");
+
+            return "redirect:/login?error";
+        }
+
         AuthenticationException exception = (AuthenticationException) request.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 
         if (exception != null) {
-            System.out.println("error message = " + exception.getMessage());
-            attrs.addFlashAttribute("error", true);
             attrs.addFlashAttribute("errorMessage", exception.getMessage());
 
             return "redirect:/login?error";
@@ -70,12 +80,26 @@ public class LoginController {
             return "redirect:/login/join-us";
         }
 
-        loginService.createMember(domain);
+        memberService.createMember(domain);
 
         return "redirect:/login";
     }
 
-    @RequestMapping(path = "/login/join-us/email-validate", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public void emailValidate(@RequestParam(value = "email", required = false)String email) {
+    @RequestMapping(path = "/login/join-us/email-authentication", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> emailValidate(@RequestParam(value = "email", required = false)final String email) {
+        if (StringUtils.isBlank(email)) {
+            return ImmutableMap.of("result", false, "msg", "이메일을 기입해 주세요.");
+        }
+
+        Member findUser = memberService.findUserByEmail(email);
+
+        if (findUser != null) {
+            return ImmutableMap.of("result", false, "msg", "이미 존재하는 아이디 입니다.");
+        }
+
+        memberService.emailConfirm(email);
+
+        return ImmutableMap.of("result", true, "msg", "인증 메일 성공적으로 요청 하였습니다.");
     }
 }
