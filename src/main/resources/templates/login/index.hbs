@@ -17,10 +17,23 @@
 						border-style: inset;
 						border-color: red;
 					}
+					.alert-danger {
+						text-align: center;
+					}
+					#user-info {
+						margin-top: 20px;
+					}
 				</style>
 				<div class="container">
 					<div id="form" class="contact-form">
 						<h1>Login</h1>
+						{{#if errorMessage}}
+							<div class="row">
+								<div class="alert alert-danger col-md-12" role="alert">
+									{{errorMessage}}
+								</div>
+							</div>
+						{{/if}}
 						<form id="login-form" method="post" action="/login">
 							<div class="form-group">
 								<label for="username">Email</label>
@@ -32,7 +45,7 @@
 							</div>
 							<button type="submit" class="btn btn-danger">Login</button>
 						</form>
-						<div class="row">
+						<div id="user-info" class="row">
 							<a class="col-sm" href="/login">Forgot Password?</a>
 							<a class="col-sm" href="/login/join-us">Join Us</a>
 						</div>
