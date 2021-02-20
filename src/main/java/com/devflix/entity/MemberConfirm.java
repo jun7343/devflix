@@ -18,13 +18,17 @@ public class MemberConfirm {
     private Long id;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private MemberConfirmType type;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
+    @Column(name = "confirm_count")
+    private int confirmCount;
+
     @Column
-    private String code;
+    private String uuid;
 
     @Column(name = "create_at")
     private Date createAt;
@@ -34,11 +38,12 @@ public class MemberConfirm {
 
     @Builder
     public MemberConfirm(final Long id, final MemberConfirmType type, final String email,
-                         final String code, final Date createAt, final Date updateAt) {
+                         final int confirmCount, final String uuid, final Date createAt, final Date updateAt) {
         this.id = id;
         this.type = type;
         this.email = email;
-        this.code = code;
+        this.confirmCount = confirmCount;
+        this.uuid = uuid;
         this.createAt = createAt;
         this.updateAt = updateAt;
     }
