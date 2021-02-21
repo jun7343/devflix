@@ -83,7 +83,7 @@ public class MemberService implements UserDetailsService {
         } else {
             newConfirm = MemberConfirm.builder()
                     .id(findConfirm.getId())
-                    .type(findConfirm.getType())
+                    .type(MemberConfirmType.EMAIL_AUTHENTICATION)
                     .email(findConfirm.getEmail())
                     .confirmCount(findConfirm.getConfirmCount() + 1)
                     .uuid(uuid.toString())
