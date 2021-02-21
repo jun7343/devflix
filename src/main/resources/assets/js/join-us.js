@@ -8,6 +8,9 @@ $(function () {
             'username': {
                 required: true
             },
+            'code': {
+                required: true
+            },
             'password': {
                 required: true,
                 'password-check': true
@@ -25,6 +28,9 @@ $(function () {
             'username': {
                 required: '유저 이름 기입해 주세요.'
             },
+            'code': {
+                required: '인증코드 기입해 주세요.'
+            },
             'password': {
                 required: '패스워드 기입해 주세요.'
             },
@@ -39,6 +45,25 @@ $(function () {
             } else {
                 error.appendTo(element.parent());
             }
+        },
+        submitHandler: function (){
+            const EMAIL = $('input[name=email]').val();
+            const CODE = $('input[name=code]').val();
+            const ALL_CONFIRM_URL = '/login/join-us/all-confirm';
+            const TYPE = 'POST';
+            const DATA = {'email' : EMAIL, 'code' : CODE};
+
+            $.ajax({
+                url: ALL_CONFIRM_URL,
+                type: TYPE,
+                data: DATA,
+                success: function (data) {
+                    alert(data.msg);
+                    return data.result;
+                }
+            })
+
+            return true;
         }
     });
 
@@ -55,8 +80,6 @@ $(function () {
         } else if (! (/^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/.test(EMAIL))) {
             alert('이메일 형식이 올바르지 않습니다.');
             return;
-        } else {
-            alert('인증 메일을 요청합니다.');
         }
 
         const EMAIL_CONFIRM_URL = '/login/join-us/email-authentication';
@@ -77,5 +100,33 @@ $(function () {
                 alert(ALERT_MESSAGE);
             }
         })
-    })
+    });
+
+    $('#btn-authentication-check').on('click', function () {
+        const EMAIL = $('input[name=email]').val();
+        const CODE = $('input[name=code]').val();
+
+        if (EMAIL === '' || EMAIL === undefined) {
+            alert('이메일을 기입해 주세요.');
+            return;
+        } else if (! (/^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/.test(EMAIL))) {
+            alert('이메일 형식이 올바르지 않습니다.');
+            return;
+        }
+
+        const CODE_CONFIRM_URL = '/login/join-us/code-authentication';
+        const TYPE = 'POST';
+        const DATA = {'email' : EMAIL, 'code' : CODE};
+
+        $.ajax({
+            url: CODE_CONFIRM_URL,
+            type: TYPE,
+            data: DATA,
+            success: function (data) {
+                const ALERT_MESSAGE = data.msg;
+
+                alert(ALERT_MESSAGE);
+            }
+        })
+    });
 })

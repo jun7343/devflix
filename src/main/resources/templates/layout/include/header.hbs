@@ -8,8 +8,8 @@
 		</a>
 	</h1>
 	{{#if isAuthentication}}
-		<div class="dropdown header-icon">
-			<a id="profile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		<div id="profile" class="dropdown header-icon">
+			<a role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<img src="/assets/img/user.jpg" class="icon-profile">
 			</a>
 			<div class="dropdown-menu" aria-labelledby="profile">
@@ -18,8 +18,8 @@
 				<a class="dropdown-item" href="#">Something else here</a>
 			</div>
 		</div>
-		<div class="dropdown header-icon">
-			<a id="alert" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		<div id="alert" class="dropdown header-icon">
+			<a role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<svg class="icon-alert"><use xlink:href="#icon-alert"></use></svg>
 				<span class="alert-dots"></span>
 			</a>
@@ -30,14 +30,14 @@
 			</div>
 		</div>
 	{{else}}
-		<div class="header-icon">
-			<a id="login" role="button" href="/login">
+		<div id="login" class="header-icon">
+			<a role="button" href="/login">
 				<svg class="icon-login"><use xlink:href="#icon-login"></use></svg>
 			</a>
 		</div>
 	{{/if}}
-	<div class="header-icon">
-		<a id="search" class="dosearch" role="button">
+	<div id="search" class="header-icon">
+		<a class="dosearch" role="button">
 			<svg class="icon-search"><use xlink:href="#icon-search"></use></svg>
 		</a>
 	</div>
