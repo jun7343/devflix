@@ -1,6 +1,8 @@
 package com.devflix.utils;
 
 import com.devflix.entity.MemberConfirm;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -9,12 +11,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.UUID;
 
+@Component
 public class JavaMailUtil {
     private static final String SMTP_EMAIL = "jkl7343@gmail.com";
     private static final String SMTP_PASSWORD = "cxbcvziegeotkxqj";
     private static final String MESSAGE_TYPE = "text/html;charset=euc-kr";
 
-    private static void sendMail(final String title, final String content, final String to) {
+    private void sendMail(final String title, final String content, final String to) {
         try {
             final MimeMessage msg = new MimeMessage(getSession());
 
@@ -31,7 +34,7 @@ public class JavaMailUtil {
         }
     }
 
-    private static Properties getProperties() {
+    private Properties getProperties() {
         Properties props = System.getProperties();
 
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -43,7 +46,7 @@ public class JavaMailUtil {
         return props;
     }
 
-    private static Session getSession() {
+    private Session getSession() {
         return Session.getDefaultInstance(getProperties(), new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -52,7 +55,8 @@ public class JavaMailUtil {
         });
     }
 
-    public static void emailConfirmSendMail(final MemberConfirm confirm, final UUID uuid) {
+    @Async("threadPoolTaskExecutor")
+    public void emailConfirmSendMail(final MemberConfirm confirm, final UUID uuid) {
         final String title = "Devflix 이메일 인증하기";
         StringBuilder content = new StringBuilder();
 
