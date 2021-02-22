@@ -11,15 +11,13 @@ import com.devflix.repository.MemberRepository;
 import com.devflix.utils.JavaMailUtil;
 import com.google.common.collect.ImmutableList;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.EncryptedPrivateKeyInfo;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.UUID;
@@ -66,14 +64,14 @@ public class MemberService implements UserDetailsService {
     }
 
     @Transactional
-    public MemberConfirm createOrUpdateMemberConfirmByEmail(final String email) {
+    public MemberConfirm createOrUpdateMemberConfirmByEmail(final String email, final MemberConfirmType type, HttpServletRequest request) {
         MemberConfirm findConfirm = memberConfirmRepository.findByEmailEquals(email);
         UUID uuid = UUID.randomUUID();
         MemberConfirm newConfirm;
 
         if (findConfirm == null) {
             newConfirm = MemberConfirm.builder()
-                    .type(MemberConfirmType.EMAIL_AUTHENTICATION)
+                    .type(type)
                     .email(email)
                     .confirmCount(1)
                     .uuid(uuid.toString())
@@ -83,7 +81,7 @@ public class MemberService implements UserDetailsService {
         } else {
             newConfirm = MemberConfirm.builder()
                     .id(findConfirm.getId())
-                    .type(MemberConfirmType.EMAIL_AUTHENTICATION)
+                    .type(type)
                     .email(findConfirm.getEmail())
                     .confirmCount(findConfirm.getConfirmCount() + 1)
                     .uuid(uuid.toString())
@@ -92,9 +90,17 @@ public class MemberService implements UserDetailsService {
                     .build();
         }
 
-        javaMailUtil.emailConfirmSendMail(newConfirm, uuid);
+        if (newConfirm.getConfirmCount() <= 5) {
+            if (type == MemberConfirmType.EMAIL_AUTHENTICATION) {
+                javaMailUtil.emailConfirmSendMail(newConfirm, uuid);
+            } else if (type == MemberConfirmType.PASSWORD) {
+                javaMailUtil.findPasswordSendMail(newConfirm, uuid, request);
+            }
 
-        return memberConfirmRepository.save(newConfirm);
+            return memberConfirmRepository.save(newConfirm);
+        } else {
+            return newConfirm;
+        }
     }
 
     @Transactional

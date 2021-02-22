@@ -1,5 +1,7 @@
 package com.devflix.controller;
 
+import com.devflix.constant.MemberConfirmType;
+import com.devflix.constant.MemberStatus;
 import com.devflix.domain.JoinUsDomain;
 import com.devflix.entity.Member;
 import com.devflix.entity.MemberConfirm;
@@ -20,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 public class MemberController {
 
     private final MemberService memberService;
+    private final String RESULT = "result";
+    private final String MESSAGE = "msg";
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String loginForm() {
@@ -97,10 +101,8 @@ public class MemberController {
 
     @RequestMapping(path = "/login/join-us/email-authentication", method = RequestMethod.POST)
     @ResponseBody
-    public ImmutableMap<String, Object> emailAuthentication(@RequestParam(value = "email", required = false)final String email) {
-        final String RESULT = "result";
-        final String MESSAGE = "msg";
-
+    public ImmutableMap<String, Object> emailAuthentication(@RequestParam(value = "email", required = false)final String email,
+                                                            HttpServletRequest request) {
         if (StringUtils.isBlank(email)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일을 기입해 주세요.");
         }
@@ -113,11 +115,11 @@ public class MemberController {
 
         MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(email);
 
-        if (findConfirm != null && findConfirm.getConfirmCount() >= 5) {
+        if (findConfirm != null && findConfirm.getConfirmCount() > 5) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "요청 메일 횟수를 넘어섰습니다.");
         }
 
-        MemberConfirm confirm = memberService.createOrUpdateMemberConfirmByEmail(email);
+        MemberConfirm confirm = memberService.createOrUpdateMemberConfirmByEmail(email, MemberConfirmType.EMAIL_AUTHENTICATION, request);
 
         if (confirm == null) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "인증 과정중 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
@@ -130,9 +132,6 @@ public class MemberController {
     @ResponseBody
     public ImmutableMap<String, Object> codeAuthentication(@RequestParam(name = "email", required = false)final String email,
                                                            @RequestParam(name = "code", required = false)final String code) {
-        final String RESULT = "result";
-        final String MESSAGE = "msg";
-
         if (StringUtils.isBlank(email)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 기입해 주세요.");
         } else if (StringUtils.isBlank(code)) {
@@ -154,9 +153,6 @@ public class MemberController {
     @ResponseBody
     public ImmutableMap<String, Object> allConfirm(@RequestParam(name = "email", required = false)final String email,
                                                    @RequestParam(name = "code", required = false)final String code) {
-        final String RESULT = "result";
-        final String MESSAGE = "msg";
-
         if (StringUtils.isBlank(email)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 기입해 주세요.");
         } else if (StringUtils.isBlank(code)) {
@@ -178,5 +174,79 @@ public class MemberController {
         }
 
         return ImmutableMap.of(RESULT, true, MESSAGE, "가입 완료 되었습니다.");
+    }
+
+    @RequestMapping(path = "/login/find-password", method = RequestMethod.GET)
+    public String findPasswordForm() {
+        return "/login/find-password";
+    }
+
+    @RequestMapping(path = "/login/find-password", method = RequestMethod.POST)
+    public String findPasswordAction(@RequestParam(name = "email", required = false)final String email,
+                                     HttpServletRequest request, RedirectAttributes attrs) {
+        if (StringUtils.isBlank(email)) {
+            attrs.addFlashAttribute("errorMessage", "이메일을 기입해 주세요.");
+
+            return "redirect:/login/find-password";
+        }
+
+        final Member findUser = memberService.findUserByEmail(email);
+
+        if (findUser == null) {
+            attrs.addFlashAttribute("errorMessage", "회원가입이 필요 합니다.");
+
+            return "redirect:/login/find-password";
+        } else if (findUser.getStatus() == MemberStatus.LOCK) {
+            attrs.addFlashAttribute("errorMessage", "잠금된 회원 입니다. 관리자에게 문의 하세요.");
+
+            return "redirect:/login/find-password";
+        }
+
+        final MemberConfirm confirm = memberService.createOrUpdateMemberConfirmByEmail(email, MemberConfirmType.PASSWORD, request);
+
+        if (confirm == null) {
+            attrs.addFlashAttribute("errorMessage", "인증 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
+
+            return "redirct:/login/find-password";
+        } else if (confirm.getConfirmCount() > 5) {
+            attrs.addFlashAttribute("errorMessage", "요청 횟수를 초과 하였습니다.");
+
+            return "redirct:/login/find-password";
+        }
+
+        return "redirect:/login";
+    }
+
+    @RequestMapping(path = "/login/find-password-confirm", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> findPasswordConfirm(@RequestParam(name = "email", required = false)final String email) {
+        if (StringUtils.isBlank(email)) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 기입해 주세요.");
+        }
+
+        final Member findUser = memberService.findUserByEmail(email);
+
+        if (findUser == null) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "회원가입이 필요 합니다.");
+        } else if (findUser.getStatus() == MemberStatus.LOCK) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "회원잠금 상태 입니다. 관리자에게 문의해 주세요.");
+        }
+
+        final MemberConfirm confirm = memberService.findMemberConfirmByEmail(email);
+
+        if (confirm == null) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "인증 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
+        } else if (confirm.getConfirmCount() >= 5) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "요청 횟수를 초과 하였습니다.");
+        }
+
+        return ImmutableMap.of(RESULT, true, MESSAGE, "비밀번호 재설정 메일을 성공적으로 요청 하였습니다.");
+    }
+
+    @RequestMapping(path = "/login/find-password/{uuid}", method = RequestMethod.GET)
+    public String findPassword(@PathVariable(name = "uuid")final String uuid, HttpServletRequest request) {
+
+
+        return "/login/find-password";
     }
 }
