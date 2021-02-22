@@ -49,7 +49,7 @@ public class MemberService implements UserDetailsService {
                 .updateAt(new Date())
                 .build();
 
-        MemberConfirm confirm = memberConfirmRepository.findByEmailEquals(domain.getEmail());
+        final MemberConfirm confirm = memberConfirmRepository.findByEmailEquals(domain.getEmail());
 
         if (confirm != null) {
             memberConfirmRepository.delete(confirm);
@@ -106,6 +106,31 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public MemberConfirm findMemberConfirmByEmail(final String email) {
         return memberConfirmRepository.findByEmailEquals(email);
+    }
+
+    @Transactional
+    public MemberConfirm findMemberConfirmByUuid(final String uuid) {
+        return memberConfirmRepository.findByUuidEquals(uuid);
+    }
+
+    @Transactional
+    public Member updateMemberPasswordAndDeleteMemberConfirm(final String password, final MemberConfirm confirm) {
+        final Member user = memberRepository.findByEmail(confirm.getEmail());
+
+        final Member updateUser = Member.builder()
+                .id(user.getId())
+                .password(password)
+                .email(user.getEmail())
+                .status(user.getStatus())
+                .username(user.getUsername())
+                .authority(user.getAuthority())
+                .createAt(user.getCreateAt())
+                .updateAt(new Date())
+                .build();
+
+        memberConfirmRepository.delete(confirm);
+
+        return memberRepository.save(updateUser);
     }
 
     @Override

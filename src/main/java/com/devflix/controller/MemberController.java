@@ -10,12 +10,20 @@ import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -74,14 +82,14 @@ public class MemberController {
             message = "인증코드가 기입해 주세요.";
         }
 
-        MemberConfirm confirm = memberService.findMemberConfirmByEmail(domain.getEmail());
+        final MemberConfirm confirm = memberService.findMemberConfirmByEmail(domain.getEmail());
 
         if (confirm == null) {
             message = "인증 확인해 주세요.";
         } else if (! StringUtils.equals(confirm.getUuid(), domain.getCode())) {
             message = "인증코드가 다릅니다. 다시 확인해 주세요.";
         } else {
-            Member newMember = memberService.createMemberAndDeleteMemberConfirm(domain);
+            final Member newMember = memberService.createMemberAndDeleteMemberConfirm(domain);
 
             if (newMember == null) {
                 message = "아이디 생성중 에러가 발생하였습니다. 관리자에게 문의해 주세요.";
@@ -107,19 +115,19 @@ public class MemberController {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일을 기입해 주세요.");
         }
 
-        Member findUser = memberService.findUserByEmail(email);
+        final Member findUser = memberService.findUserByEmail(email);
 
         if (findUser != null) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이미 가입한 회원 입니다.");
         }
 
-        MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(email);
+        final MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(email);
 
         if (findConfirm != null && findConfirm.getConfirmCount() > 5) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "요청 메일 횟수를 넘어섰습니다.");
         }
 
-        MemberConfirm confirm = memberService.createOrUpdateMemberConfirmByEmail(email, MemberConfirmType.EMAIL_AUTHENTICATION, request);
+        final MemberConfirm confirm = memberService.createOrUpdateMemberConfirmByEmail(email, MemberConfirmType.EMAIL_AUTHENTICATION, request);
 
         if (confirm == null) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "인증 과정중 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
@@ -138,7 +146,7 @@ public class MemberController {
             return ImmutableMap.of(RESULT, false, MESSAGE, "인증코드 기입해 주세요.");
         }
 
-        MemberConfirm confirm = memberService.findMemberConfirmByEmail(email);
+        final MemberConfirm confirm = memberService.findMemberConfirmByEmail(email);
 
         if (confirm == null) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 인증 다시 확인해 주세요.");
@@ -159,13 +167,13 @@ public class MemberController {
             return ImmutableMap.of(RESULT, false, MESSAGE, "인증코드 기입해 주세요.");
         }
 
-        Member findUser = memberService.findUserByEmail(email);
+        final Member findUser = memberService.findUserByEmail(email);
 
         if (findUser != null) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이미 가입한 회원 입니다.");
         }
 
-        MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(email);
+        final MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(email);
 
         if (findConfirm == null) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 인증해 주세요.");
@@ -207,11 +215,11 @@ public class MemberController {
         if (confirm == null) {
             attrs.addFlashAttribute("errorMessage", "인증 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
 
-            return "redirct:/login/find-password";
+            return "redirect:/login/find-password";
         } else if (confirm.getConfirmCount() > 5) {
             attrs.addFlashAttribute("errorMessage", "요청 횟수를 초과 하였습니다.");
 
-            return "redirct:/login/find-password";
+            return "redirect:/login/find-password";
         }
 
         return "redirect:/login";
@@ -236,17 +244,64 @@ public class MemberController {
 
         if (confirm == null) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "인증 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
-        } else if (confirm.getConfirmCount() >= 5) {
+        } else if (confirm.getConfirmCount() > 5) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "요청 횟수를 초과 하였습니다.");
         }
 
         return ImmutableMap.of(RESULT, true, MESSAGE, "비밀번호 재설정 메일을 성공적으로 요청 하였습니다.");
     }
 
-    @RequestMapping(path = "/login/find-password/{uuid}", method = RequestMethod.GET)
-    public String findPassword(@PathVariable(name = "uuid")final String uuid, HttpServletRequest request) {
+    @RequestMapping(path = "/login/new-password/{uuid}", method = RequestMethod.GET)
+    public String newPasswordForm(@PathVariable(name = "uuid")final String uuid, Model model,
+                               HttpServletResponse response) {
+        final MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(uuid);
 
+        if (findConfirm == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
-        return "/login/find-password";
+            return null;
+        } else if (findConfirm.getType() != MemberConfirmType.PASSWORD) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+            return null;
+        }
+
+        model.addAttribute("uuid", uuid);
+
+        return "/login/new-password";
+    }
+
+    @RequestMapping(path = "/login/new-password/{uuid}", method = RequestMethod.POST)
+    public String newPasswordAction(@PathVariable(name = "uuid")final String uuid,
+                                    @RequestParam(name = "password")final String password,
+                                    HttpServletResponse response,
+                                    RedirectAttributes attrs) {
+        if (StringUtils.isBlank(password)) {
+            attrs.addFlashAttribute("errorMessage", "비밀번호 기입해 주세요.");
+
+            return "redirect:/login/new-password/" + uuid;
+        }
+
+        final MemberConfirm findConfirm = memberService.findMemberConfirmByUuid(uuid);
+
+        if (findConfirm == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+            return null;
+        } else if (findConfirm.getType() != MemberConfirmType.PASSWORD) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+            return null;
+        }
+
+        final Member updateUser = memberService.updateMemberPasswordAndDeleteMemberConfirm(password, findConfirm);
+
+        if (updateUser == null) {
+            attrs.addFlashAttribute("errorMessage", "에러가 발생하였습니다. 관리자에게 문의해 주세요.");
+
+            return "/login/new-password/" + uuid;
+        }
+
+        return "redirect:/login";
     }
 }
