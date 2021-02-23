@@ -52,6 +52,7 @@ $(function () {
             const ALL_CONFIRM_URL = '/login/join-us/all-confirm';
             const TYPE = 'POST';
             const DATA = {'email' : EMAIL, 'code' : CODE};
+            let result = false;
 
             $.ajax({
                 url: ALL_CONFIRM_URL,
@@ -59,11 +60,11 @@ $(function () {
                 data: DATA,
                 success: function (data) {
                     alert(data.msg);
-                    return data.result;
+                    result = data.result;
                 }
             })
 
-            return true;
+            return result;
         }
     });
 
