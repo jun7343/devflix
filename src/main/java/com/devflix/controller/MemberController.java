@@ -10,12 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.regex.Pattern;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,6 +27,7 @@ public class MemberController {
     private final MemberService memberService;
     private final String RESULT = "result";
     private final String MESSAGE = "msg";
+    private final Pattern emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String loginForm() {
@@ -43,6 +39,10 @@ public class MemberController {
                               @RequestParam(name = "password", required = false)String password, RedirectAttributes attrs) {
         if (StringUtils.isBlank(email)) {
             attrs.addFlashAttribute("errorMessage", "이메일 기입해 주세요.");
+
+            return "redirect:/login?error";
+        } else if (! emailPattern.matcher(email).matches()) {
+            attrs.addFlashAttribute("errorMessage", "이메일 형식이 올바르지 않습니다.");
 
             return "redirect:/login?error";
         } else if (StringUtils.isBlank(password)) {
@@ -74,12 +74,20 @@ public class MemberController {
 
         if (StringUtils.isBlank(domain.getEmail())) {
             message = "이메일 기입해 주세요.";
+        } else if (emailPattern.matcher(domain.getEmail()).matches()) {
+            message = "이메일 형식이 올바르지 않습니다.";
         } else if (StringUtils.isBlank(domain.getUsername())) {
             message = "유저 이름 기입해 주세요.";
         } else if (StringUtils.isBlank(domain.getPassword())) {
             message = "패스워드 기입해 주세요.";
         } else if (StringUtils.isBlank(domain.getCode())) {
             message = "인증코드가 기입해 주세요.";
+        }
+
+        if (! success) {
+            attrs.addFlashAttribute("errorMessage", message);
+
+            return "redirect:/login/join-us";
         }
 
         final MemberConfirm confirm = memberService.findMemberConfirmByEmail(domain.getEmail());
@@ -113,6 +121,8 @@ public class MemberController {
                                                             HttpServletRequest request) {
         if (StringUtils.isBlank(email)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일을 기입해 주세요.");
+        } else if (! emailPattern.matcher(email).matches()) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 형식이 올바르지 않습니다.");
         }
 
         final Member findUser = memberService.findUserByEmail(email);
@@ -142,6 +152,8 @@ public class MemberController {
                                                            @RequestParam(name = "code", required = false)final String code) {
         if (StringUtils.isBlank(email)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 기입해 주세요.");
+        } else if (! emailPattern.matcher(email).matches()) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 형식이 올바르지 않습니다.");
         } else if (StringUtils.isBlank(code)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "인증코드 기입해 주세요.");
         }
@@ -163,6 +175,8 @@ public class MemberController {
                                                    @RequestParam(name = "code", required = false)final String code) {
         if (StringUtils.isBlank(email)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 기입해 주세요.");
+        } else if (! emailPattern.matcher(email).matches()) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 형식이 올바르지 않습니다.");
         } else if (StringUtils.isBlank(code)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "인증코드 기입해 주세요.");
         }
@@ -194,6 +208,10 @@ public class MemberController {
                                      HttpServletRequest request, RedirectAttributes attrs) {
         if (StringUtils.isBlank(email)) {
             attrs.addFlashAttribute("errorMessage", "이메일을 기입해 주세요.");
+
+            return "redirect:/login/find-password";
+        } else if (! emailPattern.matcher(email).matches()) {
+            attrs.addFlashAttribute("errorMessage", "이메일을 형식이 올바르지 않습니다.");
 
             return "redirect:/login/find-password";
         }
@@ -230,6 +248,8 @@ public class MemberController {
     public ImmutableMap<String, Object> findPasswordConfirm(@RequestParam(name = "email", required = false)final String email) {
         if (StringUtils.isBlank(email)) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 기입해 주세요.");
+        } else if (! emailPattern.matcher(email).matches()) {
+            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 형식이 올바르지 않습니다.");
         }
 
         final Member findUser = memberService.findUserByEmail(email);

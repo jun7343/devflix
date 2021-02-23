@@ -16,7 +16,6 @@ public class HomeController {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String current = format.format(new Date());
         List<Map<String, Object>> list = new ArrayList<>();
-
         Map<String, Object> data0 = new HashMap<>();
 
         data0.put("category", "LIFE");
