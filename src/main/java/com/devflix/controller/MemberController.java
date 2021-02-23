@@ -74,7 +74,7 @@ public class MemberController {
 
         if (StringUtils.isBlank(domain.getEmail())) {
             message = "이메일 기입해 주세요.";
-        } else if (emailPattern.matcher(domain.getEmail()).matches()) {
+        } else if (! emailPattern.matcher(domain.getEmail()).matches()) {
             message = "이메일 형식이 올바르지 않습니다.";
         } else if (StringUtils.isBlank(domain.getUsername())) {
             message = "유저 이름 기입해 주세요.";
@@ -82,6 +82,8 @@ public class MemberController {
             message = "패스워드 기입해 주세요.";
         } else if (StringUtils.isBlank(domain.getCode())) {
             message = "인증코드가 기입해 주세요.";
+        } else {
+            success = true;
         }
 
         if (! success) {
@@ -100,9 +102,8 @@ public class MemberController {
             final Member newMember = memberService.createMemberAndDeleteMemberConfirm(domain);
 
             if (newMember == null) {
+                success = false;
                 message = "아이디 생성중 에러가 발생하였습니다. 관리자에게 문의해 주세요.";
-            } else {
-                success = true;
             }
         }
 
@@ -228,17 +229,15 @@ public class MemberController {
             return "redirect:/login/find-password";
         }
 
-        final MemberConfirm confirm = memberService.createOrUpdateMemberConfirmByEmail(email, MemberConfirmType.PASSWORD, request);
+        final MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(email);
 
-        if (confirm == null) {
-            attrs.addFlashAttribute("errorMessage", "인증 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
-
-            return "redirect:/login/find-password";
-        } else if (confirm.getConfirmCount() > 5) {
+        if (findConfirm != null && findConfirm.getConfirmCount() > 5) {
             attrs.addFlashAttribute("errorMessage", "요청 횟수를 초과 하였습니다.");
 
             return "redirect:/login/find-password";
         }
+
+        memberService.createOrUpdateMemberConfirmByEmail(email, MemberConfirmType.PASSWORD, request);
 
         return "redirect:/login";
     }
@@ -262,9 +261,7 @@ public class MemberController {
 
         final MemberConfirm confirm = memberService.findMemberConfirmByEmail(email);
 
-        if (confirm == null) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "인증 에러가 발생하였습니다. 관리자에게 문의해 주세요.");
-        } else if (confirm.getConfirmCount() > 5) {
+        if (confirm != null && confirm.getConfirmCount() > 5) {
             return ImmutableMap.of(RESULT, false, MESSAGE, "요청 횟수를 초과 하였습니다.");
         }
 

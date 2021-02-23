@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberConfirmRepository extends JpaRepository<MemberConfirm, Long> {
-    MemberConfirm findByEmailEquals(final String email);
+    MemberConfirm findByEmailEquals(String email);
 
     MemberConfirm findByUuidEquals(String uuid);
 }
