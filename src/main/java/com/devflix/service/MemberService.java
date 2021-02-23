@@ -119,7 +119,7 @@ public class MemberService implements UserDetailsService {
 
         final Member updateUser = Member.builder()
                 .id(user.getId())
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .email(user.getEmail())
                 .status(user.getStatus())
                 .username(user.getUsername())
