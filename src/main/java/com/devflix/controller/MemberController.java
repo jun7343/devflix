@@ -271,7 +271,7 @@ public class MemberController {
     @RequestMapping(path = "/login/new-password/{uuid}", method = RequestMethod.GET)
     public String newPasswordForm(@PathVariable(name = "uuid")final String uuid, Model model,
                                HttpServletResponse response) {
-        final MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(uuid);
+        final MemberConfirm findConfirm = memberService.findMemberConfirmByUuid(uuid);
 
         if (findConfirm == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
