@@ -17,6 +17,7 @@ $(function () {
             const FIND_PASSWORD_CONFIRM_URL = '/login/find-password-confirm';
             const TYPE = 'POST';
             const DATA = {'email' : EMAIL};
+            let result = false;
 
             $.ajax({
                 url: FIND_PASSWORD_CONFIRM_URL,
@@ -24,11 +25,11 @@ $(function () {
                 data: DATA,
                 success: function (data) {
                     alert(data.msg);
-                    return data.result;
+                    result = data.result;
                 }
-            })
+            });
 
-            return true;
+            return result;
         }
     });
 })
