@@ -57,8 +57,9 @@ public class JavaMailUtil {
     }
 
     @Async("threadPoolTaskExecutor")
-    public void emailConfirmSendMail(final MemberConfirm confirm, final UUID uuid) {
+    public void emailConfirmSendMail(final MemberConfirm confirm, final UUID uuid, HttpServletRequest request) {
         final String title = "Devflix 이메일 인증하기";
+        final String SITE_URL = request.getRequestURL().toString().replace(request.getRequestURI(), "");
         StringBuilder content = new StringBuilder();
 
         content.append("<div style=\"max-width:100%;width:600px;margin:0 auto;box-sizing:border-box;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;font-size:16px;line-height:22px;color:#252525;word-wrap:break-word;word-break:break-word;text-align:left;\">");
@@ -74,7 +75,7 @@ public class JavaMailUtil {
                 "      <p style=\"margin:0 0 40px 0;padding:0;font-size:16px;color:#252525;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\"><u></u> Devflix</p>\n" +
                 "      <p style=\"margin:0 0 24px 0;padding:0;color:#252525;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word;font-size:12px;line-height:16px;color:#909090\">\n" +
                 "        <u></u> 참고 : 이 메일은 발신 전용이므로 회신하실 수 없습니다. 궁금하신 사항은 다음 웹사이트로 문의해 주시기 바랍니다. :<br>\n" +
-                "        <a href=\"\" style=\"color:#0072de;text-decoration:underline;font-size:12px;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://help.content.samsung.com/csweb/faq/searchFaq.do&amp;source=gmail&amp;ust=1613893849033000&amp;usg=AFQjCNFi5S8q0vP09p7u2fywGkDfVl1Kig\"><u></u> Devflix 바로가기</a>\n" +
+                "        <a href=\"" + SITE_URL +"\" style=\"color:#0072de;text-decoration:underline;font-size:12px;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://help.content.samsung.com/csweb/faq/searchFaq.do&amp;source=gmail&amp;ust=1613893849033000&amp;usg=AFQjCNFi5S8q0vP09p7u2fywGkDfVl1Kig\"><u></u> Devflix 바로가기</a>\n" +
                 "      </p>\n" +
                 "      <div title=\"footer\" style=\"margin:0;padding:40px 0 0 0;box-sizing:border-box\">\n" +
                 "        <div title=\"footer-logo\" style=\"margin:0 0 2px 0;padding:0\"></div>\n" +
@@ -92,7 +93,8 @@ public class JavaMailUtil {
     @Async("threadPoolTaskExecutor")
     public void findPasswordSendMail(final MemberConfirm confirm, final UUID uuid, HttpServletRequest request) {
         final String title = "Devflix 비밀번호 찾기";
-        final String NEW_PASSWORD_URL = request.getRequestURL().toString().replace(request.getRequestURI(), "") + "/login/new-password/" + uuid.toString();
+        final String SITE_URL = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+        final String NEW_PASSWORD_URL = SITE_URL + "/login/new-password/" + uuid.toString();
         StringBuilder content = new StringBuilder();
 
         content.append("<div style=\"max-width:100%;width:600px;margin:0 auto;box-sizing:border-box;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;font-size:16px;line-height:22px;color:#252525;word-wrap:break-word;word-break:break-word;text-align:left;\">");
@@ -108,7 +110,7 @@ public class JavaMailUtil {
                 "      <p style=\"margin:0 0 40px 0;padding:0;font-size:16px;color:#252525;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\"><u></u> Devflix</p>\n" +
                 "      <p style=\"margin:0 0 24px 0;padding:0;color:#252525;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word;font-size:12px;line-height:16px;color:#909090\">\n" +
                 "        <u></u> 참고 : 이 메일은 발신 전용이므로 회신하실 수 없습니다. 궁금하신 사항은 다음 웹사이트로 문의해 주시기 바랍니다. :<br>\n" +
-                "        <a href=\"\" style=\"color:#0072de;text-decoration:underline;font-size:12px;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://help.content.samsung.com/csweb/faq/searchFaq.do&amp;source=gmail&amp;ust=1613893849033000&amp;usg=AFQjCNFi5S8q0vP09p7u2fywGkDfVl1Kig\"><u></u> Devflix 바로가기</a>\n" +
+                "        <a href=\"" + SITE_URL + "\" style=\"color:#0072de;text-decoration:underline;font-size:12px;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://help.content.samsung.com/csweb/faq/searchFaq.do&amp;source=gmail&amp;ust=1613893849033000&amp;usg=AFQjCNFi5S8q0vP09p7u2fywGkDfVl1Kig\"><u></u> Devflix 바로가기</a>\n" +
                 "      </p>\n" +
                 "      <div title=\"footer\" style=\"margin:0;padding:40px 0 0 0;box-sizing:border-box\">\n" +
                 "        <div title=\"footer-logo\" style=\"margin:0 0 2px 0;padding:0\"></div>\n" +

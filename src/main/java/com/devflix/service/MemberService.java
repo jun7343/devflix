@@ -92,7 +92,7 @@ public class MemberService implements UserDetailsService {
 
         if (newConfirm.getConfirmCount() <= 5) {
             if (type == MemberConfirmType.EMAIL_AUTHENTICATION) {
-                javaMailUtil.emailConfirmSendMail(newConfirm, uuid);
+                javaMailUtil.emailConfirmSendMail(newConfirm, uuid, request);
             } else if (type == MemberConfirmType.PASSWORD) {
                 javaMailUtil.findPasswordSendMail(newConfirm, uuid, request);
             }
