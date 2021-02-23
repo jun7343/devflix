@@ -92,7 +92,7 @@ public class JavaMailUtil {
     @Async("threadPoolTaskExecutor")
     public void findPasswordSendMail(final MemberConfirm confirm, final UUID uuid, HttpServletRequest request) {
         final String title = "Devflix 비밀번호 찾기";
-        final String NEW_PASSWORD_URL = request.getRequestURL().toString() + "/" + uuid.toString();
+        final String NEW_PASSWORD_URL = request.getRequestURL().toString().replace(request.getRequestURI(), "") + "/login/new-password/" + uuid.toString();
         StringBuilder content = new StringBuilder();
 
         content.append("<div style=\"max-width:100%;width:600px;margin:0 auto;box-sizing:border-box;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;font-size:16px;line-height:22px;color:#252525;word-wrap:break-word;word-break:break-word;text-align:left;\">");
