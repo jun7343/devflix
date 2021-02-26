@@ -1,6 +1,6 @@
 package com.devflix.entity;
 
-import com.devflix.constant.CrawlerCategory;
+import com.devflix.constant.DevPostCategory;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -24,7 +24,7 @@ public class DevPost {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private CrawlerCategory category;
+    private DevPostCategory category;
 
     @Column
     private String title;
@@ -58,7 +58,7 @@ public class DevPost {
     private Date updateAt;
 
     @Builder
-    public DevPost(final Long id, final CrawlerCategory category, final String title, final String description,
+    public DevPost(final Long id, final DevPostCategory category, final String title, final String description,
                    final String writer, final String url, final Date uploadAt, final String thumbnail,
                    final List<String> tag, final Date createAt, final Date updateAt) {
         this.id = id;
