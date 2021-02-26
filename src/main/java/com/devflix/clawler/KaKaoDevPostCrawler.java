@@ -9,12 +9,12 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.javascript.DefaultJavaScriptErrorListener;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpStatus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -28,7 +28,7 @@ import java.util.*;
 public class KaKaoDevPostCrawler implements Crawler {
 
     private final DevPostService devPostService;
-    private final String KAKAO_PAGE_URL = "https://tech.kakao.com/blog/page/";
+    private final String KAKAO_BLOG_URL = "https://tech.kakao.com/blog/page/";
     private final String DEFAULT_KAKAO_THUMBNAIL = "https://tech.kakao.com/wp-content/uploads/2020/07/2020tech_main-2.jpg";
     private final SimpleDateFormat kakaoDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     private final Logger logger = LoggerFactory.getLogger(KaKaoDevPostCrawler.class);
@@ -54,10 +54,10 @@ public class KaKaoDevPostCrawler implements Crawler {
 
             // 크롤링 최대 맥시멈 10 page
             for (int page = 1; page <= 10; page++) {
-                WebResponse response = webClient.getPage(new URL(KAKAO_PAGE_URL + page)).getWebResponse();
+                WebResponse response = webClient.getPage(new URL(KAKAO_BLOG_URL + page)).getWebResponse();
                 webClient.close();
 
-                if (response.getStatusCode() == HttpStatus.OK.value()) {
+                if (response.getStatusCode() == HttpStatus.SC_OK) {
                     final String content = response.getContentAsString(StandardCharsets.UTF_8);
 
                     Element parse = Jsoup.parse(content).body();
@@ -81,7 +81,7 @@ public class KaKaoDevPostCrawler implements Crawler {
                         try {
                             map.put("url", elements.get(i).getElementsByClass("link_post").get(0).attr("href"));
                         } catch (Exception e) {
-                            map.put("url", KAKAO_PAGE_URL);
+                            map.put("url", KAKAO_BLOG_URL);
                             logger.error("Kakao blog URL crawling error !! " + e.getMessage());
                         }
 
@@ -157,8 +157,8 @@ public class KaKaoDevPostCrawler implements Crawler {
                                 }
                             }
 
-                            // title text가 8할 이상 맞으면 최근 게시물로 인정
-                            if ((double) cnt / size >= 0.8) {
+                            // title text가 단어 별로 6할 이상 맞으면 최근 게시물로 인정
+                            if ((double) cnt / size >= 0.6) {
                                 logger.info("Kakao crawling done !! total crawling count = " + totalCrawling);
                                 check = true;
                                 break;
@@ -179,7 +179,7 @@ public class KaKaoDevPostCrawler implements Crawler {
                                 .build();
 
                         devPostService.createDevPost(post);
-                        logger.info("post save success url = " + (KAKAO_PAGE_URL + page) + " post = " + post.toString());
+                        logger.info("post save success url = " + (KAKAO_BLOG_URL + page) + " post = " + post.toString());
                         totalCrawling++;
                     }
 
