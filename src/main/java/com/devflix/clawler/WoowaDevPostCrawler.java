@@ -182,11 +182,11 @@ public class WoowaDevPostCrawler implements Crawler {
                     } else {
                         logger.warn("Woowa dev post list size zero!!");
                     }
-
-                    webClient.close();
                 } else {
                     logger.error("Woowa dev blog get error !! status code = " + response.getStatusCode());
                 }
+            } else {
+                logger.error("Woowa deb blog get page error !! status code = " + response.getStatusCode());
             }
         } catch (Exception e) {
             logger.error("Woowa blog crawling error !! " + e.getMessage());

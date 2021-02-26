@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 @Component
 @RequiredArgsConstructor
@@ -37,7 +38,9 @@ public class NaverDevPostCrawler implements Crawler {
 
     @Override
     public void crawling() {
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(DevPostCategory.NAVER);
         int totalCrawling = 0;
+        boolean check = false;
 
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
@@ -48,7 +51,7 @@ public class NaverDevPostCrawler implements Crawler {
             webClient.waitForBackgroundJavaScript(30000);
 
             logger.info("Naver dev blog crawling start ....");
-            for (int page = 16; page >= 0; page--) {
+            for (int page = 0; page < 10; page++) {
                 HtmlPage htmlPage = webClient.getPage(new URL(NAVER_BLOG_URL + "/helloworld?page=" + page));
                 WebResponse response = htmlPage.getWebResponse();
 
@@ -114,6 +117,46 @@ public class NaverDevPostCrawler implements Crawler {
 
                                     map.put("writer", "네이버");
 
+                                    if (recentlyDevPost != null) {
+                                        StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
+                                        StringTokenizer st1 = new StringTokenizer(map.get("title"));
+
+                                        int titleTokenSize = st.countTokens();
+                                        int cnt = 0;
+
+                                        while (st.hasMoreTokens()) {
+                                            if (st1.hasMoreTokens()) {
+                                                if (st.nextToken().equals(st1.nextToken())) {
+                                                    cnt++;
+                                                }
+                                            } else {
+                                                break;
+                                            }
+                                        }
+
+                                        StringTokenizer st2 = new StringTokenizer(recentlyDevPost.getDescription());
+                                        StringTokenizer st3 = new StringTokenizer(map.get("desc"));
+
+                                        int descTokenSize = st2.countTokens();
+                                        int cnt1 = 0;
+
+                                        while (st2.hasMoreTokens()) {
+                                            if (st3.hasMoreTokens()) {
+                                                if (st2.nextToken().equals(st3.nextToken())) {
+                                                    cnt1++;
+                                                } else {
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if ((double) cnt / titleTokenSize >= 0.6 && (double) cnt1 / descTokenSize >= 0.6) {
+                                            logger.info("Naver dev blog crawling done !! total crawling count = " + totalCrawling);
+                                            check = true;
+                                            break;
+                                        }
+                                    }
+
                                     DevPost post = DevPost.builder()
                                             .category(DevPostCategory.NAVER)
                                             .title(map.get("title"))
@@ -130,6 +173,10 @@ public class NaverDevPostCrawler implements Crawler {
                                     logger.info("Naver post crawling success !! URL = " + NAVER_BLOG_URL + "/helloworld?page=" + page + " post = " + post.toString());
                                     totalCrawling++;
                                 }
+
+                                if (check) {
+                                    break;
+                                }
                             }
                         } else {
                             logger.error("Naver post item size zero !!");
@@ -144,7 +191,6 @@ public class NaverDevPostCrawler implements Crawler {
                     break;
                 }
             }
-            webClient.close();
         } catch (Exception e) {
             logger.error("Naver dev blog Webclient error !! " + e.getMessage());
         }

@@ -191,8 +191,6 @@ public class KakaoDevPostCrawler implements Crawler {
                     break;
                 }
             }
-
-            webClient.close();
         } catch (Exception e) {
             logger.error("webclient error = " + e.getMessage());
         }
