@@ -25,25 +25,25 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class KaKaoDevPostCrawler implements Crawler {
+public class KakaoDevPostCrawler implements Crawler {
 
     private final DevPostService devPostService;
     private final String KAKAO_BLOG_URL = "https://tech.kakao.com/blog/page/";
     private final String DEFAULT_KAKAO_THUMBNAIL = "https://tech.kakao.com/wp-content/uploads/2020/07/2020tech_main-2.jpg";
     private final SimpleDateFormat kakaoDateFormat = new SimpleDateFormat("yyyy.MM.dd");
-    private final Logger logger = LoggerFactory.getLogger(KaKaoDevPostCrawler.class);
+    private final Logger logger = LoggerFactory.getLogger(KakaoDevPostCrawler.class);
 
     @Override
     public void crawling() {
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(DevPostCategory.KAKAO);
         boolean check = false;
+        int totalCrawling = 0;
 
         if (recentlyDevPost != null) {
             logger.info("recently Kakao dev post = " + recentlyDevPost.toString());
         }
 
-        int totalCrawling = 0;
-
+        logger.info("Kakao dev blog crawling start ....");
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -55,7 +55,6 @@ public class KaKaoDevPostCrawler implements Crawler {
             // 크롤링 최대 맥시멈 10 page
             for (int page = 1; page <= 10; page++) {
                 WebResponse response = webClient.getPage(new URL(KAKAO_BLOG_URL + page)).getWebResponse();
-                webClient.close();
 
                 if (response.getStatusCode() == HttpStatus.SC_OK) {
                     final String content = response.getContentAsString(StandardCharsets.UTF_8);
@@ -188,12 +187,16 @@ public class KaKaoDevPostCrawler implements Crawler {
                         break;
                     }
                 } else {
-                    logger.error("webpage get error !! status code = " + response.getStatusCode());
+                    logger.error("Kakao dev blog get error !! status code = " + response.getStatusCode());
                     break;
                 }
             }
+
+            webClient.close();
         } catch (Exception e) {
             logger.error("webclient error = " + e.getMessage());
         }
+
+        logger.info("Kakao dev blog crawling end ....");
     }
 }
