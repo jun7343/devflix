@@ -3,25 +3,27 @@ package com.devflix.clawler;
 import com.devflix.constant.DevPostCategory;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
-import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.DefaultJavaScriptErrorListener;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.omg.CORBA.portable.ServantObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import sun.security.pkcs.ParsingException;
 
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
