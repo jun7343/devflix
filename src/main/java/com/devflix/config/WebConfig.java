@@ -1,7 +1,7 @@
 package com.devflix.config;
 
-import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 import com.devflix.security.interceptor.LoginInterceptor;
+import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

@@ -16,4 +16,12 @@ public class HandlebarHelper {
             return options.fn();
         }
     }
+
+    public CharSequence notEq(final Object arg1, final Object arg2, final Options options) throws IOException {
+        if (ObjectUtils.notEqual(arg1, arg2)) {
+            return options.fn();
+        } else {
+            return options.inverse();
+        }
+    }
 }
