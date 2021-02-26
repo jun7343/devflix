@@ -39,7 +39,7 @@ public class WoowaDevPostCrawler implements Crawler {
         int totalCrawling = 0;
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(DevPostCategory.WOOWA);
 
-        logger.debug("Woowa dev blog crawling start ....");
+        logger.info("Woowa dev blog crawling start ....");
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -50,7 +50,6 @@ public class WoowaDevPostCrawler implements Crawler {
 
             HtmlPage page = webClient.getPage(new URL(WOOWA_BLOG_URL));
             WebResponse response = page.getWebResponse();
-            webClient.close();
 
             if (response.getStatusCode() == HttpStatus.SC_OK) {
                 String content = response.getContentAsString();
@@ -183,10 +182,16 @@ public class WoowaDevPostCrawler implements Crawler {
                     } else {
                         logger.warn("Woowa dev post list size zero!!");
                     }
+
+                    webClient.close();
+                } else {
+                    logger.error("Woowa dev blog get error !! status code = " + response.getStatusCode());
                 }
             }
         } catch (Exception e) {
             logger.error("Woowa blog crawling error !! " + e.getMessage());
         }
+
+        logger.info("Woowa dev blog crawling end ....");
     }
 }
