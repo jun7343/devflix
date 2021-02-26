@@ -71,7 +71,7 @@ public class KaKaoDevPostCrawler implements Crawler {
                     }
 
                     if (elements.size() == 0) {
-                        logger.error("Kakao Blog dev post size zero!!");
+                        logger.warn("Kakao Blog dev post size zero!!");
                         break;
                     }
 
@@ -140,11 +140,11 @@ public class KaKaoDevPostCrawler implements Crawler {
                             logger.error("Kakao blog tags crawling error !! " + e.getMessage());
                         }
 
-                        // 크롤링 최근 게시물 인지 확인 여부
+                        // 크롤링된 포스트와 DB 저장된 최근 포스트 일치 여부
                         if (recentlyDevPost != null) {
                             StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
                             StringTokenizer st2 = new StringTokenizer(map.get("title"));
-                            int size = st.countTokens();
+                            int titleTokenSize = st.countTokens();
                             int cnt = 0;
 
                             while (st.hasMoreTokens()) {
@@ -158,8 +158,8 @@ public class KaKaoDevPostCrawler implements Crawler {
                             }
 
                             // title text가 단어 별로 6할 이상 맞으면 최근 게시물로 인정
-                            if ((double) cnt / size >= 0.6) {
-                                logger.info("Kakao crawling done !! total crawling count = " + totalCrawling);
+                            if ((double) cnt / titleTokenSize >= 0.6) {
+                                logger.info("Kakao dev blog crawling done !! total crawling count = " + totalCrawling);
                                 check = true;
                                 break;
                             }
@@ -179,7 +179,7 @@ public class KaKaoDevPostCrawler implements Crawler {
                                 .build();
 
                         devPostService.createDevPost(post);
-                        logger.info("post save success url = " + (KAKAO_BLOG_URL + page) + " post = " + post.toString());
+                        logger.info("Kakao post crawling success !! URL = " + (KAKAO_BLOG_URL + page) + " post = " + post.toString());
                         totalCrawling++;
                     }
 
