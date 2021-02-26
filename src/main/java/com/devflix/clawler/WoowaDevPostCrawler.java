@@ -29,7 +29,7 @@ import java.util.*;
 public class WoowaDevPostCrawler implements Crawler {
 
     private final SimpleDateFormat woowaDateFormat = new SimpleDateFormat("MMM d yyyy", Locale.ENGLISH);
-    private final String WOOWA_BLOG_URL = "https://woowabros.github.io/";
+    private final String WOOWA_BLOG_URL = "https://woowabros.github.io";
     private final Logger logger = LoggerFactory.getLogger(WoowaDevPostCrawler.class);
     private final String DEFAULT_WOOWA_THUMBNAIL = "http://www.woowahan.com/img/mobile/woowabros.jpg";
     private final DevPostService devPostService;
@@ -73,7 +73,7 @@ public class WoowaDevPostCrawler implements Crawler {
                             }
 
                             try {
-                                map.put("url", list.get(i).getElementsByTag("a").get(0).attr("href"));
+                                map.put("url", WOOWA_BLOG_URL + list.get(i).getElementsByTag("a").get(0).attr("href"));
                             } catch (Exception e) {
                                 map.put("url", WOOWA_BLOG_URL);
 
