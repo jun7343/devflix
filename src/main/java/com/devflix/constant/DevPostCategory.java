@@ -1,5 +1,5 @@
 package com.devflix.constant;
 
-public enum CrawlerCategory {
+public enum DevPostCategory {
     KAKAO, NAVER, WOOWA
 }
