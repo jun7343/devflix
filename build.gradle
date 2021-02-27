@@ -2,10 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.2.2.RELEASE'
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-    id "com.eriwen.gradle.css" version "2.14.0"
 }
-
-apply plugin: 'css'
 
 group 'com.devflix'
 version '1.0-SNAPSHOT'
@@ -31,19 +28,4 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-css.source {
-    dev {
-        css {
-            srcDir 'src/main/resources/assets/css'
-            include '*-semantic.css'
-            exclude '*.min.css'
-        }
-    }
-}
-
-minifyCss {
-    source = 'src/main/resources/assets/libs/css/semantic.css'
-    dest = 'src/main/resources/assets/libs/css/semantic.min.css'
 }
