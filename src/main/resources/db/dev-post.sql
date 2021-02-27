@@ -1,6 +1,8 @@
 create table "dev_post" (
     id bigserial,
     category varchar(200) not null,
+    status varchar(200) not null,
+    view int not null default 0,
     title varchar(500) not null,
     description text,
     writer varchar(200),
