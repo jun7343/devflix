@@ -38,18 +38,14 @@ public class HandlebarHelper {
     }
 
     public CharSequence isNewPost(final Date date, final Options options) throws IOException {
-        Calendar calendar = Calendar.getInstance();
-
-        calendar.setTime(new Date());
-        calendar.add(Calendar.DATE, -15);
-
         Calendar currentDate = Calendar.getInstance();
+        currentDate.setTime(new Date());
+        currentDate.add(Calendar.DATE, -3);
 
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 
-        System.out.println("dd = " + calendar.compareTo(currentDate));
-
-        if (calendar.compareTo(currentDate) > 0) {
+        if (calendar.compareTo(currentDate) <= 0) {
             return options.inverse();
         } else {
             return options.fn();
@@ -60,5 +56,9 @@ public class HandlebarHelper {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
 
         return dateFormat.format(date);
+    }
+
+    public int sub(int arg1, int arg2) {
+        return arg1 - arg2;
     }
 }
