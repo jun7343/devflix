@@ -173,10 +173,10 @@ public class NaverDevPostCrawler implements Crawler {
                                     logger.info("Naver post crawling success !! URL = " + NAVER_BLOG_URL + "/helloworld?page=" + page + " post = " + post.toString());
                                     totalCrawling++;
                                 }
+                            }
 
-                                if (check) {
-                                    break;
-                                }
+                            if (check) {
+                                break;
                             }
                         } else {
                             logger.error("Naver post item size zero !!");
