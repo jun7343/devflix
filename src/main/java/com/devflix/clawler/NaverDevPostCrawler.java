@@ -117,6 +117,7 @@ public class NaverDevPostCrawler implements Crawler {
 
                                     map.put("writer", "네이버");
 
+                                    // 크롤링된 포스트와 DB 저장된 최근 포스트 일치 여부
                                     if (recentlyDevPost != null) {
                                         StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
                                         StringTokenizer st1 = new StringTokenizer(map.get("title"));
@@ -150,6 +151,7 @@ public class NaverDevPostCrawler implements Crawler {
                                             }
                                         }
 
+                                        // title, description text가 단어 별로 6할 이상 맞으면 최근 게시물로 인정
                                         if ((double) cnt / titleTokenSize >= 0.6 && (double) cnt1 / descTokenSize >= 0.6) {
                                             logger.info("Naver dev blog crawling done !! total crawling count = " + totalCrawling);
                                             check = true;
