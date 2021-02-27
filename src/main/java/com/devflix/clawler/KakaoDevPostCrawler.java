@@ -1,6 +1,7 @@
 package com.devflix.clawler;
 
 import com.devflix.constant.DevPostCategory;
+import com.devflix.constant.PostStatus;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -164,13 +165,15 @@ public class KakaoDevPostCrawler implements Crawler {
                         }
 
                         DevPost post = DevPost.builder()
+                                .category(DevPostCategory.KAKAO)
+                                .status(PostStatus.POST)
                                 .title(map.get("title"))
                                 .url(map.get("url"))
-                                .category(DevPostCategory.KAKAO)
                                 .description(map.get("desc"))
                                 .thumbnail(map.get("thumbnail"))
                                 .tag(tagList)
                                 .writer(map.get("writer"))
+                                .view(0)
                                 .uploadAt(uploadAt)
                                 .createAt(new Date())
                                 .updateAt(new Date())

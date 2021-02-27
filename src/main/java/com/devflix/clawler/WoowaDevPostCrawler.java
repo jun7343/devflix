@@ -1,6 +1,7 @@
 package com.devflix.clawler;
 
 import com.devflix.constant.DevPostCategory;
+import com.devflix.constant.PostStatus;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -165,11 +166,13 @@ public class WoowaDevPostCrawler implements Crawler {
 
                             DevPost post = DevPost.builder()
                                     .category(DevPostCategory.WOOWA)
+                                    .status(PostStatus.POST)
                                     .title(map.get("title"))
                                     .description(map.get("desc"))
                                     .url(map.get("url"))
                                     .thumbnail(map.get("thumbnail"))
                                     .uploadAt(date)
+                                    .view(0)
                                     .writer(map.get("writer"))
                                     .createAt(new Date())
                                     .updateAt(new Date())
