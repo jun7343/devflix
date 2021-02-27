@@ -1,6 +1,7 @@
 package com.devflix.clawler;
 
 import com.devflix.constant.DevPostCategory;
+import com.devflix.constant.PostStatus;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -48,11 +49,11 @@ public class NaverDevPostCrawler implements Crawler {
             webClient.getOptions().setJavaScriptEnabled(true);
             webClient.getOptions().setCssEnabled(false);
             webClient.getOptions().setThrowExceptionOnScriptError(false);
-            webClient.waitForBackgroundJavaScript(30000);
+            webClient.waitForBackgroundJavaScript(3000);
 
             logger.info("Naver dev blog crawling start ....");
             for (int page = 0; page < 10; page++) {
-                HtmlPage htmlPage = webClient.getPage(new URL(NAVER_BLOG_URL + "/helloworld?page=" + page));
+                HtmlPage htmlPage = webClient.getPage(new URL(NAVER_BLOG_URL + "/home?page=" + page));
                 WebResponse response = htmlPage.getWebResponse();
 
                 if (response.getStatusCode() == HttpStatus.SC_OK) {
@@ -84,24 +85,23 @@ public class NaverDevPostCrawler implements Crawler {
 
                                     try {
                                         map.put("url", NAVER_BLOG_URL + elements.get(i).getElementsByTag("h2").get(0).getElementsByTag("a").get(0).attr("href"));
+                                        map.put("writer", "네이버");
                                     } catch (Exception e) {
                                         map.put("url", NAVER_BLOG_URL);
                                         map.put("writer", "네이버");
 
-                                        logger.error("Naver writer crawling error !!" + e.getMessage());
-                                        logger.error("Naver tag crawling error !!" + e.getMessage());
                                         logger.error("Naver URL crawling error !! " + e.getMessage());
                                     }
 
                                     try {
-                                        map.put("uploadDate", elements.get(0).getElementsByTag("dl").get(0).getElementsByTag("dd").get(0).text());
+                                        map.put("uploadDate", elements.get(i).getElementsByTag("dl").get(0).getElementsByTag("dd").get(0).text());
                                     } catch (Exception e) {
                                         map.put("uploadDate", naverDateFormat.format(new Date()));
                                         logger.error("Naver upload date crawling error !! " + e.getMessage());
                                     }
 
                                     try {
-                                        map.put("thumbnail", NAVER_BLOG_URL + elements.get(0).getElementsByClass("cont_img").get(0).getElementsByTag("img").get(0).attr("src"));
+                                        map.put("thumbnail", NAVER_BLOG_URL + elements.get(i).getElementsByClass("cont_img").get(0).getElementsByTag("img").get(0).attr("src"));
                                     } catch (Exception e) {
                                         map.put("thumbnail", DEFAULT_NAVER_THUMBNAIL);
                                         logger.error("Naevr thumbnail crawling error !! " + e.getMessage());
@@ -114,8 +114,6 @@ public class NaverDevPostCrawler implements Crawler {
                                     } catch (ParseException e) {
                                         logger.error("Naver upload date parsing error !! " + e.getMessage());
                                     }
-
-                                    map.put("writer", "네이버");
 
                                     // 크롤링된 포스트와 DB 저장된 최근 포스트 일치 여부
                                     if (recentlyDevPost != null) {
@@ -161,11 +159,13 @@ public class NaverDevPostCrawler implements Crawler {
 
                                     DevPost post = DevPost.builder()
                                             .category(DevPostCategory.NAVER)
+                                            .status(PostStatus.POST)
                                             .title(map.get("title"))
                                             .description(map.get("desc"))
                                             .url(map.get("url"))
                                             .thumbnail(map.get("thumbnail"))
                                             .writer(map.get("writer"))
+                                            .view(0)
                                             .uploadAt(date)
                                             .createAt(new Date())
                                             .updateAt(new Date())
