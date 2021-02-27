@@ -76,6 +76,7 @@ public class KakaoDevPostCrawler implements Crawler {
 
                     for (int i = 0; i < elements.size(); i++) {
                         Map<String, String> map = new HashMap<>();
+                        List<String> tagList = new LinkedList<>();
 
                         try {
                             map.put("url", elements.get(i).getElementsByClass("link_post").get(0).attr("href"));
@@ -126,8 +127,6 @@ public class KakaoDevPostCrawler implements Crawler {
                             map.put("writer", "kakao tech");
                             logger.error("Kakao blog writer crawling error !! " + e.getMessage());
                         }
-
-                        List<String> tagList = new LinkedList<>();
 
                         try {
                             Elements area_tag = elements.get(i).getElementsByClass("area_tag").get(0).children();
