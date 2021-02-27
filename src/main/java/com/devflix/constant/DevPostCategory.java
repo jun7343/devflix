@@ -1,5 +1,5 @@
 package com.devflix.constant;
 
 public enum DevPostCategory {
-    KAKAO, NAVER, WOOWA, LINE
+    ALL, KAKAO, NAVER, WOOWA, LINE
 }
