@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface DevPostRepository extends JpaRepository<DevPost, Long> {
     DevPost findTopOneByCategoryOrderByIdDesc(final String category);
 
-    Page<DevPost> findAllByCategory(final String category, PageRequest pageRequest);
-
     DevPost findTopOneByCategoryAndPostTypeAndWriterOrderByUploadAtDesc(final String category, PostType postType, final String writer);
+
+    DevPost findTopOneByUrl(final String url);
 }

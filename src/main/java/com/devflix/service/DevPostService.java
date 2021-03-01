@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +34,29 @@ public class DevPostService {
     }
 
     @Transactional
-    public Page<DevPost> findAllByCategoryPageRequest(final String category, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt")));
+    public void updateViewCount(final String url) {
+        final DevPost findPost = devPostRepository.findTopOneByUrl(url);
 
-        return devPostRepository.findAllByCategory(category, pageRequest);
+        if (findPost != null) {
+            DevPost post = DevPost.builder()
+                    .id(findPost.getId())
+                    .title(findPost.getTitle())
+                    .description(findPost.getDescription())
+                    .url(findPost.getUrl())
+                    .category(findPost.getCategory())
+                    .postType(findPost.getPostType())
+                    .uploadAt(findPost.getUploadAt())
+                    .updateAt(new Date())
+                    .createAt(findPost.getCreateAt())
+                    .view(findPost.getView() + 1)
+                    .writer(findPost.getWriter())
+                    .thumbnail(findPost.getThumbnail())
+                    .tag(findPost.getTag())
+                    .status(findPost.getStatus())
+                    .build();
+
+            devPostRepository.save(post);
+        }
     }
 
     @Transactional

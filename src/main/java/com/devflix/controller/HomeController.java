@@ -2,13 +2,16 @@ package com.devflix.controller;
 
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
+import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,5 +53,13 @@ public class HomeController {
         model.addAttribute("currentPageNum", pageResult.getNumber() + 1);
 
         return "home";
+    }
+
+    @RequestMapping(path = "/a/view-count", method = RequestMethod.POST)
+    public void actionViewCountUpdate(@RequestParam(name = "url", required = false)final String url) {
+        if (StringUtils.isBlank(url)) {
+            return;
+        }
+        devPostService.updateViewCount(url);
     }
 }
