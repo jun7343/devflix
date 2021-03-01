@@ -29,9 +29,9 @@ public class HandlebarHelper {
         }
     }
 
-    public String textOverflow(final String str) {
-        if (str.length() > 100) {
-            return str.substring(0, 100) + "...";
+    public String textOverflow(final String str, int size) {
+        if (str.length() > size) {
+            return str.substring(0, size) + "...";
         } else {
             return str;
         }
