@@ -31,7 +31,7 @@
 			  {{#each list}}
 			  <article class="box-item">
           <span class="category">
-            <a href="{{url}}">
+            <a href="/category/{{category}}">
                 <span>{{ category }} - {{ postType }}</span>
             </a>
           </span>
@@ -59,11 +59,13 @@
 						  <a class="post-link view-anchor" href="{{ url }}">
 							  <p class="description">{{textOverflow description 100}}</p>
 						  </a>
+						  {{#if tag}}
 						  <div class="tags">
 							  {{#each tag}}
-							    <a href="{{url}}">#{{ this }}</a>
+							    <a href="/tag/{{this}}">#{{ this }}</a>
 							  {{/each}}
 						  </div>
+						  {{/if}}
 					  </div>
 				  </div>
 			  </article>
