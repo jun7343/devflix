@@ -2,6 +2,7 @@ package com.devflix.clawler;
 
 import com.devflix.constant.DevPostCategory;
 import com.devflix.constant.PostStatus;
+import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -170,6 +171,7 @@ public class LineDevPostCrawler implements Crawler {
 
                             DevPost post = DevPost.builder()
                                     .category(DevPostCategory.LINE)
+                                    .postType(PostType.BLOG)
                                     .status(PostStatus.POST)
                                     .title(map.get("title"))
                                     .url(map.get("url"))
