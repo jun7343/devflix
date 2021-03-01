@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-@Entity
+@Entity(name = "dev_post")
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,7 +26,7 @@ public class DevPost {
     @Column
     private String category;
 
-    @Column
+    @Column(name = "post_type")
     @Enumerated(EnumType.STRING)
     private PostType postType;
 
@@ -49,7 +49,7 @@ public class DevPost {
     @Column
     private String url;
 
-    @Column
+    @Column(name = "upload_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date uploadAt;
 
@@ -60,11 +60,11 @@ public class DevPost {
     @Type(type = "list-array")
     private List<String> tag;
 
-    @Column
+    @Column(name = "create_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
 
-    @Column
+    @Column(name = "update_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateAt;
 
