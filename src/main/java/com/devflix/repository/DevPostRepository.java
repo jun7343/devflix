@@ -25,4 +25,6 @@ public interface DevPostRepository extends PagingAndSortingRepository<DevPost, L
 
     @Query(nativeQuery = true, value = "select * from dev_post where :tag = any(tag) order by upload_at", countQuery = "select count(*) from dev_post where :tag = any(tag)")
     Page<DevPost> findAllByTagIn(final String tag, Pageable pageable);
+
+    DevPost findTopOneByCategoryAndPostTypeOrderByIdDesc(String category, PostType postType);
 }

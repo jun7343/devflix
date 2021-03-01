@@ -45,7 +45,7 @@ public class NaverDevPostCrawler implements Crawler {
     @Override
     @Scheduled(cron = "0 0 0 */2 * *")
     public void crawling() {
-        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("NAVER");
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("NAVER", PostType.BLOG);
         int totalCrawling = 0;
         boolean success = false;
         String message = "";

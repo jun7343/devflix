@@ -24,8 +24,8 @@ public class DevPostService {
     }
 
     @Transactional
-    public DevPost findRecentlyDevPost(final String category) {
-        return devPostRepository.findTopOneByCategoryOrderByIdDesc(category);
+    public DevPost findRecentlyDevPost(final String category, PostType postType) {
+        return devPostRepository.findTopOneByCategoryAndPostTypeOrderByIdDesc(category, postType);
     }
 
     @Transactional

@@ -45,7 +45,7 @@ public class WoowaDevPostCrawler implements Crawler {
         String message = "";
         boolean succcess = false;
         int totalCrawling = 0;
-        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("WOOWA");
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("WOOWA", PostType.BLOG);
 
         logger.info("Woowa dev blog crawling start ....");
         long startAt = System.currentTimeMillis();

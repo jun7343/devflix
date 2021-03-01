@@ -42,7 +42,7 @@ public class LineDevPostCrawler implements Crawler {
     @Override
     @Scheduled(cron = "0 0 0 */2 * *")
     public void crawling() {
-        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("LINE");
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("LINE", PostType.BLOG);
         int totalCrawling = 0;
         boolean success = false;
         String message = "";
