@@ -1,6 +1,5 @@
 package com.devflix.clawler;
 
-import com.devflix.constant.DevPostCategory;
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
@@ -37,7 +36,7 @@ public class LineDevPostCrawler implements Crawler {
 
     @Override
     public void crawling() {
-        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(DevPostCategory.LINE);
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("LINE");
         int totalCrawling = 0;
         boolean check = false;
 
@@ -170,7 +169,7 @@ public class LineDevPostCrawler implements Crawler {
                             }
 
                             DevPost post = DevPost.builder()
-                                    .category(DevPostCategory.LINE)
+                                    .category("LINE")
                                     .postType(PostType.BLOG)
                                     .status(PostStatus.POST)
                                     .title(map.get("title"))

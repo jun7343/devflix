@@ -1,6 +1,5 @@
 package com.devflix.clawler;
 
-import com.devflix.constant.DevPostCategory;
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
@@ -39,7 +38,7 @@ public class WoowaDevPostCrawler implements Crawler {
     @Override
     public void crawling() {
         int totalCrawling = 0;
-        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(DevPostCategory.WOOWA);
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("WOOWA");
 
         logger.info("Woowa dev blog crawling start ....");
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
@@ -166,7 +165,7 @@ public class WoowaDevPostCrawler implements Crawler {
                             }
 
                             DevPost post = DevPost.builder()
-                                    .category(DevPostCategory.WOOWA)
+                                    .category("WOOWA")
                                     .postType(PostType.BLOG)
                                     .status(PostStatus.POST)
                                     .title(map.get("title"))

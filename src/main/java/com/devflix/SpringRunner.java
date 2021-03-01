@@ -1,37 +1,34 @@
 package com.devflix;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.javascript.DefaultJavaScriptErrorListener;
+import com.devflix.clawler.LineDevPostCrawler;
+import com.devflix.clawler.NaverDevPostCrawler;
+import com.devflix.clawler.WoowaDevPostCrawler;
+import com.devflix.clawler.YoutubeCrawler;
+import com.devflix.service.DevPostService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.net.URL;
-import java.util.List;
-
 @Component
 public class SpringRunner implements ApplicationRunner {
 
+    @Autowired
+    private DevPostService devPostService;
+
+    @Autowired
+    private WoowaDevPostCrawler woowaDevPostCrawler;
+
+    @Autowired
+    private NaverDevPostCrawler naverDevPostCrawler;
+
+    @Autowired
+    private LineDevPostCrawler lineDevPostCrawler;
+
+    @Autowired
+    private YoutubeCrawler youtubeCrawler;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        WebClient webClient = new WebClient(BrowserVersion.CHROME);
-        webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
-        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.waitForBackgroundJavaScript(3000);
-
-        HtmlPage page = webClient.getPage(new URL("https://tech.kakao.com/blog/"));
-
-
-        for (HtmlElement element : ul) {
-            System.out.println(element.asXml());
-        }
     }
 }

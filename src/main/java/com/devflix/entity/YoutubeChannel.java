@@ -1,6 +1,5 @@
 package com.devflix.entity;
 
-import com.devflix.constant.DevPostCategory;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,8 +17,7 @@ public class YoutubeChannel {
     private Long id;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private DevPostCategory category;
+    private String category;
 
     @Column(name = "channel_id", unique = true, updatable = false)
     private String channelId;
@@ -49,7 +47,7 @@ public class YoutubeChannel {
     private Date updateAt;
 
     @Builder
-    public YoutubeChannel(final Long id, final String channelId, final String channelTitle, final DevPostCategory category,
+    public YoutubeChannel(final Long id, final String channelId, final String channelTitle, final String category,
                           final String etag, final String description, final String thumbnail,
                           final Date publishAt, final Date createAt, final Date updateAt) {
         this.id = id;

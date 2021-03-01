@@ -1,6 +1,5 @@
 package com.devflix.service;
 
-import com.devflix.constant.DevPostCategory;
 import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
 import com.devflix.repository.DevPostRepository;
@@ -24,23 +23,26 @@ public class DevPostService {
     }
 
     @Transactional
-    public DevPost findRecentlyDevPost(DevPostCategory category) {
+    public DevPost findRecentlyDevPost(final String category) {
         return devPostRepository.findTopOneByCategoryOrderByIdDesc(category);
     }
 
     @Transactional
-    public DevPost findRecentlyDevPost(DevPostCategory category, PostType postType, final String writer) {
+    public DevPost findRecentlyDevPost(final String category, PostType postType, final String writer) {
         return devPostRepository.findTopOneByCategoryAndPostTypeAndWriterOrderByUploadAtDesc(category, postType, writer);
     }
 
     @Transactional
-    public Page<DevPost> findAllByCategoryPageRequest(DevPostCategory category, int page, int size) {
+    public Page<DevPost> findAllByCategoryPageRequest(final String category, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt")));
 
-        if (category == DevPostCategory.ALL) {
-            return devPostRepository.findAll(pageRequest);
-        } else {
-            return devPostRepository.findAllByCategory(category, pageRequest);
-        }
+        return devPostRepository.findAllByCategory(category, pageRequest);
+    }
+
+    @Transactional
+    public Page<DevPost> findAllByPageRequest(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt")));
+
+        return devPostRepository.findAll(pageRequest);
     }
 }

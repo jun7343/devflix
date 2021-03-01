@@ -1,11 +1,9 @@
 package com.devflix.controller;
 
-import com.devflix.constant.DevPostCategory;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +22,7 @@ public class HomeController {
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String index(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
-        Page<DevPost> pageResult = devPostService.findAllByCategoryPageRequest(DevPostCategory.ALL, page, DEFAULT_SIZE_VALUE);
+        Page<DevPost> pageResult = devPostService.findAllByPageRequest(page, DEFAULT_SIZE_VALUE);
         List<Integer> pageNumList = new ArrayList<>();
 
         model.addAttribute("list", pageResult.getContent());

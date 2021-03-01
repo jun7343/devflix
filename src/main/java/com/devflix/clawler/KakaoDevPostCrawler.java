@@ -1,6 +1,5 @@
 package com.devflix.clawler;
 
-import com.devflix.constant.DevPostCategory;
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
@@ -37,7 +36,7 @@ public class KakaoDevPostCrawler implements Crawler {
 
     @Override
     public void crawling() {
-        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(DevPostCategory.KAKAO);
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("KAKAO");
         boolean check = false;
         int totalCrawling = 0;
 
@@ -166,7 +165,7 @@ public class KakaoDevPostCrawler implements Crawler {
                         }
 
                         DevPost post = DevPost.builder()
-                                .category(DevPostCategory.KAKAO)
+                                .category("KAKAO")
                                 .postType(PostType.BLOG)
                                 .status(PostStatus.POST)
                                 .title(map.get("title"))

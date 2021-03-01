@@ -1,6 +1,5 @@
 package com.devflix.clawler;
 
-import com.devflix.constant.DevPostCategory;
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -307,7 +305,7 @@ public class YoutubeCrawler implements Crawler {
         }
     }
 
-    public void saveChannelInfoByChannelId(final String channelId, DevPostCategory category) {
+    public void saveChannelInfoByChannelId(final String channelId, final String category) {
         if (StringUtils.isBlank(YOUTUBE_API_KEY)) {
             logger.error("Youtube channel save error !! youtube api key is null");
             return;
