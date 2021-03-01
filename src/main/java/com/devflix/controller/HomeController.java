@@ -28,6 +28,7 @@ public class HomeController {
         List<Integer> pageNumList = new ArrayList<>();
 
         model.addAttribute("list", pageResult.getContent());
+        model.addAttribute("banner", pageResult.getContent().get(0));
         model.addAttribute("previousPage", pageResult.getNumber() / 5 != 0);
 
         if (pageResult.getNumber() / 5 != 0 && ((pageResult.getNumber() / 5) * 5 - 1) > 0) {

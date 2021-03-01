@@ -10,16 +10,17 @@
 		  }
 	  </style>
 	  <main class="home no-padding" role="main">
-		  <section class="hero" style="background-image: url('https://res.cloudinary.com/dm7h7e8xj/image/upload/v1559821647/theme6_qeeojf.jpg')">
+		  <section class="hero" style="background-image: url('{{banner.thumbnail}}')">
 			  <div class="pixels"></div>
 			  <div class="gradient"></div>
 			  <div class="content">
-				  <time datetime="2021.01.90 class="date">
+				  <time datetime="{{banner.uploadAt}}" class="date">
+					  {{df banner.uploadAt}}
 				  </time>
-				  <h1 class="title">Welcome to the desert of the real</h1>
-				  <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+				  <h1 class="title">{{banner.title}}</h1>
+				  <p class="description">{{textOverflow banner.description 60}}</p>
 				  <div class="buttons">
-					  <a href="" role="button" class="button">
+					  <a href="{{banner.url}}" role="button" class="button">
 						  <svg><use xlink:href="#icon-read"></use></svg>
 						  <span>Read Now</span>
 					  </a>
@@ -56,7 +57,7 @@
 							  </h2>
 						  </a>
 						  <a class="post-link" href="{{ url }}">
-							  <p class="description">{{textOverflow description}}</p>
+							  <p class="description">{{textOverflow description 100}}</p>
 						  </a>
 						  <div class="tags">
 							  {{#each tag}}
