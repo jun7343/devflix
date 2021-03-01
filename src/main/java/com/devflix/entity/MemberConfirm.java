@@ -30,7 +30,7 @@ public class MemberConfirm {
     @Column
     private String uuid;
 
-    @Column(name = "create_at")
+    @Column(name = "create_at", updatable = false)
     private Date createAt;
 
     @Column(name = "update_at")
