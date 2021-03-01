@@ -21,7 +21,7 @@
             </a>
           </span>
 						<div class="box-body">
-							<a class="cover" href="{{url}}">
+							<a class="cover view-anchor" href="{{url}}">
 								{{>layout/include/loader}}
 								<img src="/assets/img/placeholder.png" width="100%" data-url="{{thumbnail}}" class="preload">
 								<noscript>
@@ -36,12 +36,12 @@
 								<time datetime="{{uploadAt}}" class="date">
 									{{df uploadAt}}
 								</time>
-								<a class="post-link" href="{{url}}">
+								<a class="post-link view-anchor" href="{{url}}">
 									<h2 class="post-title">
 										{{title}}
 									</h2>
 								</a>
-								<a class="post-link" href="{{url}}">
+								<a class="post-link view-anchor" href="{{url}}">
 									<p class="description">{{textOverflow description 100}}</p>
 								</a>
 								{{#if tag}}
@@ -85,6 +85,6 @@
 		</main>
 	{{/inline}}
 	{{#*inline "js"}}
-		<script src="/assets/js/home.js"></script>
+		<script src="/assets/js/view-count.js"></script>
 	{{/inline}}
 {{/layout/default}}
