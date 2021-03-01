@@ -18,7 +18,7 @@ public class YoutubeChannel {
     private Long id;
 
     @Column
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private DevPostCategory category;
 
     @Column(name = "channel_id", unique = true, updatable = false)
