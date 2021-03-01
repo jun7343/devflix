@@ -2,7 +2,9 @@ package com.devflix.clawler;
 
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
+import com.devflix.entity.CrawlingSchedulerLog;
 import com.devflix.entity.DevPost;
+import com.devflix.service.CrawlingScheudlerLogService;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -16,6 +18,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -32,19 +35,20 @@ public class KakaoDevPostCrawler implements Crawler {
     private final String KAKAO_BLOG_URL = "https://tech.kakao.com/blog/page/";
     private final String DEFAULT_KAKAO_THUMBNAIL = "https://tech.kakao.com/wp-content/uploads/2020/07/2020tech_main-2.jpg";
     private final SimpleDateFormat kakaoDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+    private final CrawlingScheudlerLogService crawlingScheudlerLogService;
     private final Logger logger = LoggerFactory.getLogger(KakaoDevPostCrawler.class);
+    private final int DEFAULT_CRAWLING_MAX_PAGE = 10;
 
     @Override
+    @Scheduled(cron = "0 0 0 */2 * *")
     public void crawling() {
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("KAKAO");
-        boolean check = false;
+        boolean success = false;
         int totalCrawling = 0;
-
-        if (recentlyDevPost != null) {
-            logger.info("recently Kakao dev post = " + recentlyDevPost.toString());
-        }
+        String message = "";
 
         logger.info("Kakao dev blog crawling start ....");
+        long startAt = System.currentTimeMillis();
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -54,7 +58,7 @@ public class KakaoDevPostCrawler implements Crawler {
             webClient.waitForBackgroundJavaScript(3000);
 
             // 크롤링 최대 맥시멈 10 page
-            for (int page = 1; page <= 10; page++) {
+            for (int page = 1; page <= DEFAULT_CRAWLING_MAX_PAGE; page++) {
                 WebResponse response = webClient.getPage(new URL(KAKAO_BLOG_URL + page)).getWebResponse();
 
                 if (response.getStatusCode() == HttpStatus.SC_OK) {
@@ -67,11 +71,15 @@ public class KakaoDevPostCrawler implements Crawler {
                         elements = parse.getElementsByClass("list_post").get(0).children();
                     } catch (Exception e) {
                         logger.error("Kakao blog list crawling error !! " + e.getMessage());
+                        success = false;
+                        message = "Kakao blog list crawling error !! " + e.getMessage();
                         break;
                     }
 
                     if (elements.size() == 0) {
-                        logger.warn("Kakao Blog dev post size zero!!");
+                        logger.error("Kakao Blog dev post size zero!!");
+                        success = false;
+                        message = "Kakao Blog dev post size zero!!";
                         break;
                     }
 
@@ -159,7 +167,8 @@ public class KakaoDevPostCrawler implements Crawler {
                             // title text가 단어 별로 6할 이상 맞으면 최근 게시물로 인정
                             if ((double) cnt / titleTokenSize >= 0.6) {
                                 logger.info("Kakao dev blog crawling done !! total crawling count = " + totalCrawling);
-                                check = true;
+                                success = true;
+                                message = "Kakao dev blog crawling done !!";
                                 break;
                             }
                         }
@@ -186,18 +195,41 @@ public class KakaoDevPostCrawler implements Crawler {
                     }
 
                     // 크롤링 최근 게시물까지 도달 했으면 break;
-                    if (check) {
+                    if (success) {
                         break;
                     }
                 } else {
                     logger.error("Kakao dev blog get error !! status code = " + response.getStatusCode());
+                    message = "Kakao dev blog get error !! status code = " + response.getStatusCode();
+                    success = false;
                     break;
+                }
+
+                if (page == DEFAULT_CRAWLING_MAX_PAGE) {
+                    success = true;
+                    message = "Kakao dev blog crawling done !!";
                 }
             }
         } catch (Exception e) {
             logger.error("webclient error = " + e.getMessage());
+            message = "webclient error = " + e.getMessage();
+            success = false;
         }
 
         logger.info("Kakao dev blog crawling end ....");
+        long endAt = System.currentTimeMillis();
+
+        CrawlingSchedulerLog log = CrawlingSchedulerLog.builder()
+                .jobName("Kakao dev blog crawling")
+                .jobStartAt(startAt)
+                .jobEndAt(endAt)
+                .message(message)
+                .success(success)
+                .totalCrawling(totalCrawling)
+                .createAt(new Date())
+                .updateAt(new Date())
+                .build();
+
+        crawlingScheudlerLogService.createCrawlingSchedulerLog(log);
     }
 }

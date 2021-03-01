@@ -2,7 +2,9 @@ package com.devflix.clawler;
 
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
+import com.devflix.entity.CrawlingSchedulerLog;
 import com.devflix.entity.DevPost;
+import com.devflix.service.CrawlingScheudlerLogService;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -18,6 +20,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -34,13 +37,18 @@ public class WoowaDevPostCrawler implements Crawler {
     private final Logger logger = LoggerFactory.getLogger(WoowaDevPostCrawler.class);
     private final String DEFAULT_WOOWA_THUMBNAIL = "http://www.woowahan.com/img/mobile/woowabros.jpg";
     private final DevPostService devPostService;
+    private final CrawlingScheudlerLogService crawlingScheudlerLogService;
 
     @Override
+    @Scheduled(cron = "0 0 0 */2 * *")
     public void crawling() {
+        String message = "";
+        boolean succcess = false;
         int totalCrawling = 0;
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("WOOWA");
 
         logger.info("Woowa dev blog crawling start ....");
+        long startAt = System.currentTimeMillis();
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -183,19 +191,44 @@ public class WoowaDevPostCrawler implements Crawler {
                             logger.info("Woowa post crawling success !! URL = " + WOOWA_BLOG_URL + " post = " + post.toString());
                             totalCrawling++;
                         }
+
+                        succcess = true;
+                        message = "Woowa dev blog crawling done !!";
                     } else {
                         logger.warn("Woowa dev post list size zero!!");
+                        succcess = false;
+                        message = "Woowa dev post list size zero!!";
                     }
                 } else {
                     logger.error("Woowa dev blog get error !! status code = " + response.getStatusCode());
+                    succcess = false;
+                    message = "Woowa dev blog get error !! status code = " + response.getStatusCode();
                 }
             } else {
                 logger.error("Woowa deb blog get page error !! status code = " + response.getStatusCode());
+                succcess = false;
+                message = "Woowa deb blog get page error !! status code = " + response.getStatusCode();
             }
         } catch (Exception e) {
             logger.error("Woowa blog crawling error !! " + e.getMessage());
+            succcess = false;
+            message = "Woowa blog crawling error !! " + e.getMessage();
         }
 
         logger.info("Woowa dev blog crawling end ....");
+        long endAt = System.currentTimeMillis();
+
+        CrawlingSchedulerLog log = CrawlingSchedulerLog.builder()
+                .jobName("Woowa dev blog crawling")
+                .jobStartAt(startAt)
+                .jobEndAt(endAt)
+                .success(succcess)
+                .message(message)
+                .totalCrawling(totalCrawling)
+                .createAt(new Date())
+                .updateAt(new Date())
+                .build();
+
+        crawlingScheudlerLogService.createCrawlingSchedulerLog(log);
     }
 }
