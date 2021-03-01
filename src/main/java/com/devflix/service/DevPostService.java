@@ -1,6 +1,7 @@
 package com.devflix.service;
 
 import com.devflix.constant.DevPostCategory;
+import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
 import com.devflix.repository.DevPostRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,13 @@ public class DevPostService {
     }
 
     @Transactional
-    public DevPost findRecentlyDevPost(final DevPostCategory category) {
+    public DevPost findRecentlyDevPost(DevPostCategory category) {
         return devPostRepository.findTopOneByCategoryOrderByIdDesc(category);
+    }
+
+    @Transactional
+    public DevPost findRecentlyDevPost(DevPostCategory category, PostType postType, final String writer) {
+        return devPostRepository.findTopOneByCategoryAndPostTypeAndWriterOrderByUploadAtDesc(category, postType, writer);
     }
 
     @Transactional

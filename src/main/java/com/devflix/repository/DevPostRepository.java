@@ -1,6 +1,7 @@
 package com.devflix.repository;
 
 import com.devflix.constant.DevPostCategory;
+import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,4 +13,6 @@ public interface DevPostRepository extends JpaRepository<DevPost, Long> {
     DevPost findTopOneByCategoryOrderByIdDesc(DevPostCategory category);
 
     Page<DevPost> findAllByCategory(DevPostCategory category, PageRequest pageRequest);
+
+    DevPost findTopOneByCategoryAndPostTypeAndWriterOrderByUploadAtDesc(DevPostCategory category, PostType postType, String writer);
 }
