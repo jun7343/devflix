@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Collections;
@@ -15,6 +16,7 @@ import java.util.Collections;
 @EnableWebMvc
 @ComponentScan(basePackages = "com.devflix")
 @EnableJpaRepositories(basePackages = "com.devflix.repository")
+@EnableScheduling
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
