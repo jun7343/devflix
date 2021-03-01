@@ -25,32 +25,33 @@ public class HomeController {
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String index(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
-        Page<DevPost> pageResult = devPostService.findAllByPageRequest(page, DEFAULT_SIZE_VALUE);
+        Page<DevPost> findList = devPostService.findAllByPageRequest(page, DEFAULT_SIZE_VALUE);
         List<Integer> pageNumList = new ArrayList<>();
 
-        model.addAttribute("list", pageResult.getContent());
-        model.addAttribute("banner", pageResult.getContent().get(0));
-        model.addAttribute("previousPage", pageResult.getNumber() / 5 != 0);
+        model.addAttribute("list", findList.getContent());
+        model.addAttribute("banner", findList.getContent().get(0));
+        model.addAttribute("previousPage", findList.getNumber() / 5 != 0);
 
-        if (pageResult.getNumber() / 5 != 0 && ((pageResult.getNumber() / 5) * 5 - 1) > 0) {
-            model.addAttribute("previousPageNum", (pageResult.getNumber() / 5) * 5 - 1);
+        if (findList.getNumber() / 5 != 0 && ((findList.getNumber() / 5) * 5 - 1) > 0) {
+            model.addAttribute("previousPageNum", (findList.getNumber() / 5) * 5 - 1);
         }
 
-        model.addAttribute("nextPage", (pageResult.getNumber() / 5) * 5 + 6 <= pageResult.getTotalPages());
+        model.addAttribute("nextPage", (findList.getNumber() / 5) * 5 + 6 <= findList.getTotalPages());
 
-        if ((pageResult.getNumber() / 5) * 5 + 6 <= pageResult.getTotalPages()) {
-            model.addAttribute("nextPageNum", (pageResult.getNumber() / 5 + 1) * 5);
+        if ((findList.getNumber() / 5) * 5 + 6 <= findList.getTotalPages()) {
+            model.addAttribute("nextPageNum", (findList.getNumber() / 5 + 1) * 5);
         }
 
-        int start = (pageResult.getNumber() / 5) * 5 + 1;
-        int end = Math.min((pageResult.getNumber() / 5 + 1) * 5, pageResult.getTotalPages());
+        int start = (findList.getNumber() / 5) * 5 + 1;
+        int end = Math.min((findList.getNumber() / 5 + 1) * 5, findList.getTotalPages());
 
         for (int i = start; i <= end; i++) {
             pageNumList.add(i);
         }
 
         model.addAttribute("pageNumList", pageNumList);
-        model.addAttribute("currentPageNum", pageResult.getNumber() + 1);
+        model.addAttribute("currentPageNum", findList.getNumber() + 1);
+        model.addAttribute("pagination", findList.getTotalPages() > 1);
 
         return "home";
     }
