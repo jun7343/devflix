@@ -34,7 +34,7 @@ public class CrawlingSchedulerLog {
     @Column
     private String message;
 
-    @Column(name = "create_at")
+    @Column(name = "create_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
 

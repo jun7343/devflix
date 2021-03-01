@@ -38,7 +38,7 @@ public class YoutubeChannel {
     @Temporal(TemporalType.TIMESTAMP)
     private Date publishAt;
 
-    @Column(name = "create_at")
+    @Column(name = "create_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
 
