@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Date;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,16 @@ public class DevPostService {
     @Transactional
     public DevPost findRecentlyDevPost(final String category) {
         return devPostRepository.findTopOneByCategoryOrderByIdDesc(category);
+    }
+
+    @Transactional
+    public Page<DevPost> findAllByCategoryOrderByUploadAt(final String category, final int page, final int size) {
+        return devPostRepository.findAllByCategory(category, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
+    }
+
+    @Transactional
+    public Page<DevPost> findAllByTagOrderByUploadAt(final String tag, final int page, final int size) {
+        return devPostRepository.findAllByTagIn(tag, PageRequest.of(page, size));
     }
 
     @Transactional
@@ -63,8 +73,6 @@ public class DevPostService {
 
     @Transactional
     public Page<DevPost> findAllByPageRequest(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt")));
-
-        return devPostRepository.findAll(pageRequest);
+        return devPostRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
     }
 }
