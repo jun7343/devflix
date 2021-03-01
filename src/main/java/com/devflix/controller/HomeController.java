@@ -56,10 +56,18 @@ public class HomeController {
     }
 
     @RequestMapping(path = "/a/view-count", method = RequestMethod.POST)
-    public void actionViewCountUpdate(@RequestParam(name = "url", required = false)final String url) {
+    @ResponseBody
+    public ImmutableMap<String, Object> actionViewCountUpdate(@RequestParam(name = "url", required = false)final String url) {
         if (StringUtils.isBlank(url)) {
-            return;
+            return ImmutableMap.of("result", false);
         }
-        devPostService.updateViewCount(url);
+
+        final DevPost post = devPostService.updateViewCount(url);
+
+        if (post != null) {
+            return ImmutableMap.of("result", true);
+        } else {
+            return ImmutableMap.of("result", false);
+        }
     }
 }

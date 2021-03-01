@@ -34,7 +34,7 @@ public class DevPostService {
     }
 
     @Transactional
-    public void updateViewCount(final String url) {
+    public DevPost updateViewCount(final String url) {
         final DevPost findPost = devPostRepository.findTopOneByUrl(url);
 
         if (findPost != null) {
@@ -55,7 +55,9 @@ public class DevPostService {
                     .status(findPost.getStatus())
                     .build();
 
-            devPostRepository.save(post);
+            return devPostRepository.save(post);
+        } else {
+            return null;
         }
     }
 
