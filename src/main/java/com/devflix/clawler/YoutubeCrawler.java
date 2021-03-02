@@ -44,6 +44,7 @@ public class YoutubeCrawler implements Crawler {
     private final String PAGE_TOKEN = "pageToken";
     // result size(default 5) for search, channel parameter
     private final String MAX_RESULTS = "maxResults";
+    private final int DEFAULT_MAX_RESULT_SIZE = 50;
     // search type(channel, playlist, video) for search parmeter
     private final String TYPE = "type";
     // search result ordering(date, rating, relevance, title, videoCount, viewCount) for search parmeter
@@ -69,7 +70,7 @@ public class YoutubeCrawler implements Crawler {
     public void crawling() {
         List<YoutubeChannel> findAll = youtubeChannelService.findAllOrderByIdDesc();
 
-        for (int channelNum = 1; channelNum < findAll.size(); channelNum++) {
+        for (int channelNum = 0; channelNum < findAll.size(); channelNum++) {
             final YoutubeChannel channel = findAll.get(channelNum);
             final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(channel.getCategory(), PostType.YOUTUBE, channel.getChannelTitle());
             int totalCrawling = 0;
@@ -78,7 +79,7 @@ public class YoutubeCrawler implements Crawler {
             UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOTUBE_SEARCH_URL)
                     .queryParam(KEY, YOUTUBE_API_KEY)
                     .queryParam(PART, "id", "snippet")
-                    .queryParam(MAX_RESULTS, "20")
+                    .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
                     .queryParam(ORDER, "date")
                     .queryParam(TYPE, "video")
                     .queryParam(CHANNEL_ID, channel.getChannelId())
@@ -191,7 +192,7 @@ public class YoutubeCrawler implements Crawler {
                         UriComponents build1 = UriComponentsBuilder.fromHttpUrl(API_YOTUBE_SEARCH_URL)
                                 .queryParam(KEY, YOUTUBE_API_KEY)
                                 .queryParam(PART, "id", "snippet")
-                                .queryParam(MAX_RESULTS, "20")
+                                .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
                                 .queryParam(ORDER, "date")
                                 .queryParam(TYPE, "video")
                                 .queryParam(CHANNEL_ID, channel.getChannelId())
