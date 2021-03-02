@@ -42,7 +42,7 @@
 						  <noscript>
 							  <img src="{{ thumbnail }}" width="100%">
 						  </noscript>
-						  {{#isNewPost uploadAt}}
+						  {{#isNewPost createAt}}
 							  {{>layout/include/new-post-tag}}
 						  {{/isNewPost}}
 						  {{>layout/include/read-icon}}
@@ -53,11 +53,11 @@
 						  </time>
 						  <a class="post-link view-anchor" href="{{ url }}">
 							  <h2 class="post-title">
-								  {{ title }}
+								  {{{ title }}}
 							  </h2>
 						  </a>
 						  <a class="post-link view-anchor" href="{{ url }}">
-							  <p class="description">{{textOverflow description 100}}</p>
+							  <p class="description">{{{textOverflow description 100}}}</p>
 						  </a>
 						  {{#if tag}}
 						  <div class="tags">

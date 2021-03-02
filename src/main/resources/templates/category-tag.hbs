@@ -27,7 +27,7 @@
 								<noscript>
 									<img src="{{thumbnail}}" width="100%">
 								</noscript>
-								{{#isNewPost uploadAt}}
+								{{#isNewPost createAt}}
 									{{>layout/include/new-post-tag}}
 								{{/isNewPost}}
 								{{>layout/include/read-icon}}
@@ -38,11 +38,11 @@
 								</time>
 								<a class="post-link view-anchor" href="{{url}}">
 									<h2 class="post-title">
-										{{title}}
+										{{{title}}}
 									</h2>
 								</a>
 								<a class="post-link view-anchor" href="{{url}}">
-									<p class="description">{{textOverflow description 100}}</p>
+									<p class="description">{{{textOverflow description 100}}}</p>
 								</a>
 								{{#if tag}}
 									<div class="tags">
@@ -63,8 +63,8 @@
 					{{#if previousPage}}
 						<li class="page-item">
 							<a class="page-link" href="/{{type}}/{{parameter}}?page={{previousPageNum}}" aria-label="Previous">
-							<span aria-hidden="true">&laquo;</span>
-							<span class="sr-only">Previous</span>
+								<span aria-hidden="true">&laquo;</span>
+								<span class="sr-only">Previous</span>
 							</a>
 						</li>
 					{{/if}}
@@ -74,8 +74,8 @@
 					{{#if nextPage}}
 						<li class="page-item">
 							<a class="page-link" href="/{{type}}/{{parameter}}?page={{nextPageNum}}" aria-label="Next">
-							<span aria-hidden="true">&raquo;</span>
-							<span class="sr-only">Next</span>
+								<span aria-hidden="true">&raquo;</span>
+								<span class="sr-only">Next</span>
 							</a>
 						</li>
 					{{/if}}
