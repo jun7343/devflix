@@ -10,5 +10,6 @@ create table youtube_channel (
     create_at timestamp with time zone not null default now(),
     update_at timestamp with time zone not null default now(),
     constraint pk_youtube_channel_id primary key(id),
-    constraint uk_youtube_channel_channel_id unique(channel_id)
+    constraint uk_youtube_channel_channel_id unique(channel_id),
+    constraint uk_youtube_channel_category unique(category)
 )
