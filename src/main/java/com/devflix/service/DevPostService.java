@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
 import java.util.*;
 
@@ -79,7 +81,10 @@ public class DevPostService {
     @Transactional
     public List<DevPost> findAllBySearchContent(final String content) {
         return devPostRepository.findAll((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.like(root.get("title"), "%" + content + "%");
+            Order uploadAt = criteriaBuilder.desc(root.get("uploadAt"));
+            Predicate result = criteriaBuilder.like(root.get("title"), "%" + content + "%");
+
+            return query.where(result).orderBy(uploadAt).getRestriction();
         });
     }
 }
