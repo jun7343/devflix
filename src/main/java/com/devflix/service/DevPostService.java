@@ -75,4 +75,11 @@ public class DevPostService {
     public Page<DevPost> findAllByPageRequest(int page, int size) {
         return devPostRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
     }
+
+    @Transactional
+    public List<DevPost> findAllBySearchContent(final String content) {
+        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.like(root.get("title"), "%" + content + "%");
+        });
+    }
 }
