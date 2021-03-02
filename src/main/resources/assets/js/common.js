@@ -29,14 +29,14 @@ $(function () {
         const LAST_CHAR = CONTENT.charAt(CONTENT.length - 1);
 
         if (! REGEX_PERFECT_SEARCH.test(CONTENT) && LAST_CHAR !== ' ') {
+            $SEARCH_RESULT_FIELD.empty();
+
             $.ajax({
                 url: API_SEARCH_URL,
                 type: POST_TYPE,
                 data: {'content': $(this).val()},
                 success: function (data) {
                     if (data.result) {
-                        $SEARCH_RESULT_FIELD.empty();
-
                         for (const item of data.data) {
                             const ITEM_TEMPLATE = SEARCH_TEMPLATE.replaceAll(REGEX_URL, item.url)
                                 .replaceAll(REGEX_CATEGORY, item.category)
