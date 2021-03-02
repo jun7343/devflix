@@ -21,10 +21,10 @@ public interface DevPostRepository extends PagingAndSortingRepository<DevPost, L
 
     DevPost findTopOneByUrl(final String url);
 
-    Page<DevPost> findAllByCategory(final String category, Pageable pageable);
+    Page<DevPost> findAllByCategoryOrderByUploadAtDesc(final String category, Pageable pageable);
 
-    @Query(nativeQuery = true, value = "select * from dev_post where :tag = any(tag) order by upload_at", countQuery = "select count(*) from dev_post where :tag = any(tag)")
+    @Query(nativeQuery = true, value = "select * from dev_post where :tag = any(tag) order by upload_at desc", countQuery = "select count(*) from dev_post where :tag = any(tag)")
     Page<DevPost> findAllByTagIn(final String tag, Pageable pageable);
 
-    DevPost findTopOneByCategoryAndPostTypeOrderByIdDesc(String category, PostType postType);
+    DevPost findTopOneByCategoryAndPostTypeOrderByUploadAtDesc(String category, PostType postType);
 }

@@ -25,22 +25,22 @@ public class DevPostService {
 
     @Transactional
     public DevPost findRecentlyDevPost(final String category, PostType postType) {
-        return devPostRepository.findTopOneByCategoryAndPostTypeOrderByIdDesc(category, postType);
-    }
-
-    @Transactional
-    public Page<DevPost> findAllByCategoryOrderByUploadAt(final String category, final int page, final int size) {
-        return devPostRepository.findAllByCategory(category, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
-    }
-
-    @Transactional
-    public Page<DevPost> findAllByTagOrderByUploadAt(final String tag, final int page, final int size) {
-        return devPostRepository.findAllByTagIn(tag, PageRequest.of(page, size));
+        return devPostRepository.findTopOneByCategoryAndPostTypeOrderByUploadAtDesc(category, postType);
     }
 
     @Transactional
     public DevPost findRecentlyDevPost(final String category, PostType postType, final String writer) {
         return devPostRepository.findTopOneByCategoryAndPostTypeAndWriterOrderByUploadAtDesc(category, postType, writer);
+    }
+
+    @Transactional
+    public Page<DevPost> findAllByCategoryOrderByUploadAt(final String category, final int page, final int size) {
+        return devPostRepository.findAllByCategoryOrderByUploadAtDesc(category, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
+    }
+
+    @Transactional
+    public Page<DevPost> findAllByTagOrderByUploadAt(final String tag, final int page, final int size) {
+        return devPostRepository.findAllByTagIn(tag, PageRequest.of(page, size));
     }
 
     @Transactional
