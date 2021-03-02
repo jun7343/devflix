@@ -10,9 +10,9 @@ $(function () {
     const REGEX_POST_TYPE = '{{postType}}';
     const $SEARCH_RESULT_FIELD = $('#search-ul');
     const REGEX_PERFECT_SEARCH = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
-    const SEARCH_TEMPLATE = '<li><div class="search-thumbnail"><a href="{{url}}"><img src="{{thumbnail}}"></a></div>' +
-        '<div class="search-content"><a href="{{url}}"><span class="category">{{category}} - {{postType}}</span><br><p>{{title}}</p></a></div><div class="search-date">' +
-        '<a href="{{url}}"><span class="entry-date"><time datetime="{{uploadAt}}"></time>{{uploadAt}}</time></span></a></div></li>';
+    const SEARCH_TEMPLATE = '<li><div class="search-thumbnail"><a href="{{url}}" target="_blank"><img src="{{thumbnail}}"></a></div>' +
+        '<div class="search-content"><a href="{{url}}" target="_blank"><span class="category">{{category}} - {{postType}}</span><br><p>{{title}}</p></a></div><div class="search-date">' +
+        '<a href="{{url}}" target="_blank"><span class="entry-date"><time datetime="{{uploadAt}}"></time>{{uploadAt}}</time></span></a></div></li>';
 
     $('.view-anchor').on('click', function () {
         $.ajax({
