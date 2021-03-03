@@ -10,7 +10,7 @@
 		  }
 	  </style>
 	  <main class="home no-padding" role="main">
-		  <section class="hero" style="background-image: url('{{banner.thumbnail}}')">
+		  <section class="hero{{#eq banner.postType 'YOUTUBE'}} youtube-hero{{/eq}}" style="background-image: url('{{banner.thumbnail}}')">
 			  <div class="pixels"></div>
 			  <div class="gradient"></div>
 			  <div class="content">
