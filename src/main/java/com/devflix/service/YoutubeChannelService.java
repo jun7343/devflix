@@ -24,4 +24,9 @@ public class YoutubeChannelService {
     public List<YoutubeChannel> findAllOrderByIdDesc() {
         return youtubeChennelRepository.findAll(Sort.by(Sort.Order.desc("id")));
     }
+
+    @Transactional
+    public YoutubeChannel getByChannelId(final String channelId){
+        return youtubeChennelRepository.findByChannelId(channelId);
+    }
 }
