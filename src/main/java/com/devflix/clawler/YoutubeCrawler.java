@@ -70,6 +70,7 @@ public class YoutubeCrawler implements Crawler {
     public void crawling() {
         List<YoutubeChannel> findAll = youtubeChannelService.findAllOrderByIdDesc();
 
+        logger.info("Youtube video crawling start ...");
         for (int channelNum = 0; channelNum < findAll.size(); channelNum++) {
             final YoutubeChannel channel = findAll.get(channelNum);
             final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(channel.getCategory(), PostType.YOUTUBE, channel.getChannelTitle());
@@ -288,7 +289,7 @@ public class YoutubeCrawler implements Crawler {
                             totalCrawling++;
                         }
 
-                        if (result1.has("nextPageToken") && ! check) {
+                        if (result1.has("nextPageToken") && ! check && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
                             nextPageToken = result1.get("nextPageToken");
                         } else {
                             logger.info("Youtube video save done !! total video crawling count = " + totalCrawling);
@@ -304,12 +305,257 @@ public class YoutubeCrawler implements Crawler {
                 logger.error("Youtube video IO Exception error !! " + e.getMessage());
             }
         }
+        logger.info("Youtube video crawling end ...");
     }
 
-    public void saveChannelInfoByChannelId(final String channelId, final String category) {
+    public void targetCrawling(final String channelId, final String category) {
+        YoutubeChannel findChannel = youtubeChannelService.getByChannelId(channelId);
+
+        if (findChannel == null) {
+            findChannel = saveChannelInfoByChannelId(channelId, category);
+        }
+
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(findChannel.getCategory(), PostType.YOUTUBE, findChannel.getChannelTitle());
+        int totalCrawling = 0;
+        boolean check = false;
+
+        UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOTUBE_SEARCH_URL)
+                .queryParam(KEY, YOUTUBE_API_KEY)
+                .queryParam(PART, "id", "snippet")
+                .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
+                .queryParam(ORDER, "date")
+                .queryParam(TYPE, "video")
+                .queryParam(CHANNEL_ID, findChannel.getChannelId())
+                .build();
+
+        logger.info("Youtube video crawling start ...");
+        try {
+            URL url = build.toUri().toURL();
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            ObjectMapper mapper = new ObjectMapper();
+
+            JsonNode result = mapper.readTree(connection.getInputStream());
+            JsonNode items = result.get("items");
+
+            for (int i = 0; i < items.size(); i++) {
+                JsonNode id = items.get(i).get("id");
+                JsonNode videoId = id.get("videoId");
+                JsonNode snippet = items.get(i).get("snippet");
+                JsonNode channelTitle = snippet.get("channelTitle");
+                JsonNode title = snippet.get("title");
+                JsonNode description = snippet.get("description");
+                JsonNode publishedAt = snippet.get("publishedAt");
+                JsonNode thumbnails = snippet.get("thumbnails");
+                JsonNode thumbnailshigh = thumbnails.get("high");
+                JsonNode thumbnailshighUrl = thumbnailshigh.get("url");
+
+                Date publishDate = new Date();
+
+                try {
+                    publishDate = youtubeDateFormat.parse(publishedAt.asText());
+                } catch (ParseException e) {
+                    logger.error("Youtube video publish date parsing error !! " + e.getMessage());
+                }
+
+                if (recentlyDevPost != null) {
+                    StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
+                    StringTokenizer st1 = new StringTokenizer(title.asText());
+
+                    int titleTokenSize = st.countTokens();
+                    int cnt = 0;
+
+                    while (st.hasMoreTokens()) {
+                        if (st1.hasMoreTokens()) {
+                            if (st.nextToken().equals(st1.nextToken())) {
+                                cnt++;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+
+                    StringTokenizer st2 = new StringTokenizer(recentlyDevPost.getDescription());
+                    StringTokenizer st3 = new StringTokenizer(description.asText());
+
+                    int descTokenSize = st2.countTokens();
+                    int cnt1 = 0;
+
+                    while (st2.hasMoreTokens()) {
+                        if (st3.hasMoreTokens()) {
+                            if (st2.nextToken().equals(st3.nextToken())) {
+                                cnt1++;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if ((double) titleTokenSize / cnt >= 0.6 && (double) descTokenSize / cnt1 >= 0.6) {
+                        logger.info("Yotube " + findChannel.getChannelTitle() + " video crawling done !! total crawling count = " + totalCrawling);
+                        check = true;
+                        break;
+                    }
+                }
+
+                DevPost post = DevPost.builder()
+                        .category(findChannel.getCategory())
+                        .postType(PostType.YOUTUBE)
+                        .title(title.asText())
+                        .description(description.asText().replaceAll("\\R", ""))
+                        .writer(channelTitle.asText())
+                        .url(YOUTUBE_VIDEO_URL + videoId.asText())
+                        .tag(null)
+                        .thumbnail(thumbnailshighUrl.asText())
+                        .status(PostStatus.POST)
+                        .view(0)
+                        .uploadAt(publishDate)
+                        .createAt(new Date())
+                        .updateAt(new Date())
+                        .build();
+
+                DevPost createPost = devPostService.createDevPost(post);
+                logger.info("Youtube video save success !! post = " + createPost.toString());
+                totalCrawling++;
+            }
+
+            if (result.has("nextPageToken") && ! check) {
+                JsonNode pageInfo = result.get("pageInfo");
+                JsonNode totalResults = pageInfo.get("totalResults");
+                JsonNode resultsPerPage = pageInfo.get("resultsPerPage");
+                JsonNode nextPageToken = result.get("nextPageToken");
+
+                int start = 1;
+                int end = totalResults.asInt() / resultsPerPage.asInt();
+
+                if (totalResults.asInt() % resultsPerPage.asInt() != 0) {
+                    end++;
+                }
+
+                for (; start < end; start++) {
+                    UriComponents build1 = UriComponentsBuilder.fromHttpUrl(API_YOTUBE_SEARCH_URL)
+                            .queryParam(KEY, YOUTUBE_API_KEY)
+                            .queryParam(PART, "id", "snippet")
+                            .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
+                            .queryParam(ORDER, "date")
+                            .queryParam(TYPE, "video")
+                            .queryParam(CHANNEL_ID, findChannel.getChannelId())
+                            .queryParam(PAGE_TOKEN, nextPageToken.asText())
+                            .build();
+
+
+                    URL url1 = build1.toUri().toURL();
+                    HttpURLConnection connection1 = (HttpURLConnection) url1.openConnection();
+                    ObjectMapper mapper1 = new ObjectMapper();
+
+                    JsonNode result1 = mapper1.readTree(connection1.getInputStream());
+                    JsonNode items1 = result1.get("items");
+
+                    for (int i = 0; i < items1.size(); i++) {
+                        JsonNode id = items1.get(i).get("id");
+                        JsonNode videoId = id.get("videoId");
+                        JsonNode snippet = items1.get(i).get("snippet");
+                        JsonNode channelTitle = snippet.get("channelTitle");
+                        JsonNode title = snippet.get("title");
+                        JsonNode description = snippet.get("description");
+                        JsonNode publishedAt = snippet.get("publishedAt");
+                        JsonNode thumbnails = snippet.get("thumbnails");
+                        JsonNode thumbnailshigh = thumbnails.get("high");
+                        JsonNode thumbnailshighUrl = thumbnailshigh.get("url");
+
+                        Date publishDate = new Date();
+
+                        try {
+                            publishDate = youtubeDateFormat.parse(publishedAt.asText());
+                        } catch (ParseException e) {
+                            logger.error("Youtube video publish date parsing error !! " + e.getMessage());
+                        }
+
+                        if (recentlyDevPost != null) {
+                            StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
+                            StringTokenizer st1 = new StringTokenizer(title.asText());
+
+                            int titleTokenSize = st.countTokens();
+                            int cnt = 0;
+
+                            while (st.hasMoreTokens()) {
+                                if (st1.hasMoreTokens()) {
+                                    if (st.nextToken().equals(st1.nextToken())) {
+                                        cnt++;
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            StringTokenizer st2 = new StringTokenizer(recentlyDevPost.getDescription());
+                            StringTokenizer st3 = new StringTokenizer(description.asText());
+
+                            int descTokenSize = st2.countTokens();
+                            int cnt1 = 0;
+
+                            while (st2.hasMoreTokens()) {
+                                if (st3.hasMoreTokens()) {
+                                    if (st2.nextToken().equals(st3.nextToken())) {
+                                        cnt1++;
+                                    }
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            if ((double) titleTokenSize / cnt >= 0.6 && (double) descTokenSize / cnt1 >= 0.6) {
+                                logger.info("Yotube " + findChannel.getChannelTitle() + " video crawling done !! total crawling count = " + totalCrawling);
+                                check = true;
+                                break;
+                            }
+                        }
+
+                        DevPost post = DevPost.builder()
+                                .category(findChannel.getCategory())
+                                .postType(PostType.YOUTUBE)
+                                .title(title.asText())
+                                .description(description.asText().replaceAll("\\R", ""))
+                                .writer(channelTitle.asText())
+                                .url(YOUTUBE_VIDEO_URL + videoId.asText())
+                                .tag(null)
+                                .thumbnail(thumbnailshighUrl.asText())
+                                .status(PostStatus.POST)
+                                .view(0)
+                                .uploadAt(publishDate)
+                                .createAt(new Date())
+                                .updateAt(new Date())
+                                .build();
+
+                        DevPost createPost = devPostService.createDevPost(post);
+                        logger.info("Youtube video save success !! post = " + createPost.toString());
+                        totalCrawling++;
+                    }
+
+                    if (result1.has("nextPageToken") && ! check && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
+                        nextPageToken = result1.get("nextPageToken");
+                    } else {
+                        logger.info("Youtube video save done !! total video crawling count = " + totalCrawling);
+                        break;
+                    }
+                }
+            } else {
+                logger.info("Youtube video save done !! total video crawling count = " + totalCrawling);
+            }
+        } catch (MalformedURLException e) {
+            logger.error("Youtube video url connetion error !! " + e.getMessage());
+        } catch (IOException e) {
+            logger.error("Youtube video IO Exception error !! " + e.getMessage());
+        }
+        logger.info("Youtube video crawling end ...");
+    }
+
+    public YoutubeChannel saveChannelInfoByChannelId(final String channelId, final String category) {
+        YoutubeChannel saveChannel = null;
+
         if (StringUtils.isBlank(YOUTUBE_API_KEY)) {
             logger.error("Youtube channel save error !! youtube api key is null");
-            return;
+            return saveChannel;
         }
 
         UriComponents components = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_CHANNEL_URL)
@@ -361,9 +607,9 @@ public class YoutubeCrawler implements Crawler {
                             .build();
 
                     try {
-                        YoutubeChannel youtubeChannel = youtubeChannelService.createYoutubeChannel(channel);
+                        saveChannel = youtubeChannelService.createYoutubeChannel(channel);
 
-                        logger.info("Youtube channel save success !! channel info = " + youtubeChannel.toString());
+                        logger.info("Youtube channel save success !! channel info = " + saveChannel.toString());
                     } catch (Exception e) {
                         logger.error("Youtube channel save error !! ", e.getMessage());
                     }
@@ -377,5 +623,7 @@ public class YoutubeCrawler implements Crawler {
             logger.error("Yuotube save channel IO Exception error !! " + e.getMessage());
         }
         logger.info("Youtube channel save end ....");
+
+        return saveChannel;
     }
 }
