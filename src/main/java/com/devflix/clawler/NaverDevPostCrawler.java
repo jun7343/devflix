@@ -43,7 +43,7 @@ public class NaverDevPostCrawler implements Crawler {
     private final int DEFAULT_CRAWLING_MAX_PAGE = 9;
 
     @Override
-    @Scheduled(cron = "0 0 0 */2 * *")
+    @Scheduled(cron = "0 0 0 0 * *")
     public void crawling() {
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("NAVER", PostType.BLOG);
         int totalCrawling = 0;
