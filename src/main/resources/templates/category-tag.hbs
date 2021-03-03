@@ -30,7 +30,11 @@
 								{{#isNewPost createAt}}
 									{{>layout/include/new-post-tag}}
 								{{/isNewPost}}
-								{{>layout/include/read-icon}}
+								{{#eq postType 'BLOG'}}
+									{{>layout/include/read-icon}}
+								{{else}}
+									{{>layout/include/watch-icon}}
+								{{/eq}}
 							</a>
 							<div class="box-info">
 								<time datetime="{{uploadAt}}" class="date">
