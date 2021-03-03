@@ -4,7 +4,7 @@
     {{>layout/include/head}}
 	  <title>{{title}} {{#notEq title 'Devflix'}}| Devflix{{/notEq}}</title>
   </head>
-  <body class="{{#eq title 'Devflix'}}main-page {{/eq}}has-push-menu">
+  <body class="{{#if background-black}}main-page {{/if}}has-push-menu">
     {{>layout/include/svg-icons}}
     {{>layout/include/header}}
 	    <section class="content">
