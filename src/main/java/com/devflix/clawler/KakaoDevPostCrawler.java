@@ -40,7 +40,7 @@ public class KakaoDevPostCrawler implements Crawler {
     private final int DEFAULT_CRAWLING_MAX_PAGE = 10;
 
     @Override
-    @Scheduled(cron = "0 0 0 0 * *")
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     public void crawling() {
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("KAKAO", PostType.BLOG);
         boolean success = false;
