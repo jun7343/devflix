@@ -26,16 +26,15 @@ $(function () {
 
     $('#search-input').on('keyup', function () {
         const CONTENT = $(this).val();
-        const LAST_CHAR = CONTENT.charAt(CONTENT.length - 1);
 
-        if (! MATCH_FOR_PERFECT_SEARCH.test(CONTENT) && LAST_CHAR !== ' ') {
-            $SEARCH_RESULT_FIELD.empty();
-
+        if (! MATCH_FOR_PERFECT_SEARCH.test(CONTENT) && CONTENT.charAt(CONTENT.length - 1) !== ' ' && CONTENT.length > 0) {
             $.ajax({
                 url: API_SEARCH_URL,
                 type: POST_TYPE,
                 data: {'content': $(this).val()},
                 success: function (data) {
+                    $SEARCH_RESULT_FIELD.empty();
+
                     if (data.result) {
                         for (const item of data.data) {
                             const ITEM_TEMPLATE = SEARCH_TEMPLATE.replaceAll(MATCH_URL, item.url)
@@ -50,6 +49,8 @@ $(function () {
                     }
                 }
             });
+        } else if (CONTENT.length === 0) {
+            $SEARCH_RESULT_FIELD.empty();
         }
     });
 })
