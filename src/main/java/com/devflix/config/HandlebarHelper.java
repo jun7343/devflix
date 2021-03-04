@@ -40,7 +40,7 @@ public class HandlebarHelper {
     public CharSequence isNewPost(final Date date, final Options options) throws IOException {
         Calendar currentDate = Calendar.getInstance();
         currentDate.setTime(new Date());
-        currentDate.add(Calendar.DATE, -3);
+        currentDate.add(Calendar.DATE, -2);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
