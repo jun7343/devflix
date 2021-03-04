@@ -46,7 +46,7 @@ public class DevPost {
     @Column
     private String writer;
 
-    @Column
+    @Column(unique = true)
     private String url;
 
     @Column(name = "upload_at")

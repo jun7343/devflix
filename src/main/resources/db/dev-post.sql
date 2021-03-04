@@ -13,5 +13,6 @@ create table "dev_post" (
     tag varchar[],
     create_at timestamp with time zone not null default now(),
     update_at timestamp with time zone not null default now(),
-    constraint pk_dev_post_id primary key (id)
+    constraint pk_dev_post_id primary key (id),
+    constraint uk_dev_post_url unique (url)
 )
