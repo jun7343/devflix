@@ -40,7 +40,6 @@ public class WoowaDevPostCrawler implements Crawler {
     private final CrawlingScheudlerLogService crawlingScheudlerLogService;
 
     @Override
-    @Scheduled(cron = "0 15 0 * * *", zone = "Asia/Seoul")
     public void crawling() {
         String message = "";
         boolean succcess = false;
