@@ -2,8 +2,10 @@ package com.devflix.clawler;
 
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
+import com.devflix.entity.CrawlingLog;
 import com.devflix.entity.DevPost;
 import com.devflix.entity.YoutubeChannel;
+import com.devflix.service.CrawlingLogService;
 import com.devflix.service.DevPostService;
 import com.devflix.service.YoutubeChannelService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,23 +60,28 @@ public class YoutubeCrawler implements Crawler {
     private final Logger logger = LoggerFactory.getLogger(YoutubeCrawler.class);
     private final YoutubeChannelService youtubeChannelService;
     private final DevPostService devPostService;
+    private final CrawlingLogService crawlingLogService;
 
-    public YoutubeCrawler(YoutubeChannelService youtubeChannelService, DevPostService devPostService, Environment environment) {
+    public YoutubeCrawler(final YoutubeChannelService youtubeChannelService, final DevPostService devPostService,
+                          final CrawlingLogService crawlingLogService, Environment environment) {
         this.YOUTUBE_API_KEY = environment.getProperty("youtube.data.api-key");
         this.youtubeChannelService = youtubeChannelService;
         this.devPostService = devPostService;
+        this.crawlingLogService = crawlingLogService;
     }
 
     @Override
     public void crawling() {
         List<YoutubeChannel> findAll = youtubeChannelService.findAllOrderByIdDesc();
 
-        logger.info("Youtube video crawling start ...");
         for (int channelNum = 0; channelNum < findAll.size(); channelNum++) {
             final YoutubeChannel channel = findAll.get(channelNum);
             final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(channel.getCategory(), PostType.YOUTUBE, channel.getChannelTitle());
             int totalCrawling = 0;
-            boolean check = false;
+            String message = "";
+            long startAt = 0;
+            long endAt = 0;
+            boolean success = false;
 
             UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                     .queryParam(KEY, YOUTUBE_API_KEY)
@@ -85,6 +92,8 @@ public class YoutubeCrawler implements Crawler {
                     .queryParam(CHANNEL_ID, channel.getChannelId())
                     .build();
 
+            logger.info("Youtube " + channel.getChannelTitle() + " video crawling start ...");
+            startAt = System.currentTimeMillis();
             try {
                 URL url = build.toUri().toURL();
 
@@ -116,7 +125,7 @@ public class YoutubeCrawler implements Crawler {
 
                     if (recentlyDevPost != null) {
                         if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
-                            check = true;
+                            success = true;
                             break;
                         }
                     }
@@ -142,7 +151,7 @@ public class YoutubeCrawler implements Crawler {
                     totalCrawling++;
                 }
 
-                if (result.has("nextPageToken") && ! check) {
+                if (result.has("nextPageToken") && ! success) {
                     JsonNode pageInfo = result.get("pageInfo");
                     JsonNode totalResults = pageInfo.get("totalResults");
                     JsonNode resultsPerPage = pageInfo.get("resultsPerPage");
@@ -196,7 +205,7 @@ public class YoutubeCrawler implements Crawler {
 
                             if (recentlyDevPost != null) {
                                 if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
-                                    check = true;
+                                    success = true;
                                     break;
                                 }
                             }
@@ -222,23 +231,46 @@ public class YoutubeCrawler implements Crawler {
                             totalCrawling++;
                         }
 
-                        if (result1.has("nextPageToken") && ! check && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
+                        if (result1.has("nextPageToken") && ! success && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
                             nextPageToken = result1.get("nextPageToken");
                         } else {
                             logger.info("Youtube " + channel.getChannelTitle()  +" video crawling done !! total video crawling count = " + totalCrawling);
+                            message = "Youtube video crawling done!!";
+                            success = true;
                             break;
                         }
                     }
                 } else {
                     logger.info("Youtube " + channel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
+                    message = "Youtube video crawling done!!";
+                    success = true;
                 }
             } catch (MalformedURLException e) {
-                logger.error("Youtube " + channel.getChannelTitle() +" url connetion error !! " + e.getMessage());
+                logger.error("Youtube " + channel.getChannelTitle() +" URL connetion error !! " + e.getMessage());
+                message = "Youtube URL connection error !!";
+                success = false;
             } catch (IOException e) {
                 logger.error("Youtube " + channel.getChannelTitle() +" video IO Exception error !! " + e.getMessage());
+                message = "Youtube video IO Exception erorr !!";
+                success = false;
             }
+
+            logger.info("Youtube " + channel.getChannelTitle() + " video crawling end ...");
+            endAt = System.currentTimeMillis();
+
+            CrawlingLog log = CrawlingLog.builder()
+                    .jobName("Youtube " + channel.getChannelTitle() + " video crawling")
+                    .jobStartAt(startAt)
+                    .jobEndAt(endAt)
+                    .message(message)
+                    .success(success)
+                    .totalCrawling(totalCrawling)
+                    .createAt(new Date())
+                    .updateAt(new Date())
+                    .build();
+
+            crawlingLogService.createCrawlingSchedulerLog(log);
         }
-        logger.info("Youtube video crawling end ...");
     }
 
     public void targetCrawling(final String channelId, final String category) {
@@ -250,7 +282,10 @@ public class YoutubeCrawler implements Crawler {
 
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(findChannel.getCategory(), PostType.YOUTUBE, findChannel.getChannelTitle());
         int totalCrawling = 0;
-        boolean check = false;
+        boolean success = false;
+        String message = "";
+        long startAt = 0;
+        long endAt = 0;
 
         UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                 .queryParam(KEY, YOUTUBE_API_KEY)
@@ -262,6 +297,7 @@ public class YoutubeCrawler implements Crawler {
                 .build();
 
         logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling start ...");
+        startAt = System.currentTimeMillis();
         try {
             URL url = build.toUri().toURL();
 
@@ -292,11 +328,9 @@ public class YoutubeCrawler implements Crawler {
                 }
 
                 if (recentlyDevPost != null) {
-                    if (recentlyDevPost != null) {
-                        if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
-                            check = true;
-                            break;
-                        }
+                    if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
+                        success = true;
+                        break;
                     }
                 }
 
@@ -321,7 +355,7 @@ public class YoutubeCrawler implements Crawler {
                 totalCrawling++;
             }
 
-            if (result.has("nextPageToken") && ! check) {
+            if (result.has("nextPageToken") && ! success) {
                 JsonNode pageInfo = result.get("pageInfo");
                 JsonNode totalResults = pageInfo.get("totalResults");
                 JsonNode resultsPerPage = pageInfo.get("resultsPerPage");
@@ -376,7 +410,7 @@ public class YoutubeCrawler implements Crawler {
                         if (recentlyDevPost != null) {
                             if (recentlyDevPost != null) {
                                 if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
-                                    check = true;
+                                    success = true;
                                     break;
                                 }
                             }
@@ -403,31 +437,59 @@ public class YoutubeCrawler implements Crawler {
                         totalCrawling++;
                     }
 
-                    if (result1.has("nextPageToken") && ! check && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
+                    if (result1.has("nextPageToken") && ! success && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
                         nextPageToken = result1.get("nextPageToken");
                     } else {
                         logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
+                        message = "Youtube " + findChannel.getChannelTitle() + " video crawling done !!";
+                        success = true;
                         break;
                     }
                 }
             } else {
-                logger.info("Youtube " + findChannel.getChannelTitle() + "video crawling done !! total video crawling count = " + totalCrawling);
+                logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
+                message = "Youtube " + findChannel.getChannelTitle() + " video crawling done !!";
+                success = true;
             }
         } catch (MalformedURLException e) {
-            logger.error("Youtube " + findChannel.getChannelTitle() + " video url connetion error !! " + e.getMessage());
+            logger.error("Youtube " + findChannel.getChannelTitle() + " video URL connetion error !! " + e.getMessage());
+            message = "Youtube " + findChannel.getChannelTitle() + " video URL connection error !!";
+            success = false;
         } catch (IOException e) {
             logger.error("Youtube " + findChannel.getChannelTitle() + " video IO Exception error !! " + e.getMessage());
+            message = "Youtube " + findChannel.getChannelTitle() + " video IO Exception error !!";
+            success = false;
         }
+
         logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling end ...");
+        endAt = System.currentTimeMillis();
+
+        CrawlingLog log = CrawlingLog.builder()
+                .jobName("Youtube " + findChannel.getChannelTitle() + " video crawling")
+                .jobStartAt(startAt)
+                .jobEndAt(endAt)
+                .success(success)
+                .message(message)
+                .totalCrawling(totalCrawling)
+                .createAt(new Date())
+                .updateAt(new Date())
+                .build();
+
+        crawlingLogService.createCrawlingSchedulerLog(log);
     }
 
     public YoutubeChannel saveChannelInfoByChannelId(final String channelId, final String category) {
         YoutubeChannel saveChannel = null;
 
         if (StringUtils.isBlank(YOUTUBE_API_KEY)) {
-            logger.error("Youtube channel save error !! youtube api key is null");
+            logger.error("Youtube channel save error !! youtube API key is null");
             return saveChannel;
         }
+
+        String message = "";
+        boolean success = false;
+        long startAt = 0;
+        long endAt = 0;
 
         UriComponents components = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_CHANNEL_URL)
                 .queryParam(KEY, YOUTUBE_API_KEY)
@@ -435,7 +497,8 @@ public class YoutubeCrawler implements Crawler {
                 .queryParam(ID, channelId)
                 .build();
 
-        logger.info("Youtube channel save start .... channel id = " + channelId);
+        logger.info("Youtube " + category + " channel save start .... channel id = " + channelId);
+        startAt = System.currentTimeMillis();
         try {
             URL url = components.toUri().toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -480,20 +543,49 @@ public class YoutubeCrawler implements Crawler {
                     try {
                         saveChannel = youtubeChannelService.createYoutubeChannel(channel);
 
-                        logger.info("Youtube channel save success !! channel info = " + saveChannel.toString());
+                        logger.info("Youtube " + category + " channel save success !! channel info = " + saveChannel.toString());
+                        message = "Youtube " + category + " channel save success !!";
+                        success = true;
                     } catch (Exception e) {
-                        logger.error("Youtube channel save error !! ", e.getMessage());
+                        logger.error("Youtube " + category + " channel save error !! ", e.getMessage());
+                        message = "Youtube " + category + " channel save error !!";
+                        success = false;
                     }
                 } else {
-                    logger.error("Youtbue channel save error !! no items");
+                    logger.error("Youtbue " + category + " channel save error !! no items");
+                    message = "Youtube " + category + " channel save error !! no items";
+                    success = false;
                 }
+            } else {
+                logger.error("Youtube " + category + " channel URL connection error !! status code = " + connection.getResponseCode());
+                message = "Youtube " + category + " channel URL connection error !!";
+                success = false;
             }
         } catch (MalformedURLException e) {
-            logger.error("Youtube save channel URL Exception !! " + e.getMessage());
+            logger.error("Youtube " + category + " channel URL Exception error !! " + e.getMessage());
+            message = "Youtube " + category + "channel URL Exception error !!";
+            success = false;
         } catch (IOException e) {
-            logger.error("Yuotube save channel IO Exception error !! " + e.getMessage());
+            logger.error("Yuotube " + category + " channel IO Exception error !! " + e.getMessage());
+            message = "Youtube " + category + " channel IO Exception error !!";
+            success = false;
         }
+
         logger.info("Youtube channel save end ....");
+        endAt = System.currentTimeMillis();
+
+        CrawlingLog log = CrawlingLog.builder()
+                .jobName("Youtube " + category + " channel info crawling")
+                .jobStartAt(startAt)
+                .jobEndAt(endAt)
+                .success(success)
+                .message(message)
+                .totalCrawling(success == Boolean.TRUE? 1 : 0)
+                .createAt(new Date())
+                .updateAt(new Date())
+                .build();
+
+        crawlingLogService.createCrawlingSchedulerLog(log);
 
         return saveChannel;
     }
