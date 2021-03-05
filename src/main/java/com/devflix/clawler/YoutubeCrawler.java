@@ -24,7 +24,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /*
     reference - https://developers.google.com/youtube/v3/docs/search
@@ -33,7 +32,7 @@ import java.util.StringTokenizer;
 @Component
 public class YoutubeCrawler implements Crawler {
 
-    private final String API_YOTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
+    private final String API_YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
     private final String API_YOUTUBE_CHANNEL_URL = "https://www.googleapis.com/youtube/v3/channels";
     private final String YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v=";
     // youtube channel id for search, channel parameter
@@ -77,7 +76,7 @@ public class YoutubeCrawler implements Crawler {
             int totalCrawling = 0;
             boolean check = false;
 
-            UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOTUBE_SEARCH_URL)
+            UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                     .queryParam(KEY, YOUTUBE_API_KEY)
                     .queryParam(PART, "id", "snippet")
                     .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
@@ -116,40 +115,7 @@ public class YoutubeCrawler implements Crawler {
                     }
 
                     if (recentlyDevPost != null) {
-                        StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
-                        StringTokenizer st1 = new StringTokenizer(title.asText());
-
-                        int titleTokenSize = st.countTokens();
-                        int cnt = 0;
-
-                        while (st.hasMoreTokens()) {
-                            if (st1.hasMoreTokens()) {
-                                if (st.nextToken().equals(st1.nextToken())) {
-                                    cnt++;
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-
-                        StringTokenizer st2 = new StringTokenizer(recentlyDevPost.getDescription());
-                        StringTokenizer st3 = new StringTokenizer(description.asText());
-
-                        int descTokenSize = st2.countTokens();
-                        int cnt1 = 0;
-
-                        while (st2.hasMoreTokens()) {
-                            if (st3.hasMoreTokens()) {
-                                if (st2.nextToken().equals(st3.nextToken())) {
-                                    cnt1++;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
-                        if ((double) titleTokenSize / cnt >= 0.6 && (double) descTokenSize / cnt1 >= 0.6) {
-                            logger.info("Yotube " + channel.getChannelTitle() + " video crawling done !! total crawling count = " + totalCrawling);
+                        if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
                             check = true;
                             break;
                         }
@@ -172,7 +138,7 @@ public class YoutubeCrawler implements Crawler {
                             .build();
 
                     DevPost createPost = devPostService.createDevPost(post);
-                    logger.info("Youtube video save success !! post = " + createPost.toString());
+                    logger.info("Youtube " + channel.getChannelTitle() +" video crawling success !! post = " + createPost.toString());
                     totalCrawling++;
                 }
 
@@ -190,7 +156,7 @@ public class YoutubeCrawler implements Crawler {
                     }
 
                     for (; start < end; start++) {
-                        UriComponents build1 = UriComponentsBuilder.fromHttpUrl(API_YOTUBE_SEARCH_URL)
+                        UriComponents build1 = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                                 .queryParam(KEY, YOUTUBE_API_KEY)
                                 .queryParam(PART, "id", "snippet")
                                 .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
@@ -225,44 +191,11 @@ public class YoutubeCrawler implements Crawler {
                             try {
                                 publishDate = youtubeDateFormat.parse(publishedAt.asText());
                             } catch (ParseException e) {
-                                logger.error("Youtube video publish date parsing error !! " + e.getMessage());
+                                logger.error("Youtube " + channel.getChannelTitle() +" video publish date parsing error !! " + e.getMessage());
                             }
 
                             if (recentlyDevPost != null) {
-                                StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
-                                StringTokenizer st1 = new StringTokenizer(title.asText());
-
-                                int titleTokenSize = st.countTokens();
-                                int cnt = 0;
-
-                                while (st.hasMoreTokens()) {
-                                    if (st1.hasMoreTokens()) {
-                                        if (st.nextToken().equals(st1.nextToken())) {
-                                            cnt++;
-                                        } else {
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                StringTokenizer st2 = new StringTokenizer(recentlyDevPost.getDescription());
-                                StringTokenizer st3 = new StringTokenizer(description.asText());
-
-                                int descTokenSize = st2.countTokens();
-                                int cnt1 = 0;
-
-                                while (st2.hasMoreTokens()) {
-                                    if (st3.hasMoreTokens()) {
-                                        if (st2.nextToken().equals(st3.nextToken())) {
-                                            cnt1++;
-                                        }
-                                    } else {
-                                        break;
-                                    }
-                                }
-
-                                if ((double) titleTokenSize / cnt >= 0.6 && (double) descTokenSize / cnt1 >= 0.6) {
-                                    logger.info("Yotube " + channel.getChannelTitle() + " video crawling done !! total crawling count = " + totalCrawling);
+                                if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
                                     check = true;
                                     break;
                                 }
@@ -285,24 +218,24 @@ public class YoutubeCrawler implements Crawler {
                                     .build();
 
                             DevPost createPost = devPostService.createDevPost(post);
-                            logger.info("Youtube video save success !! post = " + createPost.toString());
+                            logger.info("Youtube " + channel.getChannelTitle() + " video save success !! post = " + createPost.toString());
                             totalCrawling++;
                         }
 
                         if (result1.has("nextPageToken") && ! check && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
                             nextPageToken = result1.get("nextPageToken");
                         } else {
-                            logger.info("Youtube video save done !! total video crawling count = " + totalCrawling);
+                            logger.info("Youtube " + channel.getChannelTitle()  +" video crawling done !! total video crawling count = " + totalCrawling);
                             break;
                         }
                     }
                 } else {
-                    logger.info("Youtube video save done !! total video crawling count = " + totalCrawling);
+                    logger.info("Youtube " + channel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
                 }
             } catch (MalformedURLException e) {
-                logger.error("Youtube video url connetion error !! " + e.getMessage());
+                logger.error("Youtube " + channel.getChannelTitle() +" url connetion error !! " + e.getMessage());
             } catch (IOException e) {
-                logger.error("Youtube video IO Exception error !! " + e.getMessage());
+                logger.error("Youtube " + channel.getChannelTitle() +" video IO Exception error !! " + e.getMessage());
             }
         }
         logger.info("Youtube video crawling end ...");
@@ -319,7 +252,7 @@ public class YoutubeCrawler implements Crawler {
         int totalCrawling = 0;
         boolean check = false;
 
-        UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOTUBE_SEARCH_URL)
+        UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                 .queryParam(KEY, YOUTUBE_API_KEY)
                 .queryParam(PART, "id", "snippet")
                 .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
@@ -328,7 +261,7 @@ public class YoutubeCrawler implements Crawler {
                 .queryParam(CHANNEL_ID, findChannel.getChannelId())
                 .build();
 
-        logger.info("Youtube video crawling start ...");
+        logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling start ...");
         try {
             URL url = build.toUri().toURL();
 
@@ -355,46 +288,15 @@ public class YoutubeCrawler implements Crawler {
                 try {
                     publishDate = youtubeDateFormat.parse(publishedAt.asText());
                 } catch (ParseException e) {
-                    logger.error("Youtube video publish date parsing error !! " + e.getMessage());
+                    logger.error("Youtube " + findChannel.getChannelTitle() + " video publish date parsing error !! " + e.getMessage());
                 }
 
                 if (recentlyDevPost != null) {
-                    StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
-                    StringTokenizer st1 = new StringTokenizer(title.asText());
-
-                    int titleTokenSize = st.countTokens();
-                    int cnt = 0;
-
-                    while (st.hasMoreTokens()) {
-                        if (st1.hasMoreTokens()) {
-                            if (st.nextToken().equals(st1.nextToken())) {
-                                cnt++;
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-
-                    StringTokenizer st2 = new StringTokenizer(recentlyDevPost.getDescription());
-                    StringTokenizer st3 = new StringTokenizer(description.asText());
-
-                    int descTokenSize = st2.countTokens();
-                    int cnt1 = 0;
-
-                    while (st2.hasMoreTokens()) {
-                        if (st3.hasMoreTokens()) {
-                            if (st2.nextToken().equals(st3.nextToken())) {
-                                cnt1++;
-                            }
-                        } else {
+                    if (recentlyDevPost != null) {
+                        if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
+                            check = true;
                             break;
                         }
-                    }
-
-                    if ((double) titleTokenSize / cnt >= 0.6 && (double) descTokenSize / cnt1 >= 0.6) {
-                        logger.info("Yotube " + findChannel.getChannelTitle() + " video crawling done !! total crawling count = " + totalCrawling);
-                        check = true;
-                        break;
                     }
                 }
 
@@ -415,7 +317,7 @@ public class YoutubeCrawler implements Crawler {
                         .build();
 
                 DevPost createPost = devPostService.createDevPost(post);
-                logger.info("Youtube video save success !! post = " + createPost.toString());
+                logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling success !! post = " + createPost.toString());
                 totalCrawling++;
             }
 
@@ -433,7 +335,7 @@ public class YoutubeCrawler implements Crawler {
                 }
 
                 for (; start < end; start++) {
-                    UriComponents build1 = UriComponentsBuilder.fromHttpUrl(API_YOTUBE_SEARCH_URL)
+                    UriComponents build1 = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                             .queryParam(KEY, YOUTUBE_API_KEY)
                             .queryParam(PART, "id", "snippet")
                             .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
@@ -468,46 +370,15 @@ public class YoutubeCrawler implements Crawler {
                         try {
                             publishDate = youtubeDateFormat.parse(publishedAt.asText());
                         } catch (ParseException e) {
-                            logger.error("Youtube video publish date parsing error !! " + e.getMessage());
+                            logger.error("Youtube " + findChannel.getChannelTitle() + "  video publish date parsing error !! " + e.getMessage());
                         }
 
                         if (recentlyDevPost != null) {
-                            StringTokenizer st = new StringTokenizer(recentlyDevPost.getTitle());
-                            StringTokenizer st1 = new StringTokenizer(title.asText());
-
-                            int titleTokenSize = st.countTokens();
-                            int cnt = 0;
-
-                            while (st.hasMoreTokens()) {
-                                if (st1.hasMoreTokens()) {
-                                    if (st.nextToken().equals(st1.nextToken())) {
-                                        cnt++;
-                                    } else {
-                                        break;
-                                    }
-                                }
-                            }
-
-                            StringTokenizer st2 = new StringTokenizer(recentlyDevPost.getDescription());
-                            StringTokenizer st3 = new StringTokenizer(description.asText());
-
-                            int descTokenSize = st2.countTokens();
-                            int cnt1 = 0;
-
-                            while (st2.hasMoreTokens()) {
-                                if (st3.hasMoreTokens()) {
-                                    if (st2.nextToken().equals(st3.nextToken())) {
-                                        cnt1++;
-                                    }
-                                } else {
+                            if (recentlyDevPost != null) {
+                                if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
+                                    check = true;
                                     break;
                                 }
-                            }
-
-                            if ((double) titleTokenSize / cnt >= 0.6 && (double) descTokenSize / cnt1 >= 0.6) {
-                                logger.info("Yotube " + findChannel.getChannelTitle() + " video crawling done !! total crawling count = " + totalCrawling);
-                                check = true;
-                                break;
                             }
                         }
 
@@ -528,26 +399,26 @@ public class YoutubeCrawler implements Crawler {
                                 .build();
 
                         DevPost createPost = devPostService.createDevPost(post);
-                        logger.info("Youtube video save success !! post = " + createPost.toString());
+                        logger.info("Youtube " + findChannel.getChannelTitle() + " video save success !! post = " + createPost.toString());
                         totalCrawling++;
                     }
 
                     if (result1.has("nextPageToken") && ! check && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
                         nextPageToken = result1.get("nextPageToken");
                     } else {
-                        logger.info("Youtube video save done !! total video crawling count = " + totalCrawling);
+                        logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
                         break;
                     }
                 }
             } else {
-                logger.info("Youtube video save done !! total video crawling count = " + totalCrawling);
+                logger.info("Youtube " + findChannel.getChannelTitle() + "video crawling done !! total video crawling count = " + totalCrawling);
             }
         } catch (MalformedURLException e) {
-            logger.error("Youtube video url connetion error !! " + e.getMessage());
+            logger.error("Youtube " + findChannel.getChannelTitle() + " video url connetion error !! " + e.getMessage());
         } catch (IOException e) {
-            logger.error("Youtube video IO Exception error !! " + e.getMessage());
+            logger.error("Youtube " + findChannel.getChannelTitle() + " video IO Exception error !! " + e.getMessage());
         }
-        logger.info("Youtube video crawling end ...");
+        logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling end ...");
     }
 
     public YoutubeChannel saveChannelInfoByChannelId(final String channelId, final String category) {
