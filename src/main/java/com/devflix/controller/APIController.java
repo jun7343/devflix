@@ -25,7 +25,7 @@ import java.util.*;
 public class APIController {
 
     private final DevPostService devPostService;
-    private final String IMAGE_ROOT_DIR;
+    private final String IMAGE_ROOT_DIR_PATH;
     private final String SEARVER_ADDRESS;
     private final String SUCCESS = "success";
     private final String RESULT = "result";
@@ -34,9 +34,9 @@ public class APIController {
         this.devPostService = devPostService;
 
         if (StringUtils.isBlank(environment.getProperty("image.root-drectory"))) {
-            IMAGE_ROOT_DIR = "images/";
+            IMAGE_ROOT_DIR_PATH = "images/";
         } else {
-            IMAGE_ROOT_DIR = environment.getProperty("image.root-drectory");
+            IMAGE_ROOT_DIR_PATH = environment.getProperty("image.root-drectory");
         }
 
         if (StringUtils.isBlank(environment.getProperty("specification.server.address"))) {
@@ -99,23 +99,23 @@ public class APIController {
                                                           @AuthenticationPrincipal Member member) {
         if (StringUtils.equals(image.getContentType(), MediaType.IMAGE_GIF_VALUE) || StringUtils.equals(image.getContentType(), MediaType.IMAGE_JPEG_VALUE) ||
         StringUtils.equals(image.getContentType(), MediaType.IMAGE_PNG_VALUE)) {
-            StringBuilder imagePath = new StringBuilder();
+            StringBuilder imageName = new StringBuilder();
 
             if (StringUtils.isBlank(pathBase)) {
                 pathBase = getPathBase();
             }
 
-            imagePath.append(System.currentTimeMillis()).append(".").append(Objects.requireNonNull(image.getContentType()).split("/")[1]);
+            imageName.append(System.currentTimeMillis()).append(".").append(Objects.requireNonNull(image.getContentType()).split("/")[1]);
 
             try {
-                File file = new File(pathBase + imagePath.toString());
+                File file = new File(IMAGE_ROOT_DIR_PATH + pathBase + imageName.toString());
                 image.transferTo(Paths.get(file.getPath()));
 
                 ImmutableMap<String, Object> map = ImmutableMap.<String, Object>builder()
                         .put("pathBase", pathBase)
-                        .put("imageName", imagePath.toString())
+                        .put("imageName", imageName.toString())
                         .put("imageOriginName", image.getOriginalFilename())
-                        .put("fullPath", SEARVER_ADDRESS + pathBase + imagePath.toString())
+                        .put("imageURL", SEARVER_ADDRESS + "images/" + pathBase + imageName.toString())
                         .build();
 
                 return ImmutableMap.of(SUCCESS, true, RESULT, map);
@@ -133,10 +133,10 @@ public class APIController {
         Calendar calendar = Calendar.getInstance();
         StringBuilder builder = new StringBuilder();
 
-        builder.append(IMAGE_ROOT_DIR).append(calendar.get(Calendar.YEAR)).append("/").append(calendar.get(Calendar.MONTH) + 1).append("/")
+        builder.append(calendar.get(Calendar.YEAR)).append("/").append(calendar.get(Calendar.MONTH) + 1).append("/")
                 .append(calendar.get(Calendar.DATE)).append("/").append(calendar.getTimeInMillis()).append("/");
 
-        File file = new File(builder.toString());
+        File file = new File(IMAGE_ROOT_DIR_PATH + builder.toString());
 
         if (! file.exists()) {
             file.mkdirs();
