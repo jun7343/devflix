@@ -1,27 +1,50 @@
 package com.devflix.controller;
 
 import com.devflix.entity.DevPost;
+import com.devflix.entity.Member;
 import com.devflix.service.DevPostService;
 import com.google.common.collect.ImmutableMap;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.env.Environment;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
-@RequiredArgsConstructor
 public class APIController {
 
     private final DevPostService devPostService;
+    private final String IMAGE_ROOT_DIR;
+    private final String SEARVER_ADDRESS;
+    private final String SUCCESS = "success";
+    private final String RESULT = "result";
+
+    public APIController(DevPostService devPostService, Environment environment) {
+        this.devPostService = devPostService;
+
+        if (StringUtils.isBlank(environment.getProperty("image.root-drectory"))) {
+            IMAGE_ROOT_DIR = "images/";
+        } else {
+            IMAGE_ROOT_DIR = environment.getProperty("image.root-drectory");
+        }
+
+        if (StringUtils.isBlank(environment.getProperty("specification.server.address"))) {
+            SEARVER_ADDRESS = "http://localhost:8080/";
+        } else {
+            SEARVER_ADDRESS = environment.getProperty("specification.server.address");
+        }
+    }
 
     @RequestMapping(path = "/a/view-count", method = RequestMethod.POST)
     @ResponseBody
@@ -67,5 +90,58 @@ public class APIController {
         }
 
         return ImmutableMap.of(RESULT, true, RESULT_DATA, dataList);
+    }
+
+    @RequestMapping(path = "/a/image-upload", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> actionImageUpload(@RequestParam(name = "image")MultipartFile image,
+                                                          @RequestParam(name = "path-base", required = false)String pathBase,
+                                                          @AuthenticationPrincipal Member member) {
+        if (StringUtils.equals(image.getContentType(), MediaType.IMAGE_GIF_VALUE) || StringUtils.equals(image.getContentType(), MediaType.IMAGE_JPEG_VALUE) ||
+        StringUtils.equals(image.getContentType(), MediaType.IMAGE_PNG_VALUE)) {
+            StringBuilder imagePath = new StringBuilder();
+
+            if (StringUtils.isBlank(pathBase)) {
+                pathBase = getPathBase();
+            }
+
+            imagePath.append(System.currentTimeMillis()).append(".").append(Objects.requireNonNull(image.getContentType()).split("/")[1]);
+
+            try {
+                File file = new File(pathBase + imagePath.toString());
+                image.transferTo(Paths.get(file.getPath()));
+
+                ImmutableMap<String, Object> map = ImmutableMap.<String, Object>builder()
+                        .put("pathBase", pathBase)
+                        .put("imageName", imagePath.toString())
+                        .put("imageOriginName", image.getOriginalFilename())
+                        .put("fullPath", SEARVER_ADDRESS + pathBase + imagePath.toString())
+                        .build();
+
+                return ImmutableMap.of(SUCCESS, true, RESULT, map);
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                return ImmutableMap.of(SUCCESS, false, RESULT, e.getMessage());
+            }
+        } else {
+            return ImmutableMap.of(SUCCESS, false, RESULT, "image type error !!");
+        }
+    }
+
+    private String getPathBase() {
+        Calendar calendar = Calendar.getInstance();
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(IMAGE_ROOT_DIR).append(calendar.get(Calendar.YEAR)).append("/").append(calendar.get(Calendar.MONTH) + 1).append("/")
+                .append(calendar.get(Calendar.DATE)).append("/").append(calendar.getTimeInMillis()).append("/");
+
+        File file = new File(builder.toString());
+
+        if (! file.exists()) {
+            file.mkdirs();
+        }
+
+        return builder.toString();
     }
 }
