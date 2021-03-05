@@ -2,12 +2,17 @@ package com.devflix.config;
 
 import com.devflix.security.interceptor.LoginInterceptor;
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Collections;
@@ -17,11 +22,21 @@ import java.util.Collections;
 @ComponentScan(basePackages = "com.devflix")
 @EnableJpaRepositories(basePackages = "com.devflix.repository")
 @EnableScheduling
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+    private final Environment environment;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/assets/");
+
+        if (environment.acceptsProfiles(Profiles.of("local"))) {
+            registry.addResourceHandler("/assets/**").addResourceLocations("file:src/main/resources/assets/");
+        } else if (environment.acceptsProfiles(Profiles.of("dev"))) {
+            registry.addResourceHandler("/assets/**").addResourceLocations("file:/srv/devflix/assets/");
+        } else {
+            registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/assets/");
+        }
     }
 
     @Override
