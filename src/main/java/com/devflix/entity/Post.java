@@ -1,32 +1,36 @@
 package com.devflix.entity;
 
 import com.devflix.constant.PostStatus;
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@TypeDef(name = "string-array", typeClass = StringArrayType.class)
+@TypeDef(name = "list-array", typeClass = ListArrayType.class)
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "post_status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private PostStatus postStatus;
+    private PostStatus status;
 
     @ManyToOne(targetEntity = Member.class)
     private Member writer;
+
+    @OneToMany(targetEntity = PostDevPost.class)
+    private List<PostDevPost> postDevPostList;
 
     @Column
     private String title;
@@ -35,28 +39,31 @@ public class Post {
     private String content;
 
     @Column
-    private long views;
+    private int views;
 
     @Column(name = "path_base")
     private String pathBase;
 
-    @Column(name = "images", columnDefinition = "varchar[]")
-    @Type(type = "string-array")
-    private String[] images;
+    @Column(name = "image_path")
+    @Type(type = "list-array")
+    private List<String> images;
 
-    @Column(name = "create_date")
+    @Column(name = "create_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
-    @Column(name = "update_date")
+    @Column(name = "update_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
 
     @Builder
-    public Post(Long id, PostStatus postStatus, Member writer, String title, String content, long views, String pathBase, String[] images, Date createDate, Date updateDate) {
+    public Post(final Long id, final PostStatus status, final Member writer, List<PostDevPost> postDevPostList,
+                final String title, final String content, final int views, final String pathBase,
+                List<String> images, final Date createDate, final Date updateDate) {
         this.id = id;
-        this.postStatus = postStatus;
+        this.status = status;
         this.writer = writer;
+        this.postDevPostList = postDevPostList;
         this.title = title;
         this.content = content;
         this.views = views;
