@@ -17,11 +17,9 @@ public class PostDevPost {
     private Long id;
 
     @ManyToOne(targetEntity = Post.class)
-    @Column
     private Post post;
 
     @ManyToOne(targetEntity = DevPost.class)
-    @Column(name = "dev_post")
     private DevPost devPost;
 
     @Column(name = "create_at")
