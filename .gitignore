@@ -5,3 +5,4 @@ src/test
 src/main/resources/application-local.properties
 src/main/resources/application-dev.properties
 deploy.sh
+images
