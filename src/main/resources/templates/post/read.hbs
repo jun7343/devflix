@@ -1,0 +1,48 @@
+{{#> layout/default title="Post Write"}}
+	{{#*inline "content"}}
+		<style>
+			#test {
+				height: 1000px;
+			}
+		</style>
+		<div class="col-md-12 empty-div">
+		</div>
+		<div class="col-md-12 d-flex justify-content-center">
+			<div class="col-md-8">
+				<h1>Post Read</h1>
+				<div class="form-row devflix-post">
+					<div class="form-group col-md-12">
+						<label for="title">Title</label>
+						{{{item.title}}}
+					</div>
+					<div class="form-group col-md-12">
+						<label for="dev-search">Search Post</label><br>
+						<div class="input-group input-group">
+							<input type="text" class="form-control col-md-6" id="dev-search">
+							<div class="input-group-prepend">
+								<span class="input-group-text"><svg class="icon-search"><use xlink:href="#icon-search"></use></svg></span>
+							</div>
+						</div>
+						<div class="alert alert-danger col-md-6" role="alert">
+							최대 5개 Post만 선택 하실 수 있습니다.
+						</div>
+					</div>
+					<div class="form-group col-md-12" id="search-dropdown">
+						<ul class="list-group col-md-6" id ="search-list"></ul>
+					</div>
+					<div class="form-group col-md-12" id="result-list">
+						<label for="title">Post List</label>
+					</div>
+					<div class="form-group col-md-12">
+						<label for="content">Content</label>
+						<div class="col-md-12" id="test">
+							{{unEscape item.content}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{{/inline}}
+	{{#*inline "js"}}
+	{{/inline}}
+{{/layout/default}}
