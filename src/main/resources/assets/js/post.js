@@ -1,5 +1,6 @@
 $(function () {
   const API_SEARCH_URL = '/a/search';
+  const API_IMAGE_UPLOAD = '/a/image-upload';
   const POST_TYPE = 'POST';
   const MATCH_URL = '{{url}}';
   const MATCH_THUMBNAIL = '{{thumbnail}}';
@@ -10,11 +11,13 @@ $(function () {
   const $SEARCH_LIST_DROPDOWN = $('#search-dropdown');
   const $SEARCH_LIST = $('#search-list');
   const $SEARCH_RESULT_LIST = $('#result-list');
+  const $EDITOR_CONTAINER = $('#content');
+  const $PATH_BASE = $('input[name=path-base]');
   const MATCH_FOR_PERFECT_SEARCH = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
   const SEARCH_LIST_TEMPLATE = '<li class="list-group-item"><a href="#" class="item-link" data-url="{{url}}" data-thumbnail="{{thumbnail}}" data-upload-at="{{uploadAt}}" data-category="{{category}}" data-post-type="{{postType}}" data-title="{{title}}"><span class="item-category">{{category}}-{{postType}}</span><span class="item-title">{{title}}</span></a></li>';
-  const SEARCH_RESULT_ITEM_TEMPLATE = '<div class="card col-md-12 bg-light result-item"><div class="row g-0"><div class="col-md-4 result-item-img-div"><img src="{{thumbnail}}" class="result-item-img"></div><div class="col-md-8"><div class="card-body"><button type="button" class="result-item-close btn btn-danger btn-sm">X</button><h5 class="card-title">{{category}} - {{postType}}</h5><p class="card-text">{{title}}</p><p class="card-text"><small class="text-muted">{{uploadAt}}</small></p></div></div></div></div>';
+  const SEARCH_RESULT_ITEM_TEMPLATE = '<div class="card col-md-12 bg-light result-item"><div class="row g-0"><div class="col-md-4 result-item-img-div"><img src="{{thumbnail}}" class="result-item-img"></div><div class="col-md-8"><div class="card-body"><button type="button" class="result-item-close btn btn-danger btn-sm">X</button><h5 class="card-title">{{category}} - {{postType}}</h5><p class="card-text">{{title}}</p><p class="card-text"><small class="text-muted">{{uploadAt}}</small></p><input type="hidden" name="post-list" value="{{url}}"></div></div></div></div>';
 
-  $('#content').summernote({
+  $EDITOR_CONTAINER.summernote({
     lang: 'ko-KR',
     height: 500,
     toolbar: [
@@ -25,8 +28,46 @@ $(function () {
       ['table', ['table']],
       ['insert', ['link', 'picture', 'video']],
       ['view', ['fullscreen', 'codeview', 'help']]
-    ]
+    ],
+    callbacks: {
+      onImageUpload: function (files, editor, welEditable) {
+        uploadImage(files[0], $PATH_BASE.val());
+      }
+    }
   });
+
+  function uploadImage(file, pathBase) {
+    const data = new FormData();
+
+    data.append('image', file);
+    data.append('path-base', pathBase);
+
+    $.ajax({
+      url: API_IMAGE_UPLOAD,
+      type: POST_TYPE,
+      data: data,
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: function (data) {
+        if (data.success) {
+          if ($PATH_BASE.val() === '' || $PATH_BASE.val() === undefined) {
+            $PATH_BASE.val(data.result.pathBase);
+          }
+
+          const input = document.createElement('input');
+
+          input.type = 'hidden';
+          input.name = 'images';
+          input.value = data.result.imageName;
+
+          $EDITOR_CONTAINER.append(input);
+
+          $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', data.result.fullPath)[0]);
+        }
+      }
+    })
+  }
 
   $(document).on('click', '.result-item-close', function () {
     $(this).parent().parent().parent().parent().remove();
@@ -81,9 +122,10 @@ $(function () {
                   const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, item.url)
                       .replaceAll(MATCH_CATEGORY, item.category)
                       .replaceAll(MATCH_POST_TYPE, item.postType)
+                      .replace(MATCH_TITLE, item.title)
                       .replaceAll(MATCH_TITLE, item.title.replace(CONTENT, '<mark>' + CONTENT + '</mark>'))
                       .replaceAll(MATCH_THUMBNAIL, item.thumbnail)
-                      .replaceAll(MATCH_UPLOAD_AT, item.uploadAt.replaceAll("/", "."));
+                      .replaceAll(MATCH_UPLOAD_AT, item.uploadAt.replaceAll('/', '.'));
 
                   $SEARCH_LIST.append($(ITEM_TEMPLATE));
                 }
