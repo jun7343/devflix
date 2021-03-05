@@ -56,14 +56,12 @@ $(function () {
           }
 
           const input = document.createElement('input');
-
           input.type = 'hidden';
           input.name = 'images';
           input.value = data.result.imageName;
-
           $EDITOR_CONTAINER.append(input);
 
-          $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', data.result.fullPath)[0]);
+          $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', data.result.imageURL)[0]);
         }
       }
     })
