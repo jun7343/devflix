@@ -1,9 +1,6 @@
 package com.devflix.job;
 
-import com.devflix.clawler.KakaoDevPostCrawler;
-import com.devflix.clawler.LineDevPostCrawler;
-import com.devflix.clawler.NaverDevPostCrawler;
-import com.devflix.clawler.WoowaDevPostCrawler;
+import com.devflix.clawler.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,6 +13,7 @@ public class CrawlingScheduler {
     private final LineDevPostCrawler lineDevPostCrawler;
     private final NaverDevPostCrawler naverDevPostCrawler;
     private final WoowaDevPostCrawler woowaDevPostCrawler;
+    private final YoutubeCrawler youtubeCrawler;
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void crawlingAll() {
@@ -23,5 +21,6 @@ public class CrawlingScheduler {
         lineDevPostCrawler.crawling();
         naverDevPostCrawler.crawling();
         woowaDevPostCrawler.crawling();
+        youtubeCrawler.crawling();
     }
 }
