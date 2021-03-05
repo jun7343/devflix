@@ -1,9 +1,9 @@
 package com.devflix.repository;
 
-import com.devflix.entity.CrawlingSchedulerLog;
+import com.devflix.entity.CrawlingLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CrawlingSchedulerLogRepository extends JpaRepository<CrawlingSchedulerLog, Long> {
+public interface CrawlingLogRepository extends JpaRepository<CrawlingLog, Long> {
 }

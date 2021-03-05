@@ -2,9 +2,9 @@ package com.devflix.clawler;
 
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
-import com.devflix.entity.CrawlingSchedulerLog;
+import com.devflix.entity.CrawlingLog;
 import com.devflix.entity.DevPost;
-import com.devflix.service.CrawlingScheudlerLogService;
+import com.devflix.service.CrawlingLogService;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -19,7 +19,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -38,7 +37,7 @@ public class NaverDevPostCrawler implements Crawler {
     private final SimpleDateFormat naverDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     private final String NAVER_BLOG_URL = "https://d2.naver.com";
     private final String DEFAULT_NAVER_THUMBNAIL = "https://d2.naver.com/static/img/app/common/sns_share_big_img1.png";
-    private final CrawlingScheudlerLogService crawlingScheudlerLogService;
+    private final CrawlingLogService crawlingLogService;
     private final Logger logger = LoggerFactory.getLogger(NaverDevPostCrawler.class);
     private final int DEFAULT_CRAWLING_MAX_PAGE = 9;
 
@@ -222,7 +221,7 @@ public class NaverDevPostCrawler implements Crawler {
         logger.info("Naver dev blog crawling end ....");
         long endAt = System.currentTimeMillis();
 
-        CrawlingSchedulerLog log = CrawlingSchedulerLog.builder()
+        CrawlingLog log = CrawlingLog.builder()
                 .jobName("Naver dev blog crawling")
                 .jobStartAt(startAt)
                 .jobEndAt(endAt)
@@ -233,6 +232,6 @@ public class NaverDevPostCrawler implements Crawler {
                 .updateAt(new Date())
                 .build();
 
-        crawlingScheudlerLogService.createCrawlingSchedulerLog(log);
+        crawlingLogService.createCrawlingSchedulerLog(log);
     }
 }

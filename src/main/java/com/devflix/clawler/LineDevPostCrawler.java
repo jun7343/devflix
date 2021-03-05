@@ -2,9 +2,9 @@ package com.devflix.clawler;
 
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
-import com.devflix.entity.CrawlingSchedulerLog;
+import com.devflix.entity.CrawlingLog;
 import com.devflix.entity.DevPost;
-import com.devflix.service.CrawlingScheudlerLogService;
+import com.devflix.service.CrawlingLogService;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -19,7 +19,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -35,7 +34,7 @@ public class LineDevPostCrawler implements Crawler {
     private final SimpleDateFormat lineDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     private final String LINE_BLOG_URL = "https://engineering.linecorp.com/ko/blog/page/";
     private final String DEFAULT_LINE_THUMBNAIL = "https://engineering.linecorp.com/wp-content/uploads/2018/11/linedev_logo.jpg";
-    private final CrawlingScheudlerLogService crawlingScheudlerLogService;
+    private final CrawlingLogService crawlingLogService;
     private final Logger logger = LoggerFactory.getLogger(LineDevPostCrawler.class);
     private final int DEFAULT_CRAWLING_MAX_PAGE = 10;
 
@@ -227,7 +226,7 @@ public class LineDevPostCrawler implements Crawler {
         logger.info("Line dev blog crawling end ....");
         long endAt = System.currentTimeMillis();
 
-        CrawlingSchedulerLog log = CrawlingSchedulerLog.builder()
+        CrawlingLog log = CrawlingLog.builder()
                 .jobName("Line dev blog crawling")
                 .jobStartAt(startAt)
                 .jobEndAt(endAt)
@@ -238,6 +237,6 @@ public class LineDevPostCrawler implements Crawler {
                 .updateAt(new Date())
                 .build();
 
-        crawlingScheudlerLogService.createCrawlingSchedulerLog(log);
+        crawlingLogService.createCrawlingSchedulerLog(log);
     }
 }

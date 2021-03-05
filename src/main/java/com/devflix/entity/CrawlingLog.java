@@ -5,12 +5,12 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity(name = "crawling_scheduler_log")
+@Entity(name = "crawling_log")
 @Getter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CrawlingSchedulerLog {
+public class CrawlingLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,9 +43,9 @@ public class CrawlingSchedulerLog {
     private Date updateAt;
 
     @Builder
-    public CrawlingSchedulerLog(final Long id, final String jobName, final long jobStartAt,
-                                final long jobEndAt, final int totalCrawling, final boolean success,
-                                final String message, final Date createAt, final Date updateAt) {
+    public CrawlingLog(final Long id, final String jobName, final long jobStartAt,
+                       final long jobEndAt, final int totalCrawling, final boolean success,
+                       final String message, final Date createAt, final Date updateAt) {
         this.id = id;
         this.jobName = jobName;
         this.jobStartAt = jobStartAt;

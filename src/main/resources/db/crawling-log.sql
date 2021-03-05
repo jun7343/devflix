@@ -1,4 +1,4 @@
-create table crawling_scheduler_log (
+create table crawling_log (
     id serial,
     job_name varchar(300) not null,
     job_start_at bigint not null,

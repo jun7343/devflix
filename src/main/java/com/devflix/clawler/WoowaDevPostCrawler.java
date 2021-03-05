@@ -2,9 +2,9 @@ package com.devflix.clawler;
 
 import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
-import com.devflix.entity.CrawlingSchedulerLog;
+import com.devflix.entity.CrawlingLog;
 import com.devflix.entity.DevPost;
-import com.devflix.service.CrawlingScheudlerLogService;
+import com.devflix.service.CrawlingLogService;
 import com.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -20,7 +20,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -37,7 +36,7 @@ public class WoowaDevPostCrawler implements Crawler {
     private final Logger logger = LoggerFactory.getLogger(WoowaDevPostCrawler.class);
     private final String DEFAULT_WOOWA_THUMBNAIL = "http://www.woowahan.com/img/mobile/woowabros.jpg";
     private final DevPostService devPostService;
-    private final CrawlingScheudlerLogService crawlingScheudlerLogService;
+    private final CrawlingLogService crawlingLogService;
 
     @Override
     public void crawling() {
@@ -217,7 +216,7 @@ public class WoowaDevPostCrawler implements Crawler {
         logger.info("Woowa dev blog crawling end ....");
         long endAt = System.currentTimeMillis();
 
-        CrawlingSchedulerLog log = CrawlingSchedulerLog.builder()
+        CrawlingLog log = CrawlingLog.builder()
                 .jobName("Woowa dev blog crawling")
                 .jobStartAt(startAt)
                 .jobEndAt(endAt)
@@ -228,6 +227,6 @@ public class WoowaDevPostCrawler implements Crawler {
                 .updateAt(new Date())
                 .build();
 
-        crawlingScheudlerLogService.createCrawlingSchedulerLog(log);
+        crawlingLogService.createCrawlingSchedulerLog(log);
     }
 }
