@@ -29,3 +29,23 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
+bootJar {
+    processResources {
+        exclude('assets', 'templates', 'db')
+    }
+}
+
+task assetsZip(type: Zip) {
+    archiveName('assets.zip')
+    destinationDir(file('build/'))
+
+    from(file('src/main/resources/assets'))
+}
+
+task templatesZip(type: Zip) {
+    archiveName('templates.zip')
+    destinationDir(file('build/'))
+
+    from(file('src/main/resources/templates'))
+}
