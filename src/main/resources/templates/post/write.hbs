@@ -5,11 +5,11 @@
 		<div class="col-md-12 d-flex justify-content-center">
 			<div class="col-md-8">
 				<h1>Post Write</h1>
-				<form>
+				<form action="/post/write" method="post">
 					<div class="form-row devflix-post">
 						<div class="form-group col-md-12">
 							<label for="title">Title</label>
-							<input type="text" class="form-control" id="title" placeholder="Title">
+							<input type="text" class="form-control" id="title" placeholder="Title" name="title">
 						</div>
 						<div class="form-group col-md-12">
 							<label for="dev-search">Search Post</label><br>
@@ -32,6 +32,7 @@
 						<div class="form-group col-md-12">
 							<label for="content">Content</label>
 							<textarea id="content" name="content"></textarea>
+							<input type="hidden" name="path-base" value="">
 						</div>
 					</div>
 					<div class="d-flex justify-content-end button-box">
