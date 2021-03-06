@@ -24,7 +24,6 @@ public class APIController {
 
     private final DevPostService devPostService;
     private final String IMAGE_ROOT_DIR_PATH;
-    private final String SEARVER_ADDRESS;
 
     public APIController(DevPostService devPostService, Environment environment) {
         this.devPostService = devPostService;
@@ -33,12 +32,6 @@ public class APIController {
             IMAGE_ROOT_DIR_PATH = "images/";
         } else {
             IMAGE_ROOT_DIR_PATH = environment.getProperty("image.root-drectory");
-        }
-
-        if (StringUtils.isBlank(environment.getProperty("specification.server.address"))) {
-            SEARVER_ADDRESS = "http://localhost:8080/";
-        } else {
-            SEARVER_ADDRESS = environment.getProperty("specification.server.address");
         }
     }
 
@@ -97,7 +90,6 @@ public class APIController {
         }
 
         List<Object> list = new LinkedList<>();
-        list.add(ImmutableMap.of("pathBase", pathBase));
 
         for (MultipartFile img : images) {
             if (StringUtils.equals(img.getContentType(), MediaType.IMAGE_GIF_VALUE) || StringUtils.equals(img.getContentType(), MediaType.IMAGE_JPEG_VALUE) ||
@@ -114,7 +106,7 @@ public class APIController {
                             .put("pathBase", pathBase)
                             .put("imageName", imageName.toString())
                             .put("imageOriginName", img.getOriginalFilename())
-                            .put("imageURL", SEARVER_ADDRESS + "images/" + pathBase + imageName.toString())
+                            .put("imageURL", "/images/" + pathBase + imageName.toString())
                             .build();
 
                     list.add(map);
@@ -125,6 +117,29 @@ public class APIController {
         }
 
         return ImmutableMap.of("result", list);
+    }
+
+    @RequestMapping(path = "/a/image-delete", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> actionImageDelete(@RequestParam(name = "pathBase", required = false)final String pathBase,
+                                                          @RequestParam(name = "imageName", required = false)final String imageName) {
+        if (StringUtils.isBlank(pathBase) || StringUtils.isBlank(imageName)) {
+            return ImmutableMap.of("result", false);
+        }
+
+        File deleteFile = new File(IMAGE_ROOT_DIR_PATH + pathBase + imageName);
+
+        if (deleteFile.exists()) {
+            if (deleteFile.delete()) {
+                return ImmutableMap.of("result", true);
+            } else {
+                System.out.println("false!!");
+                return ImmutableMap.of("result", false);
+            }
+        } else {
+            System.out.println("what!?");
+            return ImmutableMap.of("result", false);
+        }
     }
 
     private String getPathBase() {

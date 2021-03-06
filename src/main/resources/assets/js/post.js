@@ -1,6 +1,7 @@
 $(function () {
   const API_SEARCH_URL = '/a/search';
-  const API_IMAGE_UPLOAD = '/a/image-upload';
+  const API_IMAGE_UPLOAD_URL = '/a/image-upload';
+  const API_IMAGE_DELETE_URL = '/a/image-delete';
   const POST_TYPE = 'POST';
   const MATCH_URL = '{{url}}';
   const MATCH_THUMBNAIL = '{{thumbnail}}';
@@ -12,7 +13,7 @@ $(function () {
   const $SEARCH_LIST = $('#search-list');
   const $SEARCH_RESULT_LIST = $('#result-list');
   const $EDITOR_CONTAINER = $('#content');
-  const $PATH_BASE = $('input[name=path-base]');
+  const $PATH_BASE = $('#path-base');
   const MATCH_FOR_PERFECT_SEARCH = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
   const SEARCH_LIST_TEMPLATE = '<li class="list-group-item"><a href="#" class="item-link" data-url="{{url}}" data-thumbnail="{{thumbnail}}" data-upload-at="{{uploadAt}}" data-category="{{category}}" data-post-type="{{postType}}" data-title="{{title}}"><span class="item-category">{{category}}-{{postType}}</span><span class="item-title">{{title}}</span></a></li>';
   const SEARCH_RESULT_ITEM_TEMPLATE = '<div class="card col-md-12 bg-light result-item"><div class="row g-0"><div class="col-md-4 result-item-img-div"><img src="{{thumbnail}}" class="result-item-img"></div><div class="col-md-8"><div class="card-body"><button type="button" class="result-item-close btn btn-danger btn-sm">X</button><h5 class="card-title">{{category}} - {{postType}}</h5><p class="card-text">{{title}}</p><p class="card-text"><small class="text-muted">{{uploadAt}}</small></p><input type="hidden" name="post-url" value="{{url}}"></div></div></div></div>';
@@ -32,6 +33,9 @@ $(function () {
     callbacks: {
       onImageUpload: function (files, editor, welEditable) {
         uploadImage(files, $PATH_BASE.val());
+      },
+      onMediaDelete: function (files, editor, welEditable) {
+        deleteImage($PATH_BASE.val(), files[0].id);
       }
     }
   });
@@ -46,18 +50,16 @@ $(function () {
     data.append('path-base', pathBase);
 
     $.ajax({
-      url: API_IMAGE_UPLOAD,
+      url: API_IMAGE_UPLOAD_URL,
       type: POST_TYPE,
       data: data,
       contentType: false,
       cache: false,
       processData: false,
       success: function (data) {
-        console.log('aaaaa');
         if (data.result) {
-          console.log('bbbbb');
           if ($PATH_BASE.val() === '' || $PATH_BASE.val() === undefined) {
-            $PATH_BASE.val(data.result.pathBase);
+            $PATH_BASE.val(data.result[0].pathBase);
           }
 
           for (const item of data.result) {
@@ -67,9 +69,19 @@ $(function () {
             input.value = item.imageName;
             $EDITOR_CONTAINER.append(input);
 
-            $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', item.imageURL)[0]);
+            $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', item.imageURL).attr('id', item.imageName)[0]);
           }
         }
+      }
+    })
+  }
+
+  function deleteImage(pathBase, imageName) {
+    $.ajax({
+      url: API_IMAGE_DELETE_URL,
+      type: POST_TYPE,
+      data: {'pathBase': pathBase, 'imageName': imageName},
+      success: function (data) {
       }
     })
   }
