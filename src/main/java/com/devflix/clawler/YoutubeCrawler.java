@@ -72,7 +72,7 @@ public class YoutubeCrawler implements Crawler {
 
     @Override
     public void crawling() {
-        List<YoutubeChannel> findAll = youtubeChannelService.findAllOrderByIdDesc();
+        List<YoutubeChannel> findAll = youtubeChannelService.findAllOrderByCrawlingAtAsc();
 
         for (int channelNum = 0; channelNum < findAll.size(); channelNum++) {
             final YoutubeChannel channel = findAll.get(channelNum);
@@ -270,6 +270,22 @@ public class YoutubeCrawler implements Crawler {
                     .build();
 
             crawlingLogService.createCrawlingSchedulerLog(log);
+
+            YoutubeChannel updateChannel = YoutubeChannel.builder()
+                    .id(channel.getId())
+                    .category(channel.getCategory())
+                    .channelId(channel.getChannelId())
+                    .channelTitle(channel.getChannelTitle())
+                    .etag(channel.getEtag())
+                    .description(channel.getDescription())
+                    .thumbnail(channel.getThumbnail())
+                    .publishAt(channel.getPublishAt())
+                    .crawlingAt(System.currentTimeMillis())
+                    .createAt(channel.getCreateAt())
+                    .updateAt(new Date())
+                    .build();
+
+            youtubeChannelService.updateYoutubeChannel(updateChannel);
         }
     }
 
@@ -475,6 +491,22 @@ public class YoutubeCrawler implements Crawler {
                 .build();
 
         crawlingLogService.createCrawlingSchedulerLog(log);
+
+        YoutubeChannel updateChannel = YoutubeChannel.builder()
+                .id(channel.getId())
+                .category(channel.getCategory())
+                .channelId(channel.getChannelId())
+                .channelTitle(channel.getChannelTitle())
+                .etag(channel.getEtag())
+                .description(channel.getDescription())
+                .thumbnail(channel.getThumbnail())
+                .publishAt(channel.getPublishAt())
+                .crawlingAt(System.currentTimeMillis())
+                .createAt(channel.getCreateAt())
+                .updateAt(new Date())
+                .build();
+
+        youtubeChannelService.updateYoutubeChannel(updateChannel);
     }
 
     public YoutubeChannel saveChannelInfoByChannelId(final String channelId, final String category) {
