@@ -1,23 +1,23 @@
 package com.devflix.dto;
 
+import com.devflix.entity.DevPost;
+import com.devflix.entity.Member;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @ToString
 @EqualsAndHashCode
+@RequiredArgsConstructor
+@Builder
 public class PostDto {
     private final Long id;
+    private final Member writer;
     private final String title;
     private final String content;
     private final String pathBase;
-    private final String[] images;
-
-    @Builder
-    public PostDto(final Long id, final String title, final String content, final String pathBase, final String[] images) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.pathBase = pathBase;
-        this.images = images;
-    }
+    private final List<String> images;
+    private final List<DevPost> devPostList;
+    private final List<String> devPostUrl;
 }
