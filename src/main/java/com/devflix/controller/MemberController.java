@@ -170,35 +170,6 @@ public class MemberController {
         return ImmutableMap.of(RESULT, true, MESSAGE, "인증 확인 되었습니다.");
     }
 
-    @RequestMapping(path = "/login/join-us/all-confirm", method = RequestMethod.POST)
-    @ResponseBody
-    public ImmutableMap<String, Object> allConfirm(@RequestParam(name = "email", required = false)final String email,
-                                                   @RequestParam(name = "code", required = false)final String code) {
-        if (StringUtils.isBlank(email)) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 기입해 주세요.");
-        } else if (! emailPattern.matcher(email).matches()) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 형식이 올바르지 않습니다.");
-        } else if (StringUtils.isBlank(code)) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "인증코드 기입해 주세요.");
-        }
-
-        final Member findUser = memberService.findUserByEmail(email);
-
-        if (findUser != null) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "이미 가입한 회원 입니다.");
-        }
-
-        final MemberConfirm findConfirm = memberService.findMemberConfirmByEmail(email);
-
-        if (findConfirm == null) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 인증해 주세요.");
-        } else if (! StringUtils.equals(findConfirm.getUuid(), code) && ! StringUtils.equals(findConfirm.getEmail(), email)) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "인증 코드 확인해 주세요.");
-        }
-
-        return ImmutableMap.of(RESULT, true, MESSAGE, "가입 완료 되었습니다.");
-    }
-
     @RequestMapping(path = "/login/find-password", method = RequestMethod.GET)
     public String findPasswordForm() {
         return "/login/find-password";
@@ -240,32 +211,6 @@ public class MemberController {
         memberService.createOrUpdateMemberConfirmByEmail(email, MemberConfirmType.PASSWORD, request);
 
         return "redirect:/login";
-    }
-
-    @RequestMapping(path = "/login/find-password-confirm", method = RequestMethod.POST)
-    @ResponseBody
-    public ImmutableMap<String, Object> findPasswordConfirm(@RequestParam(name = "email", required = false)final String email) {
-        if (StringUtils.isBlank(email)) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 기입해 주세요.");
-        } else if (! emailPattern.matcher(email).matches()) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "이메일 형식이 올바르지 않습니다.");
-        }
-
-        final Member findUser = memberService.findUserByEmail(email);
-
-        if (findUser == null) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "회원가입이 필요 합니다.");
-        } else if (findUser.getStatus() == MemberStatus.LOCK) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "회원잠금 상태 입니다. 관리자에게 문의해 주세요.");
-        }
-
-        final MemberConfirm confirm = memberService.findMemberConfirmByEmail(email);
-
-        if (confirm != null && confirm.getConfirmCount() > 5) {
-            return ImmutableMap.of(RESULT, false, MESSAGE, "요청 횟수를 초과 하였습니다.");
-        }
-
-        return ImmutableMap.of(RESULT, true, MESSAGE, "비밀번호 재설정 메일을 성공적으로 요청 하였습니다.");
     }
 
     @RequestMapping(path = "/login/new-password/{uuid}", method = RequestMethod.GET)
