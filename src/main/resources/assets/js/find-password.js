@@ -13,23 +13,9 @@ $(function () {
             }
         },
         submitHandler: function (){
-            const EMAIL = $('input[name=email]').val();
-            const FIND_PASSWORD_CONFIRM_URL = '/login/find-password-confirm';
-            const TYPE = 'POST';
-            const DATA = {'email' : EMAIL};
-            let result = false;
+            alert('비밀번호 재설정 메일을 성공적으로 요청 하였습니다.')
 
-            $.ajax({
-                url: FIND_PASSWORD_CONFIRM_URL,
-                type: TYPE,
-                data: DATA,
-                success: function (data) {
-                    alert(data.msg);
-                    result = data.result;
-                }
-            });
-
-            return result;
+            return true;
         }
     });
 })
