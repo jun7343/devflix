@@ -135,7 +135,6 @@ public class MemberService implements UserDetailsService {
 
     @Override
     public Member loadUserByUsername(final String email) throws UsernameNotFoundException {
-        System.out.println(email);
         final Member user = memberRepository.findByEmailEquals(email);
 
         if (user == null) {
