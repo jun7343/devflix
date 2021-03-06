@@ -1,5 +1,6 @@
 package com.devflix.controller;
 
+import com.devflix.constant.PostStatus;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class HomeController {
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String index(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
-        Page<DevPost> findList = devPostService.findAllByPageRequest(page, DEFAULT_SIZE_VALUE);
+        Page<DevPost> findList = devPostService.findAllByStatusAndPageRequest(PostStatus.POST, page, DEFAULT_SIZE_VALUE);
         List<Integer> pageNumList = new ArrayList<>();
 
         model.addAttribute("list", findList.getContent());

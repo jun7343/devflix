@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface DevPostRepository extends PagingAndSortingRepository<DevPost, Long>, JpaSpecificationExecutor<DevPost> {
     DevPost findTopOneByCategoryAndPostTypeAndWriterOrderByUploadAtDesc(final String category, PostType postType, final String writer);
@@ -23,6 +21,4 @@ public interface DevPostRepository extends PagingAndSortingRepository<DevPost, L
     Page<DevPost> findAllByTagIn(final String tag, Pageable pageable);
 
     DevPost findTopOneByCategoryAndPostTypeOrderByUploadAtDesc(String category, PostType postType);
-
-    List<DevPost> findAllByTitleLike(final String title);
 }

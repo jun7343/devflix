@@ -1,5 +1,6 @@
 package com.devflix.service;
 
+import com.devflix.constant.PostStatus;
 import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
 import com.devflix.repository.DevPostRepository;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Order;
@@ -86,5 +88,11 @@ public class DevPostService {
 
             return query.where(result).orderBy(uploadAt).getRestriction();
         });
+    }
+
+    public Page<DevPost> findAllByStatusAndPageRequest(PostStatus post, int page, int size) {
+        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("status"), post);
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
     }
 }
