@@ -21,12 +21,12 @@ public class YoutubeChannelService {
     }
 
     @Transactional
-    public List<YoutubeChannel> findAllOrderByIdDesc() {
-        return youtubeChennelRepository.findAll(Sort.by(Sort.Order.desc("id")));
+    public List<YoutubeChannel> findAllOrderByCrawlingAtAsc() {
+        return youtubeChennelRepository.findAll(Sort.by(Sort.Order.asc("crawlingAt")));
     }
 
     @Transactional
-    public YoutubeChannel getByChannelId(final String channelId){
-        return youtubeChennelRepository.findByChannelId(channelId);
+    public YoutubeChannel updateYoutubeChannel(final YoutubeChannel channel) {
+        return youtubeChennelRepository.save(channel);
     }
 }

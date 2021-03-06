@@ -38,6 +38,9 @@ public class YoutubeChannel {
     @Temporal(TemporalType.TIMESTAMP)
     private Date publishAt;
 
+    @Column(name = "crawling_at")
+    private long crawlingAt;
+
     @Column(name = "create_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
@@ -49,7 +52,7 @@ public class YoutubeChannel {
     @Builder
     public YoutubeChannel(final Long id, final String channelId, final String channelTitle, final String category,
                           final String etag, final String description, final String thumbnail,
-                          final Date publishAt, final Date createAt, final Date updateAt) {
+                          final Date publishAt, final long crawlingAt, final Date createAt, final Date updateAt) {
         this.id = id;
         this.category = category;
         this.channelId = channelId;
@@ -58,6 +61,7 @@ public class YoutubeChannel {
         this.description = description;
         this.thumbnail = thumbnail;
         this.publishAt = publishAt;
+        this.crawlingAt = crawlingAt;
         this.createAt = createAt;
         this.updateAt = updateAt;
     }
