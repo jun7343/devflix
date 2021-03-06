@@ -2,7 +2,6 @@ package com.devflix.controller;
 
 import com.devflix.constant.MemberConfirmType;
 import com.devflix.constant.MemberStatus;
-import com.devflix.domain.JoinUsDomain;
 import com.devflix.entity.Member;
 import com.devflix.entity.MemberConfirm;
 import com.devflix.service.MemberService;
@@ -68,19 +67,20 @@ public class MemberController {
     }
 
     @RequestMapping(path = "/login/join-us", method = RequestMethod.POST)
-    public String joinUsAction(JoinUsDomain domain, RedirectAttributes attrs) {
+    public String joinUsAction(@RequestParam(name = "email", required = false)final String email, @RequestParam(name = "username", required = false)final String username,
+            @RequestParam(name = "password", required = false)final String password, @RequestParam(name = "code", required = false)final String code, RedirectAttributes attrs) {
         String message = "";
         boolean success = false;
 
-        if (StringUtils.isBlank(domain.getEmail())) {
+        if (StringUtils.isBlank(email)) {
             message = "이메일 기입해 주세요.";
-        } else if (! emailPattern.matcher(domain.getEmail()).matches()) {
+        } else if (! emailPattern.matcher(email).matches()) {
             message = "이메일 형식이 올바르지 않습니다.";
-        } else if (StringUtils.isBlank(domain.getUsername())) {
+        } else if (StringUtils.isBlank(username)) {
             message = "유저 이름 기입해 주세요.";
-        } else if (StringUtils.isBlank(domain.getPassword())) {
+        } else if (StringUtils.isBlank(password)) {
             message = "패스워드 기입해 주세요.";
-        } else if (StringUtils.isBlank(domain.getCode())) {
+        } else if (StringUtils.isBlank(code)) {
             message = "인증코드가 기입해 주세요.";
         } else {
             success = true;
@@ -92,14 +92,14 @@ public class MemberController {
             return "redirect:/login/join-us";
         }
 
-        final MemberConfirm confirm = memberService.findMemberConfirmByEmail(domain.getEmail());
+        final MemberConfirm confirm = memberService.findMemberConfirmByEmail(email);
 
         if (confirm == null) {
             message = "인증 확인해 주세요.";
-        } else if (! StringUtils.equals(confirm.getUuid(), domain.getCode())) {
+        } else if (! StringUtils.equals(confirm.getUuid(), code)) {
             message = "인증코드가 다릅니다. 다시 확인해 주세요.";
         } else {
-            final Member newMember = memberService.createMemberAndDeleteMemberConfirm(domain);
+            final Member newMember = memberService.createMemberAndDeleteMemberConfirm(email, password, username);
 
             if (newMember == null) {
                 success = false;

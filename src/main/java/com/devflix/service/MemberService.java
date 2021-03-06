@@ -3,7 +3,6 @@ package com.devflix.service;
 import com.devflix.constant.MemberConfirmType;
 import com.devflix.constant.MemberStatus;
 import com.devflix.constant.RoleType;
-import com.devflix.domain.JoinUsDomain;
 import com.devflix.entity.Member;
 import com.devflix.entity.MemberConfirm;
 import com.devflix.repository.MemberConfirmRepository;
@@ -32,24 +31,24 @@ public class MemberService implements UserDetailsService {
     private final JavaMailUtil javaMailUtil;
 
     @Transactional
-    public Member createMemberAndDeleteMemberConfirm(final JoinUsDomain domain) {
-        final Member user = memberRepository.findByEmail(domain.getEmail());
+    public Member createMemberAndDeleteMemberConfirm(final String email, final String password, final String username) {
+        final Member user = memberRepository.findByEmail(email);
 
         if (user != null) {
             return null;
         }
 
         Member joinUser = Member.builder()
-                .email(domain.getEmail())
+                .email(email)
                 .status(MemberStatus.ACTIVE)
-                .password(passwordEncoder.encode(domain.getPassword()))
-                .username(domain.getUsername())
+                .password(passwordEncoder.encode(password))
+                .username(username)
                 .authority(ImmutableList.of(RoleType.USER))
                 .createAt(new Date())
                 .updateAt(new Date())
                 .build();
 
-        final MemberConfirm confirm = memberConfirmRepository.findByEmailEquals(domain.getEmail());
+        final MemberConfirm confirm = memberConfirmRepository.findByEmailEquals(email);
 
         if (confirm != null) {
             memberConfirmRepository.delete(confirm);
