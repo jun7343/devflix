@@ -133,11 +133,9 @@ public class APIController {
             if (deleteFile.delete()) {
                 return ImmutableMap.of("result", true);
             } else {
-                System.out.println("false!!");
                 return ImmutableMap.of("result", false);
             }
         } else {
-            System.out.println("what!?");
             return ImmutableMap.of("result", false);
         }
     }
