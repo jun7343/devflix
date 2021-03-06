@@ -1,167 +1,182 @@
 $(function () {
-  const API_SEARCH_URL = '/a/search';
-  const API_IMAGE_UPLOAD_URL = '/a/image-upload';
-  const API_IMAGE_DELETE_URL = '/a/image-delete';
-  const POST_TYPE = 'POST';
-  const MATCH_URL = '{{url}}';
-  const MATCH_THUMBNAIL = '{{thumbnail}}';
-  const MATCH_TITLE = '{{title}}';
-  const MATCH_UPLOAD_AT = '{{uploadAt}}';
-  const MATCH_CATEGORY = '{{category}}';
-  const MATCH_POST_TYPE = '{{postType}}';
-  const $SEARCH_LIST_DROPDOWN = $('#search-dropdown');
-  const $SEARCH_LIST = $('#search-list');
-  const $SEARCH_RESULT_LIST = $('#result-list');
-  const $EDITOR_CONTAINER = $('#content');
-  const $PATH_BASE = $('#path-base');
-  const MATCH_FOR_PERFECT_SEARCH = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
-  const SEARCH_LIST_TEMPLATE = '<li class="list-group-item"><a href="#" class="item-link" data-url="{{url}}" data-thumbnail="{{thumbnail}}" data-upload-at="{{uploadAt}}" data-category="{{category}}" data-post-type="{{postType}}" data-title="{{title}}"><span class="item-category">{{category}}-{{postType}}</span><span class="item-title">{{title}}</span></a></li>';
-  const SEARCH_RESULT_ITEM_TEMPLATE = '<div class="card col-md-12 bg-light result-item"><div class="row g-0"><div class="col-md-4 result-item-img-div"><img src="{{thumbnail}}" class="result-item-img"></div><div class="col-md-8"><div class="card-body"><button type="button" class="result-item-close btn btn-danger btn-sm">X</button><h5 class="card-title">{{category}} - {{postType}}</h5><p class="card-text">{{title}}</p><p class="card-text"><small class="text-muted">{{uploadAt}}</small></p><input type="hidden" name="post-url" value="{{url}}"></div></div></div></div>';
+    const API_SEARCH_URL = '/a/search';
+    const API_IMAGE_UPLOAD_URL = '/a/image-upload';
+    const API_IMAGE_DELETE_URL = '/a/image-delete';
+    const POST_TYPE = 'POST';
+    const MATCH_URL = '{{url}}';
+    const MATCH_THUMBNAIL = '{{thumbnail}}';
+    const MATCH_TITLE = '{{title}}';
+    const MATCH_UPLOAD_AT = '{{uploadAt}}';
+    const MATCH_CATEGORY = '{{category}}';
+    const MATCH_POST_TYPE = '{{postType}}';
+    const $SEARCH_LIST_DROPDOWN = $('#search-dropdown');
+    const $SEARCH_LIST = $('#search-list');
+    const $SEARCH_RESULT_LIST = $('#result-list');
+    const $EDITOR_CONTAINER = $('#content');
+    const $PATH_BASE = $('#path-base');
+    const MATCH_FOR_PERFECT_SEARCH = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
+    const SEARCH_LIST_TEMPLATE = '<li class="list-group-item"><a href="#" class="item-link" data-url="{{url}}" data-thumbnail="{{thumbnail}}" data-upload-at="{{uploadAt}}" data-category="{{category}}" data-post-type="{{postType}}" data-title="{{title}}"><span class="item-category">{{category}}-{{postType}}</span><span class="item-title">{{title}}</span></a></li>';
+    const SEARCH_RESULT_ITEM_TEMPLATE = '<div class="card col-md-12 bg-light result-item"><div class="row g-0"><div class="col-md-4 result-item-img-div"><img src="{{thumbnail}}" class="result-item-img"></div><div class="col-md-8"><div class="card-body"><button type="button" class="result-item-close btn btn-danger btn-sm">X</button><h5 class="card-title">{{category}} - {{postType}}</h5><p class="card-text">{{title}}</p><p class="card-text"><small class="text-muted">{{uploadAt}}</small></p><input type="hidden" name="post-url" value="{{url}}"></div></div></div></div>';
 
-  $EDITOR_CONTAINER.summernote({
-    lang: 'ko-KR',
-    height: 500,
-    toolbar: [
-      ['style', ['style']],
-      ['font', ['bold', 'underline', 'clear']],
-      ['color', ['color']],
-      ['para', ['ul', 'ol', 'paragraph']],
-      ['table', ['table']],
-      ['insert', ['link', 'picture', 'video']],
-      ['view', ['fullscreen', 'codeview', 'help']]
-    ],
-    callbacks: {
-      onImageUpload: function (files, editor, welEditable) {
-        uploadImage(files, $PATH_BASE.val());
-      },
-      onMediaDelete: function (files, editor, welEditable) {
-        deleteImage($PATH_BASE.val(), files[0].id);
-      }
-    }
-  });
-
-  function uploadImage(files, pathBase) {
-    const data = new FormData();
-
-    for (const file of files) {
-      data.append('images', file);
-    }
-
-    data.append('path-base', pathBase);
-
-    $.ajax({
-      url: API_IMAGE_UPLOAD_URL,
-      type: POST_TYPE,
-      data: data,
-      contentType: false,
-      cache: false,
-      processData: false,
-      success: function (data) {
-        if (data.result) {
-          if ($PATH_BASE.val() === '' || $PATH_BASE.val() === undefined) {
-            $PATH_BASE.val(data.result[0].pathBase);
-          }
-
-          for (const item of data.result) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'images';
-            input.value = item.imageName;
-            $EDITOR_CONTAINER.append(input);
-
-            $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', item.imageURL).attr('id', item.imageName)[0]);
-          }
-        }
-      }
-    })
-  }
-
-  function deleteImage(pathBase, imageName) {
-    $.ajax({
-      url: API_IMAGE_DELETE_URL,
-      type: POST_TYPE,
-      data: {'pathBase': pathBase, 'imageName': imageName},
-      success: function (data) {
-      }
-    })
-  }
-
-  $(document).on('click', '.result-item-close', function () {
-    $(this).parent().parent().parent().parent().remove();
-
-    if ($SEARCH_RESULT_LIST.children().length <= 1) {
-      $SEARCH_RESULT_LIST.css('display', 'none');
-    } else {
-      if ($('.alert-danger').css('display') === 'block') {
-        $('.alert-danger').css('display', 'none');
-      }
-    }
-  });
-
-  $(document).on('click', '.item-link', function (e) {
-    e.preventDefault();
-    $SEARCH_LIST_DROPDOWN.css('display', 'none');
-    $SEARCH_RESULT_LIST.css('display', 'block');
-
-    if ($SEARCH_RESULT_LIST.children().length < 6) {
-      const TEMPLATE = SEARCH_RESULT_ITEM_TEMPLATE.replaceAll(MATCH_URL, $(this).data('url'))
-          .replaceAll(MATCH_TITLE, $(this).data('title'))
-          .replaceAll(MATCH_UPLOAD_AT, $(this).data('uploadAt'))
-          .replaceAll(MATCH_THUMBNAIL, $(this).data('thumbnail'))
-          .replaceAll(MATCH_CATEGORY, $(this).data('category'))
-          .replaceAll(MATCH_POST_TYPE, $(this).data('postType'));
-
-      $SEARCH_RESULT_LIST.append($(TEMPLATE));
-    } else {
-      $('.alert-danger').css('display', 'block');
-    }
-  });
-
-  $('#dev-search').on('click', function () {
-    $SEARCH_LIST_DROPDOWN.css('display', 'block');
-  });
-
-  $('#dev-search').on('keyup', function () {
-    const CONTENT = $('#dev-search').val();
-
-    if (CONTENT.length > 0) {
-      $SEARCH_LIST_DROPDOWN.css('display', 'block');
-      if (! MATCH_FOR_PERFECT_SEARCH.test(CONTENT) && CONTENT.charAt(CONTENT.length - 1) !== ' ' && CONTENT.length > 0) {
-        $.ajax({
-          url: API_SEARCH_URL,
-          type: POST_TYPE,
-          data: {'content': CONTENT},
-          success: function (data) {
-            $SEARCH_LIST.empty();
-            if (data.result) {
-              if (data.data.length > 0) {
-                for (const item of data.data) {
-                  const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, item.url)
-                      .replaceAll(MATCH_CATEGORY, item.category)
-                      .replaceAll(MATCH_POST_TYPE, item.postType)
-                      .replace(MATCH_TITLE, item.title)
-                      .replaceAll(MATCH_TITLE, item.title.replace(CONTENT, '<mark>' + CONTENT + '</mark>'))
-                      .replaceAll(MATCH_THUMBNAIL, item.thumbnail)
-                      .replaceAll(MATCH_UPLOAD_AT, item.uploadAt.replaceAll('/', '.'));
-
-                  $SEARCH_LIST.append($(ITEM_TEMPLATE));
-                }
-              } else {
-                const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, '')
-                    .replaceAll(MATCH_CATEGORY, '')
-                    .replaceAll(MATCH_POST_TYPE, '')
-                    .replaceAll(MATCH_TITLE, 'No search results ...')
-                    .replaceAll(MATCH_THUMBNAIL, '')
-                    .replaceAll(MATCH_UPLOAD_AT, '');
-
-                $SEARCH_LIST.append($(ITEM_TEMPLATE));
-              }
+    $EDITOR_CONTAINER.summernote({
+        lang: 'ko-KR',
+        height: 500,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        callbacks: {
+            onImageUpload: function (files, editor, welEditable) {
+                uploadImage(files, $PATH_BASE.val());
+            },
+            onMediaDelete: function (files, editor, welEditable) {
+                deleteImage($PATH_BASE.val(), files[0].id);
             }
-          }
-        });
-      }
-    } else {
-      $SEARCH_LIST_DROPDOWN.css('display', 'none');
+        }
+    });
+
+    function uploadImage(files, pathBase) {
+        const data = new FormData();
+
+        for (const file of files) {
+            data.append('images', file);
+        }
+
+        data.append('path-base', pathBase);
+
+        $.ajax({
+            url: API_IMAGE_UPLOAD_URL,
+            type: POST_TYPE,
+            data: data,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (data) {
+                if (data.result) {
+                    if ($PATH_BASE.val() === '' || $PATH_BASE.val() === undefined) {
+                        $PATH_BASE.val(data.result[0].pathBase);
+                    }
+
+                    for (const item of data.result) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'images';
+                        input.value = item.imageName;
+                        $EDITOR_CONTAINER.append(input);
+
+                        $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', item.imageURL).attr('id', item.imageName)[0]);
+                    }
+                }
+            }
+        })
     }
-  });
+
+    function deleteImage(pathBase, imageName) {
+        $.ajax({
+            url: API_IMAGE_DELETE_URL,
+            type: POST_TYPE,
+            data: { 'pathBase': pathBase, 'imageName': imageName },
+            success: function (data) {
+            }
+        })
+    }
+
+    $('#postForm').validate({
+        rules: {
+            'title': {
+                required: true,
+                maxLength: 2000
+            }
+        },
+        messages: {
+            'title': {
+                required: '제목 기입해 주세요.',
+                maxLength: '최대 2000자 까지 입력해 주세요.'
+            }
+        }
+    })
+
+    $(document).on('click', '.result-item-close', function () {
+        $(this).parent().parent().parent().parent().remove();
+
+        if ($SEARCH_RESULT_LIST.children().length <= 1) {
+            $SEARCH_RESULT_LIST.css('display', 'none');
+        } else {
+            if ($('.alert-danger').css('display') === 'block') {
+                $('.alert-danger').css('display', 'none');
+            }
+        }
+    });
+
+    $(document).on('click', '.item-link', function (e) {
+        e.preventDefault();
+        $SEARCH_LIST_DROPDOWN.css('display', 'none');
+        $SEARCH_RESULT_LIST.css('display', 'block');
+
+        if ($SEARCH_RESULT_LIST.children().length < 6) {
+            const TEMPLATE = SEARCH_RESULT_ITEM_TEMPLATE.replaceAll(MATCH_URL, $(this).data('url'))
+                .replaceAll(MATCH_TITLE, $(this).data('title'))
+                .replaceAll(MATCH_UPLOAD_AT, $(this).data('uploadAt'))
+                .replaceAll(MATCH_THUMBNAIL, $(this).data('thumbnail'))
+                .replaceAll(MATCH_CATEGORY, $(this).data('category'))
+                .replaceAll(MATCH_POST_TYPE, $(this).data('postType'));
+
+            $SEARCH_RESULT_LIST.append($(TEMPLATE));
+        } else {
+            $('.alert-danger').css('display', 'block');
+        }
+    });
+
+    $('#dev-search').on('click', function () {
+        $SEARCH_LIST_DROPDOWN.css('display', 'block');
+    });
+
+    $('#dev-search').on('keyup', function () {
+        const CONTENT = $('#dev-search').val();
+
+        if (CONTENT.length > 0) {
+            $SEARCH_LIST_DROPDOWN.css('display', 'block');
+            if (!MATCH_FOR_PERFECT_SEARCH.test(CONTENT) && CONTENT.charAt(CONTENT.length - 1) !== ' ' && CONTENT.length > 0) {
+                $.ajax({
+                    url: API_SEARCH_URL,
+                    type: POST_TYPE,
+                    data: { 'content': CONTENT },
+                    success: function (data) {
+                        $SEARCH_LIST.empty();
+                        if (data.result) {
+                            if (data.data.length > 0) {
+                                for (const item of data.data) {
+                                    const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, item.url)
+                                        .replaceAll(MATCH_CATEGORY, item.category)
+                                        .replaceAll(MATCH_POST_TYPE, item.postType)
+                                        .replace(MATCH_TITLE, item.title)
+                                        .replaceAll(MATCH_TITLE, item.title.replace(CONTENT, '<mark>' + CONTENT + '</mark>'))
+                                        .replaceAll(MATCH_THUMBNAIL, item.thumbnail)
+                                        .replaceAll(MATCH_UPLOAD_AT, item.uploadAt.replaceAll('/', '.'));
+
+                                    $SEARCH_LIST.append($(ITEM_TEMPLATE));
+                                }
+                            } else {
+                                const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, '')
+                                    .replaceAll(MATCH_CATEGORY, '')
+                                    .replaceAll(MATCH_POST_TYPE, '')
+                                    .replaceAll(MATCH_TITLE, 'No search results ...')
+                                    .replaceAll(MATCH_THUMBNAIL, '')
+                                    .replaceAll(MATCH_UPLOAD_AT, '');
+
+                                $SEARCH_LIST.append($(ITEM_TEMPLATE));
+                            }
+                        }
+                    }
+                });
+            }
+        } else {
+            $SEARCH_LIST_DROPDOWN.css('display', 'none');
+        }
+    });
 })
