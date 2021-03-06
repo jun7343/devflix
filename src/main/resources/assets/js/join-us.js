@@ -1,4 +1,9 @@
 $(function () {
+    const CODE_CONFIRM_URL = '/login/join-us/code-authentication';
+    const EMAIL_CONFIRM_URL = '/login/join-us/email-authentication';
+    const ALL_CONFIRM_URL = '/login/join-us/all-confirm';
+    const POST_TYPE = 'POST';
+
     $('#join-us-form').validate({
         rules: {
             'email': {
@@ -47,24 +52,9 @@ $(function () {
             }
         },
         submitHandler: function (){
-            const EMAIL = $('input[name=email]').val();
-            const CODE = $('input[name=code]').val();
-            const ALL_CONFIRM_URL = '/login/join-us/all-confirm';
-            const TYPE = 'POST';
-            const DATA = {'email' : EMAIL, 'code' : CODE};
-            let result = false;
+            alert('가입이 완료 되었습니다.');
 
-            $.ajax({
-                url: ALL_CONFIRM_URL,
-                type: TYPE,
-                data: DATA,
-                success: function (data) {
-                    alert(data.msg);
-                    result = data.result;
-                }
-            })
-
-            return result;
+            return true;
         }
     });
 
@@ -83,14 +73,10 @@ $(function () {
             return;
         }
 
-        const EMAIL_CONFIRM_URL = '/login/join-us/email-authentication';
-        const TYPE = 'POST';
-        const DATA = {'email' : EMAIL};
-
         $.ajax({
             url: EMAIL_CONFIRM_URL,
-            type: TYPE,
-            data: DATA,
+            type: POST_TYPE,
+            data: {'email' : EMAIL},
             success: function (data) {
                 const ALERT_MESSAGE = data.msg;
 
@@ -115,14 +101,10 @@ $(function () {
             return;
         }
 
-        const CODE_CONFIRM_URL = '/login/join-us/code-authentication';
-        const TYPE = 'POST';
-        const DATA = {'email' : EMAIL, 'code' : CODE};
-
         $.ajax({
             url: CODE_CONFIRM_URL,
-            type: TYPE,
-            data: DATA,
+            type: POST_TYPE,
+            data: {'email' : EMAIL, 'code' : CODE},
             success: function (data) {
                 const ALERT_MESSAGE = data.msg;
 

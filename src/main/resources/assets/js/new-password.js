@@ -18,6 +18,11 @@ $(function () {
                 required: '패스워드 확인 기입해 주세요.',
                 equalTo: '패스워드와 똑같이 기입해 주세요.'
             }
+        },
+        submitHandler: function (){
+            alert('비밀번호가 성공적으로 변경 되었습니다.');
+
+            return true;
         }
     });
 
