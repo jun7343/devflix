@@ -1,6 +1,8 @@
 package com.devflix.utils;
 
 import com.devflix.entity.MemberConfirm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +19,10 @@ public class JavaMailUtil {
     private final String SMTP_EMAIL = "jkl7343@gmail.com";
     private final String SMTP_PASSWORD = "cxbcvziegeotkxqj";
     private final String MESSAGE_TYPE = "text/html;charset=euc-kr";
+    private final Logger logger = LoggerFactory.getLogger(JavaMailUtil.class);
 
     private void sendMail(final String title, final String content, final String to) {
+        logger.info("Java Mail send to " + to + " .... ");
         try {
             final MimeMessage msg = new MimeMessage(getSession());
 
@@ -29,8 +33,10 @@ public class JavaMailUtil {
 
             Transport.send(msg);
         } catch (MessagingException e) {
+            logger.error("Java Mail MessagingException error !! " + e.getMessage());
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
+            logger.error("Java Mail UnsupportedEncodingException error !! " + e.getMessage());
             e.printStackTrace();
         }
     }
