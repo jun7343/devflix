@@ -15,7 +15,7 @@ $(function () {
   const $PATH_BASE = $('input[name=path-base]');
   const MATCH_FOR_PERFECT_SEARCH = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
   const SEARCH_LIST_TEMPLATE = '<li class="list-group-item"><a href="#" class="item-link" data-url="{{url}}" data-thumbnail="{{thumbnail}}" data-upload-at="{{uploadAt}}" data-category="{{category}}" data-post-type="{{postType}}" data-title="{{title}}"><span class="item-category">{{category}}-{{postType}}</span><span class="item-title">{{title}}</span></a></li>';
-  const SEARCH_RESULT_ITEM_TEMPLATE = '<div class="card col-md-12 bg-light result-item"><div class="row g-0"><div class="col-md-4 result-item-img-div"><img src="{{thumbnail}}" class="result-item-img"></div><div class="col-md-8"><div class="card-body"><button type="button" class="result-item-close btn btn-danger btn-sm">X</button><h5 class="card-title">{{category}} - {{postType}}</h5><p class="card-text">{{title}}</p><p class="card-text"><small class="text-muted">{{uploadAt}}</small></p><input type="hidden" name="post-list" value="{{url}}"></div></div></div></div>';
+  const SEARCH_RESULT_ITEM_TEMPLATE = '<div class="card col-md-12 bg-light result-item"><div class="row g-0"><div class="col-md-4 result-item-img-div"><img src="{{thumbnail}}" class="result-item-img"></div><div class="col-md-8"><div class="card-body"><button type="button" class="result-item-close btn btn-danger btn-sm">X</button><h5 class="card-title">{{category}} - {{postType}}</h5><p class="card-text">{{title}}</p><p class="card-text"><small class="text-muted">{{uploadAt}}</small></p><input type="hidden" name="post-url" value="{{url}}"></div></div></div></div>';
 
   $EDITOR_CONTAINER.summernote({
     lang: 'ko-KR',
@@ -31,15 +31,18 @@ $(function () {
     ],
     callbacks: {
       onImageUpload: function (files, editor, welEditable) {
-        uploadImage(files[0], $PATH_BASE.val());
+        uploadImage(files, $PATH_BASE.val());
       }
     }
   });
 
-  function uploadImage(file, pathBase) {
+  function uploadImage(files, pathBase) {
     const data = new FormData();
 
-    data.append('image', file);
+    for (const file of files) {
+      data.append('images', file);
+    }
+
     data.append('path-base', pathBase);
 
     $.ajax({
@@ -50,18 +53,22 @@ $(function () {
       cache: false,
       processData: false,
       success: function (data) {
-        if (data.success) {
+        console.log('aaaaa');
+        if (data.result) {
+          console.log('bbbbb');
           if ($PATH_BASE.val() === '' || $PATH_BASE.val() === undefined) {
             $PATH_BASE.val(data.result.pathBase);
           }
 
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'images';
-          input.value = data.result.imageName;
-          $EDITOR_CONTAINER.append(input);
+          for (const item of data.result) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'images';
+            input.value = item.imageName;
+            $EDITOR_CONTAINER.append(input);
 
-          $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', data.result.imageURL)[0]);
+            $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', item.imageURL)[0]);
+          }
         }
       }
     })
