@@ -1,13 +1,11 @@
 package com.devflix.controller;
 
 import com.devflix.entity.DevPost;
-import com.devflix.entity.Member;
 import com.devflix.service.DevPostService;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,8 +25,6 @@ public class APIController {
     private final DevPostService devPostService;
     private final String IMAGE_ROOT_DIR_PATH;
     private final String SEARVER_ADDRESS;
-    private final String SUCCESS = "success";
-    private final String RESULT = "result";
 
     public APIController(DevPostService devPostService, Environment environment) {
         this.devPostService = devPostService;
@@ -94,39 +90,41 @@ public class APIController {
 
     @RequestMapping(path = "/a/image-upload", method = RequestMethod.POST)
     @ResponseBody
-    public ImmutableMap<String, Object> actionImageUpload(@RequestParam(name = "image")MultipartFile image,
-                                                          @RequestParam(name = "path-base", required = false)String pathBase,
-                                                          @AuthenticationPrincipal Member member) {
-        if (StringUtils.equals(image.getContentType(), MediaType.IMAGE_GIF_VALUE) || StringUtils.equals(image.getContentType(), MediaType.IMAGE_JPEG_VALUE) ||
-        StringUtils.equals(image.getContentType(), MediaType.IMAGE_PNG_VALUE)) {
-            StringBuilder imageName = new StringBuilder();
-
-            if (StringUtils.isBlank(pathBase)) {
-                pathBase = getPathBase();
-            }
-
-            imageName.append(System.currentTimeMillis()).append(".").append(Objects.requireNonNull(image.getContentType()).split("/")[1]);
-
-            try {
-                File file = new File(IMAGE_ROOT_DIR_PATH + pathBase + imageName.toString());
-                image.transferTo(Paths.get(file.getPath()));
-
-                ImmutableMap<String, Object> map = ImmutableMap.<String, Object>builder()
-                        .put("pathBase", pathBase)
-                        .put("imageName", imageName.toString())
-                        .put("imageOriginName", image.getOriginalFilename())
-                        .put("imageURL", SEARVER_ADDRESS + "images/" + pathBase + imageName.toString())
-                        .build();
-
-                return ImmutableMap.of(SUCCESS, true, RESULT, map);
-            } catch (IOException e) {
-                e.printStackTrace();
-
-                return ImmutableMap.of(SUCCESS, false, RESULT, e.getMessage());
-            }
-        } else {
-            return ImmutableMap.of(SUCCESS, false, RESULT, "image type error !!");
+    public ImmutableMap<String, Object> actionImageUpload(@RequestParam(name = "images")MultipartFile[] images,
+                                                          @RequestParam(name = "path-base", required = false)String pathBase) {
+        if (StringUtils.isBlank(pathBase)) {
+            pathBase = getPathBase();
         }
+
+        List<Object> list = new LinkedList<>();
+        list.add(ImmutableMap.of("pathBase", pathBase));
+
+        for (MultipartFile img : images) {
+            if (StringUtils.equals(img.getContentType(), MediaType.IMAGE_GIF_VALUE) || StringUtils.equals(img.getContentType(), MediaType.IMAGE_JPEG_VALUE) ||
+                    StringUtils.equals(img.getContentType(), MediaType.IMAGE_PNG_VALUE)) {
+                StringBuilder imageName = new StringBuilder();
+
+                imageName.append(System.currentTimeMillis()).append(".").append(Objects.requireNonNull(img.getContentType()).split("/")[1]);
+
+                try {
+                    File file = new File(IMAGE_ROOT_DIR_PATH + pathBase + imageName.toString());
+                    img.transferTo(Paths.get(file.getPath()));
+
+                    ImmutableMap<String, Object> map = ImmutableMap.<String, Object>builder()
+                            .put("pathBase", pathBase)
+                            .put("imageName", imageName.toString())
+                            .put("imageOriginName", img.getOriginalFilename())
+                            .put("imageURL", SEARVER_ADDRESS + "images/" + pathBase + imageName.toString())
+                            .build();
+
+                    list.add(map);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return ImmutableMap.of("result", list);
     }
 
     private String getPathBase() {
