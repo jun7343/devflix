@@ -40,7 +40,7 @@ public class YoutubeCrawler implements Crawler {
     // youtube channel id for search, channel parameter
     private final String ID = "id";
     // youtube channel name for search, channer parameter
-    private final String FOR_URSE_NAME = "forUserName";
+    private final String FOR_URSE_NAME = "forUsername";
     // next page or previous page token for search, channel parameter
     private final String PAGE_TOKEN = "pageToken";
     // result size(default 5) for search, channel parameter
@@ -273,14 +273,13 @@ public class YoutubeCrawler implements Crawler {
         }
     }
 
-    public void targetCrawling(final String channelId, final String category) {
-        YoutubeChannel findChannel = youtubeChannelService.getByChannelId(channelId);
-
-        if (findChannel == null) {
-            findChannel = saveChannelInfoByChannelId(channelId, category);
+    public void targetCrawling(final YoutubeChannel channel) {
+        if (channel == null) {
+            logger.error("Youtube channel object is null!!");
+            return;
         }
 
-        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(findChannel.getCategory(), PostType.YOUTUBE, findChannel.getChannelTitle());
+        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(channel.getCategory(), PostType.YOUTUBE, channel.getChannelTitle());
         int totalCrawling = 0;
         boolean success = false;
         String message = "";
@@ -293,10 +292,10 @@ public class YoutubeCrawler implements Crawler {
                 .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
                 .queryParam(ORDER, "date")
                 .queryParam(TYPE, "video")
-                .queryParam(CHANNEL_ID, findChannel.getChannelId())
+                .queryParam(CHANNEL_ID, channel.getChannelId())
                 .build();
 
-        logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling start ...");
+        logger.info("Youtube " + channel.getChannelTitle() + " video crawling start ...");
         startAt = System.currentTimeMillis();
         try {
             URL url = build.toUri().toURL();
@@ -324,7 +323,7 @@ public class YoutubeCrawler implements Crawler {
                 try {
                     publishDate = youtubeDateFormat.parse(publishedAt.asText());
                 } catch (ParseException e) {
-                    logger.error("Youtube " + findChannel.getChannelTitle() + " video publish date parsing error !! " + e.getMessage());
+                    logger.error("Youtube " + channel.getChannelTitle() + " video publish date parsing error !! " + e.getMessage());
                 }
 
                 if (recentlyDevPost != null) {
@@ -335,7 +334,7 @@ public class YoutubeCrawler implements Crawler {
                 }
 
                 DevPost post = DevPost.builder()
-                        .category(findChannel.getCategory())
+                        .category(channel.getCategory())
                         .postType(PostType.YOUTUBE)
                         .title(title.asText())
                         .description(description.asText().replaceAll("\\R", ""))
@@ -351,7 +350,7 @@ public class YoutubeCrawler implements Crawler {
                         .build();
 
                 DevPost createPost = devPostService.createDevPost(post);
-                logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling success !! post = " + createPost.toString());
+                logger.info("Youtube " + channel.getChannelTitle() + " video crawling success !! post = " + createPost.toString());
                 totalCrawling++;
             }
 
@@ -375,7 +374,7 @@ public class YoutubeCrawler implements Crawler {
                             .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
                             .queryParam(ORDER, "date")
                             .queryParam(TYPE, "video")
-                            .queryParam(CHANNEL_ID, findChannel.getChannelId())
+                            .queryParam(CHANNEL_ID, channel.getChannelId())
                             .queryParam(PAGE_TOKEN, nextPageToken.asText())
                             .build();
 
@@ -404,7 +403,7 @@ public class YoutubeCrawler implements Crawler {
                         try {
                             publishDate = youtubeDateFormat.parse(publishedAt.asText());
                         } catch (ParseException e) {
-                            logger.error("Youtube " + findChannel.getChannelTitle() + "  video publish date parsing error !! " + e.getMessage());
+                            logger.error("Youtube " + channel.getChannelTitle() + "  video publish date parsing error !! " + e.getMessage());
                         }
 
                         if (recentlyDevPost != null) {
@@ -417,7 +416,7 @@ public class YoutubeCrawler implements Crawler {
                         }
 
                         DevPost post = DevPost.builder()
-                                .category(findChannel.getCategory())
+                                .category(channel.getCategory())
                                 .postType(PostType.YOUTUBE)
                                 .title(title.asText())
                                 .description(description.asText().replaceAll("\\R", ""))
@@ -433,39 +432,39 @@ public class YoutubeCrawler implements Crawler {
                                 .build();
 
                         DevPost createPost = devPostService.createDevPost(post);
-                        logger.info("Youtube " + findChannel.getChannelTitle() + " video save success !! post = " + createPost.toString());
+                        logger.info("Youtube " + channel.getChannelTitle() + " video save success !! post = " + createPost.toString());
                         totalCrawling++;
                     }
 
                     if (result1.has("nextPageToken") && ! success && result1.get("pageInfo").get("resultsPerPage").asInt() == DEFAULT_MAX_RESULT_SIZE) {
                         nextPageToken = result1.get("nextPageToken");
                     } else {
-                        logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
-                        message = "Youtube " + findChannel.getChannelTitle() + " video crawling done !!";
+                        logger.info("Youtube " + channel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
+                        message = "Youtube " + channel.getChannelTitle() + " video crawling done !!";
                         success = true;
                         break;
                     }
                 }
             } else {
-                logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
-                message = "Youtube " + findChannel.getChannelTitle() + " video crawling done !!";
+                logger.info("Youtube " + channel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
+                message = "Youtube " + channel.getChannelTitle() + " video crawling done !!";
                 success = true;
             }
         } catch (MalformedURLException e) {
-            logger.error("Youtube " + findChannel.getChannelTitle() + " video URL connetion error !! " + e.getMessage());
-            message = "Youtube " + findChannel.getChannelTitle() + " video URL connection error !!";
+            logger.error("Youtube " + channel.getChannelTitle() + " video URL connetion error !! " + e.getMessage());
+            message = "Youtube " + channel.getChannelTitle() + " video URL connection error !!";
             success = false;
         } catch (IOException e) {
-            logger.error("Youtube " + findChannel.getChannelTitle() + " video IO Exception error !! " + e.getMessage());
-            message = "Youtube " + findChannel.getChannelTitle() + " video IO Exception error !!";
+            logger.error("Youtube " + channel.getChannelTitle() + " video IO Exception error !! " + e.getMessage());
+            message = "Youtube " + channel.getChannelTitle() + " video IO Exception error !!";
             success = false;
         }
 
-        logger.info("Youtube " + findChannel.getChannelTitle() + " video crawling end ...");
+        logger.info("Youtube " + channel.getChannelTitle() + " video crawling end ...");
         endAt = System.currentTimeMillis();
 
         CrawlingLog log = CrawlingLog.builder()
-                .jobName("Youtube " + findChannel.getChannelTitle() + " video crawling")
+                .jobName("Youtube " + channel.getChannelTitle() + " video crawling")
                 .jobStartAt(startAt)
                 .jobEndAt(endAt)
                 .success(success)
