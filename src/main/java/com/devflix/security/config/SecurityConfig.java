@@ -51,12 +51,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/login");
                     dispatcher.forward(request, response);
                 })
-            .and()
+                .and()
                 .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .deleteCookies("JSESSIONID", "remember-me")
-            .and()
+                .and()
                 .csrf().disable();
     }
 
