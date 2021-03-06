@@ -29,8 +29,9 @@ public class Post {
     @ManyToOne(targetEntity = Member.class)
     private Member writer;
 
-    @OneToMany(targetEntity = PostDevPost.class)
-    private List<PostDevPost> postDevPostList;
+    @Column(name = "dev_post_url", columnDefinition = "varchar[]")
+    @Type(type = "list-array")
+    private List<String> devPostUrl;
 
     @Column
     private String title;
@@ -57,13 +58,13 @@ public class Post {
     private Date updateDate;
 
     @Builder
-    public Post(final Long id, final PostStatus status, final Member writer, List<PostDevPost> postDevPostList,
+    public Post(final Long id, final PostStatus status, final Member writer, List<String> devPostUrl,
                 final String title, final String content, final int views, final String pathBase,
                 List<String> images, final Date createDate, final Date updateDate) {
         this.id = id;
         this.status = status;
         this.writer = writer;
-        this.postDevPostList = postDevPostList;
+        this.devPostUrl = devPostUrl;
         this.title = title;
         this.content = content;
         this.views = views;
