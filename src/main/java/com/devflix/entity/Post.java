@@ -27,6 +27,7 @@ public class Post {
     private PostStatus status;
 
     @ManyToOne(targetEntity = Member.class)
+    @JoinColumn(name = "writer_id")
     private Member writer;
 
     @Column(name = "dev_post_url", columnDefinition = "varchar[]")
@@ -40,7 +41,7 @@ public class Post {
     private String content;
 
     @Column
-    private int views;
+    private int view;
 
     @Column(name = "path_base")
     private String pathBase;
@@ -51,26 +52,26 @@ public class Post {
 
     @Column(name = "create_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createDate;
+    private Date createAt;
 
     @Column(name = "update_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updateDate;
+    private Date updateAt;
 
     @Builder
     public Post(final Long id, final PostStatus status, final Member writer, List<String> devPostUrl,
-                final String title, final String content, final int views, final String pathBase,
-                List<String> images, final Date createDate, final Date updateDate) {
+                final String title, final String content, final int view, final String pathBase,
+                List<String> images, final Date createAt, final Date updateAt) {
         this.id = id;
         this.status = status;
         this.writer = writer;
         this.devPostUrl = devPostUrl;
         this.title = title;
         this.content = content;
-        this.views = views;
+        this.view = view;
         this.pathBase = pathBase;
         this.images = images;
-        this.createDate = createDate;
-        this.updateDate = updateDate;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
     }
 }
