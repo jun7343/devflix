@@ -52,8 +52,8 @@ public class HandlebarHelper {
         }
     }
 
-    public String df(final Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+    public String df(final Date date, final String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.ENGLISH);
 
         return dateFormat.format(date);
     }

@@ -15,7 +15,7 @@
 			  <div class="gradient"></div>
 			  <div class="content">
 				  <time datetime="{{banner.uploadAt}}" class="date">
-					  {{df banner.uploadAt}}
+					  {{df banner.uploadAt "MMM d, yyyy"}}
 				  </time>
 				  <h1 class="title">{{{textOverflow banner.title 50}}}</h1>
 				  <p class="description">{{{textOverflow banner.description 50}}}</p>
@@ -58,7 +58,7 @@
 					  </a>
 					  <div class="box-info">
 						  <time datetime="{{ uploadAt }}" class="date">
-							  {{df uploadAt}}
+							  {{df uploadAt "MMM d, yyyy"}}
 						  </time>
 						  <a class="post-link view-anchor" href="{{ url }}">
 							  <h2 class="post-title">
