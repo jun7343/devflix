@@ -92,13 +92,13 @@ $(function () {
         rules: {
             'title': {
                 required: true,
-                maxLength: 2000
+                maxlength: 2000
             }
         },
         messages: {
             'title': {
                 required: '제목 기입해 주세요.',
-                maxLength: '최대 2000자 까지 입력해 주세요.'
+                maxlength: '최대 2000자 까지 입력해 주세요.'
             }
         }
     })
@@ -165,7 +165,7 @@ $(function () {
                                             .replaceAll(MATCH_CATEGORY, item.category)
                                             .replaceAll(MATCH_POST_TYPE, item.postType)
                                             .replace(MATCH_TITLE, item.title)
-                                            .replaceAll(MATCH_TITLE, item.title.replace(CONTENT, '<mark>' + CONTENT + '</mark>'))
+                                            .replace(MATCH_TITLE, item.title.replaceAll(CONTENT, '<mark>' + CONTENT + '</mark>'))
                                             .replaceAll(MATCH_THUMBNAIL, item.thumbnail)
                                             .replaceAll(MATCH_UPLOAD_AT, item.uploadAt.replaceAll('/', '.'));
 
