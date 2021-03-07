@@ -2,7 +2,6 @@ package com.devflix.entity;
 
 import com.devflix.constant.MemberStatus;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -43,6 +42,31 @@ public class Member implements UserDetails {
     @Type(type = "list-array")
     @Column(nullable = false, columnDefinition = "varchar[]")
     private List<String> authority;
+
+    @Column(name = "path_base")
+    private String pathBasae;
+
+    @Column(name = "image_path", columnDefinition = "varchar[]")
+    @Type(type = "list-array")
+    private List<String> images;
+
+    @Column
+    private String description;
+
+    @Column
+    private String github;
+
+    @Column
+    private String facebook;
+
+    @Column
+    private String twiter;
+
+    @Column
+    private String instagram;
+
+    @Column(name = "linked_in")
+    private String linkedIn;
 
     @Column(name = "create_at", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -97,13 +121,23 @@ public class Member implements UserDetails {
 
     @Builder
     public Member(final Long id, final MemberStatus status, final String email, final String password, final String username,
-                  final List<String> authority, final Date createAt, final Date updateAt) {
+                  final List<String> authority, final String pathBasae, List<String> images, final String description,
+                  final String github, final String facebook, final String twiter, final String instagram,
+                  final String linkedIn, final Date createAt, final Date updateAt) {
         this.id = id;
         this.status = status;
         this.email = email;
         this.password = password;
         this.username = username;
         this.authority = authority;
+        this.pathBasae = pathBasae;
+        this.images = images;
+        this.description = description;
+        this.github = github;
+        this.facebook = facebook;
+        this.twiter = twiter;
+        this. instagram = instagram;
+        this.linkedIn = linkedIn;
         this.createAt = createAt;
         this.updateAt = updateAt;
     }
