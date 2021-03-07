@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +46,17 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    @Transactional
     public Page<Post> findAllByStatusAndPageRequest(PostStatus status, int page, int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("status"), status);
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+    }
+
+    @Transactional
+    public Optional<Post> findOneById(long id) {
+        return postRepository.findOne((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("id"), id);
+        });
     }
 }

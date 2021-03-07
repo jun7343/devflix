@@ -1,10 +1,13 @@
 package com.devflix.controller;
 
 import com.devflix.constant.PostStatus;
+import com.devflix.constant.PostType;
 import com.devflix.constant.RoleType;
 import com.devflix.dto.PostDto;
+import com.devflix.entity.DevPost;
 import com.devflix.entity.Member;
 import com.devflix.entity.Post;
+import com.devflix.service.DevPostService;
 import com.devflix.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,11 +32,14 @@ public class PostController {
 
     private final int DEFAULT_SIZE_VALUE = 20;
     private final PostService postService;
+    private final DevPostService devPostService;
 
     @RequestMapping(path = "/post", method = RequestMethod.GET)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
         Page<Post> findList = postService.findAllByStatusAndPageRequest(PostStatus.POST, page, DEFAULT_SIZE_VALUE);
         List<Integer> pageNumList = new ArrayList<>();
+
+        model.addAttribute("list", findList);
 
         if (findList.getNumber() / 5 != 0 && ((findList.getNumber() / 5) * 5 - 1) > 0) {
             model.addAttribute("previousPageNum", (findList.getNumber() / 5) * 5 - 1);
@@ -94,7 +101,24 @@ public class PostController {
 
     @RequestMapping(path = "/post/read/{id}", method = RequestMethod.GET)
     public String readForm(@PathVariable(name = "id")long id, Model model) {
+        Optional<Post> postItem = postService.findOneById(id);
 
-        return "/post/read";
+        if (postItem.isPresent()) {
+            Post post = postItem.get();
+
+            model.addAttribute("item", post);
+
+            if (post.getStatus() == PostStatus.POST) {
+                List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(post.getDevPostUrl(), PostStatus.POST);
+
+                model.addAttribute("devPostList", findDevPostList);
+            }
+
+            return "/post/read";
+        } else {
+            model.addAttribute("errorMessage", "해당 post가 없습니다.");
+
+            return "redirect:/post";
+        }
     }
 }

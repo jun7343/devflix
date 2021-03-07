@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -90,5 +92,20 @@ public class DevPostService {
         return devPostRepository.findAll((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("status"), post);
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
+    }
+
+    @Transactional
+    public List<DevPost> findAllByUrlAndStatus(List<String> urlList, PostStatus status) {
+        List<DevPost> findList = new ArrayList<>();
+
+        for (String url : urlList) {
+            Optional<DevPost> findOne = devPostRepository.findOne((root, query, criteriaBuilder) -> {
+                return criteriaBuilder.and(criteriaBuilder.equal(root.get("url"), url), criteriaBuilder.equal(root.get("status"), status));
+            });
+
+            findOne.ifPresent(findList::add);
+        }
+
+        return findList;
     }
 }
