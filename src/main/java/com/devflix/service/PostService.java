@@ -1,10 +1,14 @@
 package com.devflix.service;
 
+import com.devflix.constant.PostStatus;
 import com.devflix.dto.PostDto;
 import com.devflix.entity.Post;
 import com.devflix.repository.DevPostRepository;
 import com.devflix.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,23 +28,26 @@ public class PostService {
     }
 
     @Transactional
-    public Post get(long id) {
-        return postRepository.getOne(id);
-    }
-
-    @Transactional
     public Post createPost(PostDto dto) {
         Post post = Post.builder()
+                .status(dto.getStatus())
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .writer(dto.getWriter())
                 .pathBase(dto.getPathBase())
                 .devPostUrl(dto.getDevPostUrl())
                 .images(dto.getImages())
-                .createDate(new Date())
-                .updateDate(new Date())
+                .view(dto.getView())
+                .createAt(new Date())
+                .updateAt(new Date())
                 .build();
 
         return postRepository.save(post);
+    }
+
+    public Page<Post> findAllByStatusAndPageRequest(PostStatus status, int page, int size) {
+        return postRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("status"), status);
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 }
