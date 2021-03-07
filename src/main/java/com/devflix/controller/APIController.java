@@ -1,11 +1,13 @@
 package com.devflix.controller;
 
+import com.devflix.constant.RoleType;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -81,6 +83,7 @@ public class APIController {
         return ImmutableMap.of(RESULT, true, RESULT_DATA, dataList);
     }
 
+    @Secured(RoleType.USER)
     @RequestMapping(path = "/a/image-upload", method = RequestMethod.POST)
     @ResponseBody
     public ImmutableMap<String, Object> actionImageUpload(@RequestParam(name = "images")MultipartFile[] images,
@@ -119,6 +122,7 @@ public class APIController {
         return ImmutableMap.of("result", list);
     }
 
+    @Secured(RoleType.USER)
     @RequestMapping(path = "/a/image-delete", method = RequestMethod.POST)
     @ResponseBody
     public ImmutableMap<String, Object> actionImageDelete(@RequestParam(name = "pathBase", required = false)final String pathBase,
