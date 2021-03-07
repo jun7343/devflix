@@ -36,7 +36,7 @@ public class LineDevPostCrawler implements Crawler {
     private final String DEFAULT_LINE_THUMBNAIL = "https://engineering.linecorp.com/wp-content/uploads/2018/11/linedev_logo.jpg";
     private final CrawlingLogService crawlingLogService;
     private final Logger logger = LoggerFactory.getLogger(LineDevPostCrawler.class);
-    private final int DEFAULT_CRAWLING_MAX_PAGE = 10;
+    private final int DEFAULT_CRAWLING_MAX_PAGE = 3;
 
     @Override
     public void crawling() {

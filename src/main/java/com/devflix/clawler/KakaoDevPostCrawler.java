@@ -36,7 +36,7 @@ public class KakaoDevPostCrawler implements Crawler {
     private final SimpleDateFormat kakaoDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     private final CrawlingLogService crawlingLogService;
     private final Logger logger = LoggerFactory.getLogger(KakaoDevPostCrawler.class);
-    private final int DEFAULT_CRAWLING_MAX_PAGE = 10;
+    private final int DEFAULT_CRAWLING_MAX_PAGE = 3;
 
     @Override
     public void crawling() {
