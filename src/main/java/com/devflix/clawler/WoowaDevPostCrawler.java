@@ -181,6 +181,7 @@ public class WoowaDevPostCrawler implements Crawler {
                                     .uploadAt(date)
                                     .view(0)
                                     .writer(map.get("writer"))
+                                    .tag(new ArrayList<>())
                                     .createAt(new Date())
                                     .updateAt(new Date())
                                     .build();

@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -142,6 +143,7 @@ public class YoutubeCrawler implements Crawler {
                             .status(PostStatus.POST)
                             .view(0)
                             .uploadAt(publishDate)
+                            .tag(new ArrayList<>())
                             .createAt(new Date())
                             .updateAt(new Date())
                             .build();
@@ -222,6 +224,7 @@ public class YoutubeCrawler implements Crawler {
                                     .status(PostStatus.POST)
                                     .view(0)
                                     .uploadAt(publishDate)
+                                    .tag(new ArrayList<>())
                                     .createAt(new Date())
                                     .updateAt(new Date())
                                     .build();
@@ -361,6 +364,7 @@ public class YoutubeCrawler implements Crawler {
                         .status(PostStatus.POST)
                         .view(0)
                         .uploadAt(publishDate)
+                        .tag(new ArrayList<>())
                         .createAt(new Date())
                         .updateAt(new Date())
                         .build();
@@ -443,6 +447,7 @@ public class YoutubeCrawler implements Crawler {
                                 .status(PostStatus.POST)
                                 .view(0)
                                 .uploadAt(publishDate)
+                                .tag(new ArrayList<>())
                                 .createAt(new Date())
                                 .updateAt(new Date())
                                 .build();
@@ -567,6 +572,7 @@ public class YoutubeCrawler implements Crawler {
                             .description(description.asText().replaceAll("\\R", ""))
                             .thumbnail(thumbnailsHighUrl.asText())
                             .publishAt(publishDate)
+                            .crawlingAt(0)
                             .createAt(new Date())
                             .updateAt(new Date())
                             .build();
