@@ -2,7 +2,7 @@
   {{#*inline "content"}}
 	  <div class="col-md-12 empty-div">
 	  </div>
-	  <div class="col-md-12 d-flex justify-content-center">
+	  <div class="col-md-12 d-flex justify-content-center post-list-container">
 		  <div class="col-md-8">
 			  <h1>Post</h1>
 			  {{#if errorMessage}}
@@ -13,18 +13,18 @@
 			  <table class="table table-hover">
 				  <thead>
 				  <tr>
-					  <th scope="col" style="width: 65%">Title</th>
-					  <th scope="col" style="width: 20%">Writer</th>
-					  <th scope="col" style="width: 15%">Publish At</th>
+					  <th scope="col" class="list-title">Title</th>
+					  <th scope="col" class="list-writer">Writer</th>
+					  <th scope="col" class="list-publish-at">Publish At</th>
 				  </tr>
 				  </thead>
 				  <tbody>
 				  {{#if list}}
 				    {{#each list}}
 					  <tr>
-						  <td><a href="/post/read/{{id}}" class="post-list-title">{{{title}}}</a></td>
-						  <td>{{{writer.username}}}</td>
-						  <td>{{df createAt "yyyy.MM.dd"}}</td>
+						  <td class="item-title"><a href="/post/read/{{id}}" class="post-list-title">{{{title}}}</a></td>
+						  <td class="item-writer">{{{writer.username}}}</td>
+						  <td class="item-publish-at">{{df createAt "yyyy.MM.dd"}}</td>
 					  </tr>
 				    {{/each}}
 				  {{/if}}
