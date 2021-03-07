@@ -1,5 +1,6 @@
 package com.devflix.controller;
 
+import com.devflix.constant.PostStatus;
 import com.devflix.constant.RoleType;
 import com.devflix.entity.DevPost;
 import com.devflix.service.DevPostService;
@@ -63,7 +64,7 @@ public class APIController {
             return ImmutableMap.of(RESULT, false);
         }
 
-        List<DevPost> findAll = devPostService.findAllBySearchContent(content);
+        List<DevPost> findAll = devPostService.findAllBySearchContentAndStatus(content, PostStatus.POST);
         List<Map<String, String>> dataList = new LinkedList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 

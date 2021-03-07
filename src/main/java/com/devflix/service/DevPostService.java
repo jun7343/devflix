@@ -76,15 +76,16 @@ public class DevPostService {
     }
 
     @Transactional
-    public List<DevPost> findAllBySearchContent(final String content) {
+    public List<DevPost> findAllBySearchContentAndStatus(final String content, PostStatus status) {
         return devPostRepository.findAll((root, query, criteriaBuilder) -> {
             Order uploadAt = criteriaBuilder.desc(root.get("uploadAt"));
-            Predicate result = criteriaBuilder.like(root.get("title"), "%" + content + "%");
+            Predicate result = criteriaBuilder.and(criteriaBuilder.equal(root.get("status"), status), criteriaBuilder.like(root.get("title"), "%" + content + "%"));
 
             return query.where(result).orderBy(uploadAt).getRestriction();
         });
     }
 
+    @Transactional
     public Page<DevPost> findAllByStatusAndPageRequest(PostStatus post, int page, int size) {
         return devPostRepository.findAll((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("status"), post);
