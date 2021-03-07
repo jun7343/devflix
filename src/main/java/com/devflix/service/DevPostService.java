@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -73,11 +73,6 @@ public class DevPostService {
         } else {
             return null;
         }
-    }
-
-    @Transactional
-    public Page<DevPost> findAllByPageRequest(int page, int size) {
-        return devPostRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
     }
 
     @Transactional
