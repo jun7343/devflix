@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    {{>layout/include/head}}
+	  <title>{{{title}}} {{#notEq title 'Devflix'}}| Devflix{{/notEq}}</title>
+  </head>
+  <body class="{{#if background-black}}main-page {{/if}}has-push-menu">
+    {{>layout/include/svg-icons}}
+    {{>layout/include/header}}
+    {{>content}}
+    {{>layout/include/footer}}
+    {{>js}}
+  </body>
+</html>
