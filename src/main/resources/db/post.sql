@@ -6,7 +6,7 @@ create table post (
   content text,
   view int,
   dev_post_url varchar[],
-  path_base varchar(1000),
+  path_base varchar(500),
   image_path varchar[],
   create_at timestamp with time zone not null default now(),
   update_at timestamp with time zone not null default now(),
