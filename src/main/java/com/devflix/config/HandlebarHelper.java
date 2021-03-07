@@ -2,6 +2,7 @@ package com.devflix.config;
 
 import com.github.jknack.handlebars.Options;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import pl.allegro.tech.boot.autoconfigure.handlebars.HandlebarsHelper;
 
 import java.io.IOException;
@@ -60,5 +61,9 @@ public class HandlebarHelper {
 
     public int sub(int arg1, int arg2) {
         return arg1 - arg2;
+    }
+
+    public String unEscape(String arg) {
+        return StringEscapeUtils.unescapeHtml4(arg);
     }
 }
