@@ -15,6 +15,7 @@ import com.gargoylesoftware.htmlunit.javascript.DefaultJavaScriptErrorListener;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
@@ -24,10 +25,7 @@ import org.springframework.stereotype.Component;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +37,7 @@ public class NaverDevPostCrawler implements Crawler {
     private final String DEFAULT_NAVER_THUMBNAIL = "https://d2.naver.com/static/img/app/common/sns_share_big_img1.png";
     private final CrawlingLogService crawlingLogService;
     private final Logger logger = LoggerFactory.getLogger(NaverDevPostCrawler.class);
-    private final int DEFAULT_CRAWLING_MAX_PAGE = 9;
+    private final int DEFAULT_CRAWLING_MAX_PAGE = 3;
 
     @Override
     public void crawling() {
@@ -91,10 +89,8 @@ public class NaverDevPostCrawler implements Crawler {
 
                                     try {
                                         map.put("url", NAVER_BLOG_URL + elements.get(i).getElementsByTag("h2").get(0).getElementsByTag("a").get(0).attr("href"));
-                                        map.put("writer", "네이버");
                                     } catch (Exception e) {
                                         map.put("url", NAVER_BLOG_URL);
-                                        map.put("writer", "네이버");
 
                                         logger.error("Naver URL crawling error !! " + e.getMessage());
                                     }
@@ -164,6 +160,8 @@ public class NaverDevPostCrawler implements Crawler {
                                         }
                                     }
 
+                                    Map<String, Object> writerAndTag = getWriterAndTags(map.get("url"));
+
                                     DevPost post = DevPost.builder()
                                             .category("NAVER")
                                             .postType(PostType.BLOG)
@@ -172,7 +170,8 @@ public class NaverDevPostCrawler implements Crawler {
                                             .description(map.get("desc"))
                                             .url(map.get("url"))
                                             .thumbnail(map.get("thumbnail"))
-                                            .writer(map.get("writer"))
+                                            .writer(writerAndTag.get("writer") == null? "네이버" : String.valueOf(writerAndTag.get("writer")))
+                                            .tag(writerAndTag.get("tagList") == null? new ArrayList<>() : (List<String>) writerAndTag.get("tagList"))
                                             .view(0)
                                             .uploadAt(date)
                                             .createAt(new Date())
@@ -233,5 +232,57 @@ public class NaverDevPostCrawler implements Crawler {
                 .build();
 
         crawlingLogService.createCrawlingSchedulerLog(log);
+    }
+
+    private Map<String, Object> getWriterAndTags(final String url) {
+        Map<String, Object> map = new HashMap<>();
+
+        try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
+            webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
+            webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+            webClient.getOptions().setJavaScriptEnabled(true);
+            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+            webClient.waitForBackgroundJavaScript(3000);
+
+            List<String> tagList = new ArrayList<>();
+            StringBuilder writers = new StringBuilder();
+
+            HtmlPage page = webClient.getPage(new URL(url));
+
+            String s = page.getBody().asXml();
+
+            Document parse = Jsoup.parse(s);
+
+            Elements tagElement = parse.getElementsByClass("tag_list");
+            Elements wrterElement = parse.getElementsByClass("post_writer_info");
+
+            if (tagElement.size() > 0) {
+                Elements children = tagElement.get(0).children();
+
+                for (Element e : children) {
+                    tagList.add(e.text());
+                }
+            }
+
+            if (wrterElement.size() > 0) {
+                Elements children = wrterElement.get(0).children();
+
+                for (Element e : children) {
+                    Elements name = e.getElementsByClass("name");
+
+                    if (name.size() > 0) {
+                        writers.append(name.get(0).text()).append(",");
+                    }
+                }
+            }
+            
+            map.put("writer", writers.toString().length() > 0? writers.substring(0, writers.toString().length() - 1) : "네이버");
+            map.put("tagList", tagList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return map;
     }
 }
