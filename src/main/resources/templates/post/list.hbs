@@ -5,6 +5,11 @@
 	  <div class="col-md-12 d-flex justify-content-center">
 		  <div class="col-md-8">
 			  <h1>Post</h1>
+			  {{#if errorMessage}}
+				  <div class="alert alert-danger" role="alert">
+					  {{errorMessage}}
+				  </div>
+			  {{/if}}
 			  <table class="table table-hover">
 				  <thead>
 				  <tr>
@@ -14,26 +19,43 @@
 				  </tr>
 				  </thead>
 				  <tbody>
-				  <tr>
-					  <td>Mark</td>
-					  <td>Otto</td>
-					  <td>2020.01.02</td>
-				  </tr>
-				  <tr>
-					  <td>Thornton</td>
-					  <td>@fat</td>
-					  <td>2021/01/02</td>
-				  </tr>
-				  <tr>
-					  <td>@mdo</td>
-					  <td>@twitter</td>
-					  <td>2020-01-02</td>
-				  </tr>
+				  {{#if list}}
+				    {{#each list}}
+					  <tr>
+						  <td><a href="/post/read/{{id}}" class="post-list-title">{{{title}}}</a></td>
+						  <td>{{{writer.username}}}</td>
+						  <td>{{df createAt "yyyy.MM.dd"}}</td>
+					  </tr>
+				    {{/each}}
+				  {{/if}}
 				  </tbody>
 			  </table>
 			  <div class="d-flex justify-content-end button-box">
 				  <a href="/post/write" class="btn btn-primary">글쓰기</a>
 			  </div>
+			  <nav id="nav-pagination" aria-label="Page navigation">
+				  <ul class="pagination justify-content-center">
+					  {{#if previousPage}}
+						  <li class="page-item">
+							  <a class="page-link" href="/?page={{previousPageNum}}" aria-label="Previous">
+							  <span aria-hidden="true">&laquo;</span>
+							  <span class="sr-only">Previous</span>
+							  </a>
+						  </li>
+					  {{/if}}
+					  {{#each pageNumList}}
+						  <li class="page-item {{#eq this currentPageNum}}active{{/eq}}"><a class="page-link" href="/?page={{sub this 1}}">{{this}}</a></li>
+					  {{/each}}
+					  {{#if nextPage}}
+						  <li class="page-item">
+							  <a class="page-link" href="/?page={{nextPageNum}}" aria-label="Next">
+							  <span aria-hidden="true">&raquo;</span>
+							  <span class="sr-only">Next</span>
+							  </a>
+						  </li>
+					  {{/if}}
+				  </ul>
+			  </nav>
 		  </div>
 	  </div>
   {{/inline}}
