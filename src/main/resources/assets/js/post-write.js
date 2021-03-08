@@ -30,8 +30,10 @@ $(function () {
             ['para', ['ul', 'ol', 'paragraph']],
             ['table', ['table']],
             ['insert', ['link', 'picture', 'video']],
-            ['view', ['fullscreen', 'codeview', 'help']]
+            ['view', ['fullscreen', 'help']]
         ],
+        codeviewFilter: true,
+        codeviewIframeFilter: true,
         callbacks: {
             onImageUpload: function (files, editor, welEditable) {
                 uploadImage(files, $PATH_BASE.val());
@@ -108,10 +110,10 @@ $(function () {
 
         if ($SEARCH_RESULT_LIST.children().length <= 1) {
             $SEARCH_RESULT_LIST.css('display', 'none');
-        } else {
-            if ($('.alert-danger').css('display') === 'block') {
-                $('.alert-danger').css('display', 'none');
-            }
+        }
+
+        if ($('.alert-danger').css('display') === 'block') {
+            $('.alert-danger').css('display', 'none');
         }
     });
 
@@ -120,7 +122,7 @@ $(function () {
         $SEARCH_LIST_DROPDOWN.css('display', 'none');
         $SEARCH_RESULT_LIST.css('display', 'block');
 
-        if ($SEARCH_RESULT_LIST.children().length < 6) {
+        if ($SEARCH_RESULT_LIST.children().length < 2) {
             const TEMPLATE = SEARCH_RESULT_ITEM_TEMPLATE.replaceAll(MATCH_URL, $(this).data('url'))
                 .replaceAll(MATCH_TITLE, $(this).data('title'))
                 .replaceAll(MATCH_UPLOAD_AT, $(this).data('uploadAt'))
