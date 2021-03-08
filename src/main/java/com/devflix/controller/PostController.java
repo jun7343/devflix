@@ -11,6 +11,7 @@ import com.devflix.service.DevPostService;
 import com.devflix.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +92,7 @@ public class PostController {
                 .writer(writer)
                 .pathBase(pathBase)
                 .images(images)
-                .devPostUrl(devPostURL)
+                .devPostUrl(devPostURL == null? new ArrayList<>() : devPostURL)
                 .view(0)
                 .build();
 
@@ -100,13 +102,14 @@ public class PostController {
     }
 
     @RequestMapping(path = "/post/read/{id}", method = RequestMethod.GET)
-    public String readForm(@PathVariable(name = "id")long id, Model model) {
+    public String readForm(@PathVariable(name = "id")long id, HttpServletRequest request, Model model) {
         Optional<Post> postItem = postService.findOneById(id);
 
         if (postItem.isPresent()) {
             Post post = postItem.get();
 
             model.addAttribute("item", post);
+            model.addAttribute("siteUrl", request.getRequestURL());
 
             if (post.getStatus() == PostStatus.POST) {
                 List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(post.getDevPostUrl(), PostStatus.POST);
