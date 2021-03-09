@@ -1,14 +1,21 @@
 package com.devflix.controller;
 
-import com.devflix.constant.PostStatus;
+import com.devflix.constant.Status;
 import com.devflix.constant.RoleType;
 import com.devflix.entity.DevPost;
+import com.devflix.entity.Member;
+import com.devflix.entity.Post;
+import com.devflix.entity.PostComment;
 import com.devflix.service.DevPostService;
+import com.devflix.service.PostCommentService;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,10 +33,15 @@ import java.util.*;
 public class APIController {
 
     private final DevPostService devPostService;
+    private final PostCommentService postCommentService;
     private final String IMAGE_ROOT_DIR_PATH;
+    private final int DEFAULT_COMMENT_PAGE_PER_SIZE = 10;
+    private final SimpleDateFormat commentDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+    private final String DEFAULT_USER_PROFILE_IMG_PATH = "/assets/img/user.jpg";
 
-    public APIController(DevPostService devPostService, Environment environment) {
+    public APIController(DevPostService devPostService, PostCommentService postCommentService, Environment environment) {
         this.devPostService = devPostService;
+        this.postCommentService = postCommentService;
 
         if (StringUtils.isBlank(environment.getProperty("image.root-drectory"))) {
             IMAGE_ROOT_DIR_PATH = "images/";
@@ -64,7 +76,7 @@ public class APIController {
             return ImmutableMap.of(RESULT, false);
         }
 
-        List<DevPost> findAll = devPostService.findAllBySearchContentAndStatus(content, PostStatus.POST);
+        List<DevPost> findAll = devPostService.findAllBySearchContentAndStatus(content, Status.POST);
         List<Map<String, String>> dataList = new LinkedList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
@@ -159,5 +171,82 @@ public class APIController {
         }
 
         return builder.toString();
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/a/post-comment-save", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> actionCommentSave(@RequestParam(name = "post-id")long id,
+                                                          @RequestParam(name = "comment")final String comment,
+                                                          @AuthenticationPrincipal Member member) {
+        PostComment saveComment = postCommentService.createComment(id, comment, member);
+
+        if (saveComment != null) {
+            return ImmutableMap.of("result", true);
+        } else {
+            return ImmutableMap.of("result", false);
+        }
+    }
+
+    @RequestMapping(path = "/a/post-comment-list", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> actionGetComment(@RequestParam(name = "post-id")final long id,
+                                                         @RequestParam(name = "page", required = false, defaultValue = "0")final int page,
+                                                         @AuthenticationPrincipal Member user) {
+        Page<PostComment> findAll = null;
+
+        if (page >= 9999) {
+            long totalCount = postCommentService.getCountAllByPostIdAndStatus(id, Status.POST);
+
+            findAll = postCommentService.findAllByPostIdAndStatusAndPageRequest(id, Status.POST, (int) (totalCount / DEFAULT_COMMENT_PAGE_PER_SIZE), DEFAULT_COMMENT_PAGE_PER_SIZE);
+        } else {
+            findAll = postCommentService.findAllByPostIdAndStatusAndPageRequest(id, Status.POST, page, DEFAULT_COMMENT_PAGE_PER_SIZE);
+        }
+
+        List<PostComment> content = findAll.getContent();
+        List<ImmutableMap<String, Object>> commentList = new ArrayList<>();
+
+        for (PostComment comment : content) {
+            commentList.add(ImmutableMap.<String, Object>builder()
+                    .put("writer", comment.getWriter().getUsername())
+                    .put("userImg", comment.getWriter().getPathBasae() == null? DEFAULT_USER_PROFILE_IMG_PATH : comment.getWriter().getImages().size() == 0? DEFAULT_USER_PROFILE_IMG_PATH
+                            : "/images/" + comment.getWriter().getPathBasae() + comment.getWriter().getImages().get(comment.getWriter().getImages().size() - 1))
+                    .put("uploadAt", commentDateFormat.format(comment.getCreateAt()))
+                    .put("comment", StringEscapeUtils.unescapeHtml4(comment.getComment()))
+                    .put("owner", user != null && comment.getWriter().getId().equals(user.getId()))
+                    .build());
+        }
+
+        Map<String, Object> paging = new HashMap<>();
+        List<Integer> pageNumList = new ArrayList<>();
+
+        if (findAll.getTotalPages() > 1) {
+            paging.put("previousPage", findAll.getNumber() / 5 != 0);
+
+            if (findAll.getNumber() / 5 != 0 && ((findAll.getNumber() / 5) * 5 - 1) > 0) {
+                paging.put("previousPageNum", (findAll.getNumber() / 5) * 5 - 1);
+            }
+
+            paging.put("nextPage", (findAll.getNumber() / 5) * 5 + 6 <= findAll.getTotalPages());
+
+            if ((findAll.getNumber() / 5) * 5 + 6 <= findAll.getTotalPages()) {
+                paging.put("nextPageNum", (findAll.getNumber() / 5 + 1) * 5);
+            }
+
+            int start = (findAll.getNumber() / 5) * 5 + 1;
+            int end = Math.min((findAll.getNumber() / 5 + 1) * 5, findAll.getTotalPages());
+
+            for (int i = start; i <= end; i++) {
+                pageNumList.add(i);
+            }
+
+            paging.put("pageNumList", pageNumList);
+            paging.put("currentPageNum", findAll.getNumber() + 1);
+        }
+
+        return ImmutableMap.<String, Object>builder()
+                .put("commentList", commentList)
+                .put("paging", paging)
+                .build();
     }
 }
