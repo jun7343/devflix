@@ -36,8 +36,10 @@ public class APIController {
     private final PostCommentService postCommentService;
     private final String IMAGE_ROOT_DIR_PATH;
     private final int DEFAULT_COMMENT_PAGE_PER_SIZE = 10;
+    private final int DEFAULT_DEV_POST_PAGE_PER_SIZE = 20;
     private final SimpleDateFormat commentDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     private final String DEFAULT_USER_PROFILE_IMG_PATH = "/assets/img/user.jpg";
+    private final SimpleDateFormat devPostDateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
 
     public APIController(DevPostService devPostService, PostCommentService postCommentService, Environment environment) {
         this.devPostService = devPostService;
@@ -48,6 +50,72 @@ public class APIController {
         } else {
             IMAGE_ROOT_DIR_PATH = environment.getProperty("image.root-drectory");
         }
+    }
+
+    @RequestMapping(path = "/a/dev-post-list", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> actionGetDevPostList(@RequestParam(name = "category", required = false)final String category,
+            @RequestParam(name = "tag", required = false)final String tag, @RequestParam(name = "page", required = false, defaultValue = "0")int page) {
+        Page<DevPost> findAll = null;
+        Map<String, Object> paging = new HashMap<>();
+
+        if (StringUtils.isBlank(category) && StringUtils.isBlank(tag)) {
+            findAll = devPostService.findAllByStatusAndPageRequest(Status.POST, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
+        } else if (! StringUtils.isBlank(category)) {
+            findAll = devPostService.findAllByCategoryOrderByUploadAt(category, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
+        } else if (! StringUtils.isBlank(tag)) {
+            findAll = devPostService.findAllByTagOrderByUploadAt(tag, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
+        }
+
+        List<Map<String, Object>> resultAll = new ArrayList<>();
+
+        if (findAll != null) {
+            Calendar twoDaysAgo = Calendar.getInstance();
+            twoDaysAgo.setTime(new Date());
+            twoDaysAgo.add(Calendar.DATE, -2);
+
+            for (DevPost post : findAll.getContent()) {
+                resultAll.add(ImmutableMap.<String, Object>builder()
+                        .put("title", StringEscapeUtils.unescapeHtml4(post.getTitle()))
+                        .put("url", post.getUrl())
+                        .put("thumbnail", post.getThumbnail())
+                        .put("category", post.getCategory())
+                        .put("postType", post.getPostType())
+                        .put("uploadAt", devPostDateFormat.format(post.getUploadAt()))
+                        .put("isNew", post.getUploadAt().compareTo(twoDaysAgo.getTime()) > 0)
+                        .put("description", StringEscapeUtils.unescapeHtml4(post.getDescription()))
+                        .put("tagList", post.getTag())
+                        .build());
+            }
+        }
+
+        if (findAll != null && findAll.getTotalPages() > 1) {
+            List<Integer> pageNumList = new ArrayList<>();
+
+            paging.put("previousPage", findAll.getNumber() / 5 != 0);
+
+            if (findAll.getNumber() / 5 != 0 && ((findAll.getNumber() / 5) * 5 - 1) > 0) {
+                paging.put("previousPageNum", (findAll.getNumber() / 5) * 5 - 1);
+            }
+
+            paging.put("nextPage", (findAll.getNumber() / 5) * 5 + 6 <= findAll.getTotalPages());
+
+            if ((findAll.getNumber() / 5) * 5 + 6 <= findAll.getTotalPages()) {
+                paging.put("nextPageNum", (findAll.getNumber() / 5 + 1) * 5);
+            }
+
+            int start = (findAll.getNumber() / 5) * 5 + 1;
+            int end = Math.min((findAll.getNumber() / 5 + 1) * 5, findAll.getTotalPages());
+
+            for (int i = start; i <= end; i++) {
+                pageNumList.add(i);
+            }
+
+            paging.put("pageNumList", pageNumList);
+            paging.put("currentPageNum", findAll.getNumber() + 1);
+        }
+
+        return ImmutableMap.of("devPostList", resultAll, "paging", paging);
     }
 
     @RequestMapping(path = "/a/view-count", method = RequestMethod.POST)
@@ -218,9 +286,10 @@ public class APIController {
         }
 
         Map<String, Object> paging = new HashMap<>();
-        List<Integer> pageNumList = new ArrayList<>();
 
         if (findAll.getTotalPages() > 1) {
+            List<Integer> pageNumList = new ArrayList<>();
+
             paging.put("previousPage", findAll.getNumber() / 5 != 0);
 
             if (findAll.getNumber() / 5 != 0 && ((findAll.getNumber() / 5) * 5 - 1) > 0) {
