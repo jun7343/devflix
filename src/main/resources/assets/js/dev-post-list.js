@@ -3,8 +3,8 @@ $(function () {
     const API_DEV_POST_DRAWING_URL = '/a/dev-post-list';
     const POST_TYPE = 'POST';
     const $DEV_POST_LIST = $('#grid');
-    const CATEGORY = $DEV_POST_LIST.data('category');
-    const TAG = $DEV_POST_LIST.data('tag');
+    const DEV_POST_LIST_TYPE = $DEV_POST_LIST.data('type');
+    const DEV_POST_LIST_PARAMETER = $DEV_POST_LIST.data('parameter');
     const MATCH_CATEGORY = '{{category}}';
     const MATCH_POST_TYPE = '{{postType}}';
     const MATCH_TITLE = '{{title}}';
@@ -12,6 +12,8 @@ $(function () {
     const MATCH_UPLOAD_AT = '{{uploadAt}}';
     const MATCH_THUMBNAIL = '{{thumbnail}}';
     const MATCH_URL = '{{url}}';
+    const MATCH_IS_NEW = '{{isNew}}';
+    const MATCH_TAG = '{{tag}}'
     const MATCH_VALUE = '{{value}}';
     const MATCH_NUM = '{{num}}';
     const DEV_POST_TEMPLATE = '<article class="box-item"><span class="category"><a href="/category/{{category}}"><span>{{category}} - {{postType}}</span></a></span><div class="box-body">' +
@@ -20,16 +22,16 @@ $(function () {
         '</linearGradient></defs><g fill="none" fill-rule="evenodd"><g transform="translate(1 1)"><path d="M0,18.0000525 C0,27.9411416 8.05885836,36 18.0000525,36 C27.9411416,36 36,27.9411416 36,18.0000525" id="Oval-2" stroke="url(#a)" stroke-width="2">\n' +
         '<animateTransform tattributeName="transform" type="rotate" from="360 18 18" to="0 18 18" dur="1.9s" repeatCount="indefinite"/></path><circle fill="currentColor" cx="36" cy="18" r="1">' +
         '<animateTransform tattributeName="transform" type="rotate" from="360 18 18" to="0 18 18" dur="1.9s" repeatCount="indefinite"/></circle>\</g></g></svg>' +
-        '<img src="/assets/img/placeholder.png" width="100%" data-url="{{thumbnail}}" class="preload"><noscript><img src="{{thumbnail}}" width="100%"></noscript><div class="new-post-tag">New Post</div>' +
+        '<img src="/assets/img/placeholder.png" width="100%" data-url="{{thumbnail}}" class="preload"><noscript><img src="{{thumbnail}}" width="100%"></noscript>{{isNew}}' +
         '<div class="read-icon"><svg><use xlink:href="#icon-read"></use></svg></div><div class="watch-icon"><svg><use xlink:href="#icon-watch"></use></svg></div>' +
         '</a><div class="box-info"><time datetime="{{uploadAt}}" class="date">{{uploadAt}}</time><a class="post-link view-anchor" href="{{url}}"><h2 class="post-title">{{title}}</h2></a>\<a class="post-link view-anchor" href="{{url}}">' +
-        '<p class="description">{{description}}</p></a><div class="tags"></div></div></div></article>';
+        '<p class="description">{{description}}</p></a>{{tag}}</div></div></article>';
     const $PAGINATION = $('#pagination');
     const PAGING_PREVIOUS_TEMPLATE = '<a class="page-item previous" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
     const PAGING_NEXT_TEMPLATE = '<a class="page-item next" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
     const PAGING_NUM_TEMPLATE = '<a class="page-item page-number" data-val="{{value}}"><span>{{num}}</span></a>';
 
-    devPostDrawling(CATEGORY, TAG, getParameterByName('page'));
+    devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, getParameterByName('page'));
 
     $('.view-anchor').on('click', function () {
         $.ajax({
@@ -46,16 +48,15 @@ $(function () {
         const VALUE = $(this).data('val');
 
         history.pushState({'page' : VALUE}, 'main',  '?page=' + VALUE);
-        devPostDrawling(CATEGORY, TAG, VALUE);
+        devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, VALUE);
 
         $('html, body').stop().animate({
             scrollTop: $DEV_POST_LIST.offset().top - $('.bar-header').eq(0).innerHeight()
         }, 800);
     });
 
-    $(window).on('popstate', function (e) {
-        console.log(getParameterByName('page'));
-        devPostDrawling(CATEGORY, TAG, getParameterByName('page'));
+    $(window).on('popstate', function () {
+        devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, getParameterByName('page'));
     });
 
     function getParameterByName (name) {
@@ -64,13 +65,14 @@ $(function () {
         return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
-    function devPostDrawling(category, tag, page) {
+    function devPostDrawling(type, parameter, page) {
         $.ajax({
             url: API_DEV_POST_DRAWING_URL,
             type: POST_TYPE,
-            data: {'category': category, 'tag': tag, 'page': page},
+            data: {'type': type, 'parameter': parameter, 'page': page},
             success: function (data) {
                 $DEV_POST_LIST.empty();
+                console.log(data);
 
                 for (const post of data.devPostList) {
                     let template = DEV_POST_TEMPLATE.replaceAll(MATCH_TITLE, post.title)
@@ -79,23 +81,21 @@ $(function () {
                         .replaceAll(MATCH_THUMBNAIL, post.thumbnail)
                         .replaceAll(MATCH_URL, post.url)
                         .replaceAll(MATCH_POST_TYPE, post.postType)
+                        .replaceAll(MATCH_IS_NEW, post.isNew? '<div class="new-post-tag">New Post</div>' : '')
                         .replaceAll(MATCH_DESCRIPTION, post.description.length > 100? post.description.substring(0, 100) + "..." : post.description);
 
-                    if (! post.isNew) {
-                        $(template).find('.new-post-tag').eq(0).remove();
-                    }
+                    let tagTemplate = '';
 
                     if (post.tagList) {
-                        let tagTemplate = '';
+                        tagTemplate = '<div class="tags">';
 
                         for (const tag of post.tagList) {
-                            tagTemplate += '<a href="">#' + tag + '</a>';
+                            tagTemplate += '<a href="/tag/' + tag + '">#' + tag + '</a>';
                         }
-
-                        $(template).find('.tags').eq(0).append($(tagTemplate));
-                    } else {
-                        $(template).find('.tags').eq(0).remove();
+                        tagTemplate += '</div>';
                     }
+
+                    template = template.replaceAll(MATCH_TAG, tagTemplate);
 
                     $DEV_POST_LIST.append($(template));
                 }
