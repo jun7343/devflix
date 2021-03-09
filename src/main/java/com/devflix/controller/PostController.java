@@ -1,7 +1,6 @@
 package com.devflix.controller;
 
-import com.devflix.constant.PostStatus;
-import com.devflix.constant.PostType;
+import com.devflix.constant.Status;
 import com.devflix.constant.RoleType;
 import com.devflix.dto.PostDto;
 import com.devflix.entity.DevPost;
@@ -11,7 +10,6 @@ import com.devflix.service.DevPostService;
 import com.devflix.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,7 +36,7 @@ public class PostController {
 
     @RequestMapping(path = "/post", method = RequestMethod.GET)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
-        Page<Post> findList = postService.findAllByStatusAndPageRequest(PostStatus.POST, page, DEFAULT_SIZE_VALUE);
+        Page<Post> findList = postService.findAllByStatusAndPageRequest(Status.POST, page, DEFAULT_SIZE_VALUE);
         List<Integer> pageNumList = new ArrayList<>();
 
         model.addAttribute("list", findList);
@@ -86,7 +84,7 @@ public class PostController {
         }
 
         PostDto dto = PostDto.builder()
-                .status(PostStatus.POST)
+                .status(Status.POST)
                 .title(title)
                 .content(content)
                 .writer(writer)
@@ -111,8 +109,8 @@ public class PostController {
             model.addAttribute("item", post);
             model.addAttribute("siteUrl", request.getRequestURL());
 
-            if (post.getStatus() == PostStatus.POST) {
-                List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(post.getDevPostUrl(), PostStatus.POST);
+            if (post.getStatus() == Status.POST) {
+                List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(post.getDevPostUrl(), Status.POST);
 
                 model.addAttribute("devPostList", findDevPostList);
             }

@@ -1,6 +1,6 @@
 package com.devflix.service;
 
-import com.devflix.constant.PostStatus;
+import com.devflix.constant.Status;
 import com.devflix.dto.PostDto;
 import com.devflix.entity.Post;
 import com.devflix.repository.DevPostRepository;
@@ -47,7 +47,7 @@ public class PostService {
     }
 
     @Transactional
-    public Page<Post> findAllByStatusAndPageRequest(PostStatus status, int page, int size) {
+    public Page<Post> findAllByStatusAndPageRequest(Status status, int page, int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("status"), status);
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
