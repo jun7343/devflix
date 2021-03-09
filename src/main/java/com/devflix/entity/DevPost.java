@@ -1,6 +1,6 @@
 package com.devflix.entity;
 
-import com.devflix.constant.PostStatus;
+import com.devflix.constant.Status;
 import com.devflix.constant.PostType;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.*;
@@ -32,7 +32,7 @@ public class DevPost {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private PostStatus status;
+    private Status status;
 
     @Column
     private int view;
@@ -69,7 +69,7 @@ public class DevPost {
     private Date updateAt;
 
     @Builder
-    public DevPost(final Long id, final String category, final PostType postType, final PostStatus status, final int view, final String title,
+    public DevPost(final Long id, final String category, final PostType postType, final Status status, final int view, final String title,
                    final String description, final String writer, final String url, final Date uploadAt, final String thumbnail,
                    final List<String> tag, final Date createAt, final Date updateAt) {
         this.id = id;

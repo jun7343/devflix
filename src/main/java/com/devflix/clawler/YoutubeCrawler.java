@@ -1,6 +1,6 @@
 package com.devflix.clawler;
 
-import com.devflix.constant.PostStatus;
+import com.devflix.constant.Status;
 import com.devflix.constant.PostType;
 import com.devflix.entity.CrawlingLog;
 import com.devflix.entity.DevPost;
@@ -140,7 +140,7 @@ public class YoutubeCrawler implements Crawler {
                             .url(YOUTUBE_VIDEO_URL + videoId.asText())
                             .tag(null)
                             .thumbnail(thumbnailshighUrl.asText())
-                            .status(PostStatus.POST)
+                            .status(Status.POST)
                             .view(0)
                             .uploadAt(publishDate)
                             .tag(new ArrayList<>())
@@ -221,7 +221,7 @@ public class YoutubeCrawler implements Crawler {
                                     .url(YOUTUBE_VIDEO_URL + videoId.asText())
                                     .tag(null)
                                     .thumbnail(thumbnailshighUrl.asText())
-                                    .status(PostStatus.POST)
+                                    .status(Status.POST)
                                     .view(0)
                                     .uploadAt(publishDate)
                                     .tag(new ArrayList<>())
@@ -361,7 +361,7 @@ public class YoutubeCrawler implements Crawler {
                         .url(YOUTUBE_VIDEO_URL + videoId.asText())
                         .tag(null)
                         .thumbnail(thumbnailshighUrl.asText())
-                        .status(PostStatus.POST)
+                        .status(Status.POST)
                         .view(0)
                         .uploadAt(publishDate)
                         .tag(new ArrayList<>())
@@ -444,7 +444,7 @@ public class YoutubeCrawler implements Crawler {
                                 .url(YOUTUBE_VIDEO_URL + videoId.asText())
                                 .tag(null)
                                 .thumbnail(thumbnailshighUrl.asText())
-                                .status(PostStatus.POST)
+                                .status(Status.POST)
                                 .view(0)
                                 .uploadAt(publishDate)
                                 .tag(new ArrayList<>())

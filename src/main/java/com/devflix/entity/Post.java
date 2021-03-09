@@ -1,6 +1,6 @@
 package com.devflix.entity;
 
-import com.devflix.constant.PostStatus;
+import com.devflix.constant.Status;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -24,7 +24,7 @@ public class Post {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private PostStatus status;
+    private Status status;
 
     @ManyToOne(targetEntity = Member.class)
     @JoinColumn(name = "writer_id")
@@ -59,7 +59,7 @@ public class Post {
     private Date updateAt;
 
     @Builder
-    public Post(final Long id, final PostStatus status, final Member writer, List<String> devPostUrl,
+    public Post(final Long id, final Status status, final Member writer, List<String> devPostUrl,
                 final String title, final String content, final int view, final String pathBase,
                 List<String> images, final Date createAt, final Date updateAt) {
         this.id = id;

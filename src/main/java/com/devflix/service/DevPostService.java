@@ -1,6 +1,6 @@
 package com.devflix.service;
 
-import com.devflix.constant.PostStatus;
+import com.devflix.constant.Status;
 import com.devflix.constant.PostType;
 import com.devflix.entity.DevPost;
 import com.devflix.repository.DevPostRepository;
@@ -78,7 +78,7 @@ public class DevPostService {
     }
 
     @Transactional
-    public List<DevPost> findAllBySearchContentAndStatus(final String content, PostStatus status) {
+    public List<DevPost> findAllBySearchContentAndStatus(final String content, Status status) {
         return devPostRepository.findAll((root, query, criteriaBuilder) -> {
             Order uploadAt = criteriaBuilder.desc(root.get("uploadAt"));
             Predicate result = criteriaBuilder.and(criteriaBuilder.equal(root.get("status"), status), criteriaBuilder.like(root.get("title"), "%" + content + "%"));
@@ -88,14 +88,14 @@ public class DevPostService {
     }
 
     @Transactional
-    public Page<DevPost> findAllByStatusAndPageRequest(PostStatus post, int page, int size) {
+    public Page<DevPost> findAllByStatusAndPageRequest(Status post, int page, int size) {
         return devPostRepository.findAll((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("status"), post);
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
     }
 
     @Transactional
-    public List<DevPost> findAllByUrlAndStatus(List<String> urlList, PostStatus status) {
+    public List<DevPost> findAllByUrlAndStatus(List<String> urlList, Status status) {
         List<DevPost> findList = new ArrayList<>();
 
         for (String url : urlList) {

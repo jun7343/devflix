@@ -1,5 +1,5 @@
 package com.devflix.constant;
 
-public enum PostStatus {
+public enum Status {
     DELETE, HIDDEN, NOTICE, POST
 }

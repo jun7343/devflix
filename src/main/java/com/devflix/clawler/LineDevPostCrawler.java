@@ -1,6 +1,6 @@
 package com.devflix.clawler;
 
-import com.devflix.constant.PostStatus;
+import com.devflix.constant.Status;
 import com.devflix.constant.PostType;
 import com.devflix.entity.CrawlingLog;
 import com.devflix.entity.DevPost;
@@ -178,7 +178,7 @@ public class LineDevPostCrawler implements Crawler {
                             DevPost post = DevPost.builder()
                                     .category("LINE")
                                     .postType(PostType.BLOG)
-                                    .status(PostStatus.POST)
+                                    .status(Status.POST)
                                     .title(map.get("title"))
                                     .url(map.get("url"))
                                     .description(map.get("desc"))

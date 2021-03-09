@@ -1,6 +1,6 @@
 package com.devflix.clawler;
 
-import com.devflix.constant.PostStatus;
+import com.devflix.constant.Status;
 import com.devflix.constant.PostType;
 import com.devflix.entity.CrawlingLog;
 import com.devflix.entity.DevPost;
@@ -173,7 +173,7 @@ public class WoowaDevPostCrawler implements Crawler {
                             DevPost post = DevPost.builder()
                                     .category("WOOWA")
                                     .postType(PostType.BLOG)
-                                    .status(PostStatus.POST)
+                                    .status(Status.POST)
                                     .title(map.get("title"))
                                     .description(map.get("desc"))
                                     .url(map.get("url"))
