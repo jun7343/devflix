@@ -5,6 +5,7 @@ import com.devflix.entity.DevPost;
 import com.devflix.entity.Member;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -23,4 +24,6 @@ public class PostDto {
     private final List<String> images;
     private final List<DevPost> devPostList;
     private final List<String> devPostUrl;
+    private final Date createAt;
+    private final Date updateAt;
 }
