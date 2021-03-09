@@ -1,5 +1,6 @@
 package com.devflix.entity;
 
+import com.devflix.constant.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,6 +16,10 @@ public class PostComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @ManyToOne(targetEntity = Member.class)
     @JoinColumn(name = "writer_id")
@@ -36,9 +41,10 @@ public class PostComment {
     private Date updateAt;
 
     @Builder
-    public PostComment(final Long id, final Member writer, final Post post, final String comment,
+    public PostComment(final Long id, Status status, final Member writer, final Post post, final String comment,
                        final Date createAt, final Date updateAt) {
         this.id = id;
+        this.status = status;
         this.writer = writer;
         this.post = post;
         this.comment = comment;

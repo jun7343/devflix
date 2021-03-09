@@ -1,5 +1,6 @@
 create table post_comment (
     id serial,
+    status varchar(200) not null,
     writer_id int,
     post_id int,
     comment text,
