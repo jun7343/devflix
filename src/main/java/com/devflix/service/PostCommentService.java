@@ -38,4 +38,11 @@ public class PostCommentService {
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("post").get("id"), id), criteriaBuilder.equal(root.get("status"), status));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.asc("createAt"))));
     }
+
+    @Transactional
+    public long getCountAllByPostIdAndStatus(final long id, Status status) {
+        return postCommentRepository.count((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("post").get("id"), id), criteriaBuilder.equal(root.get("status"), status));
+        });
+    }
 }
