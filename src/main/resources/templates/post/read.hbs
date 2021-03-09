@@ -1,6 +1,6 @@
 {{#> layout/post title=item.title}}
 	{{#*inline "content"}}
-		<section class="post one-column">
+		<section class="post one-column" id="content" data-id="{{item.id}}">
 			<article role="article" class="post-content">
 				<p class="post-info">
 					<svg class="icon-calendar" id="date"><use xlink:href="#icon-calendar"></use></svg>
@@ -73,72 +73,27 @@
 		</section>
 		<section class="button-section">
 			<a href="/post" class="btn btn-secondary">목록</a>
-			<a href="/post/modify" class="btn btn-primary">수정</a>
+			{{#if postOwner}}
+			<a href="/post/modify/{{item.id}}" class="btn btn-primary">수정</a>
+			{{/if}}
 		</section>
+		<section class="comments" id="comment-list">
+		</section>
+		{{#if isAuthentication}}
 		<section class="comments">
-			<h3>Comments</h3>
-			<div class="comment-item">
-				<div class="user-profile">
-					<img class="img-rounded" src="/assets/img/user.jpg" alt="">
-					asdasdsadsaaasd
-				</div>
-				<div class="comment-content">
-					<small>2021.01.21</small><br>
-					<p>asdasdasdasdasdsad</p>
-					<p>asdasdasdasdasdsad</p>
-					<p>asdasdasdasdasdsad</p>
-				</div>
-			</div>
-			<div class="comment-item">
-				<div class="user-profile">
-					<img class="img-rounded" src="/assets/img/user.jpg" alt="">
-					asdasdsadsaaasd
-				</div>
-				<div class="comment-content">
-					<small>2021.01.21</small><br>
-					<p>asdasdasdasdasdsad</p>
-					<p>asdasdasdasdasdsad</p>
-				</div>
-			</div>
-			<div class="comment-item">
-				<div class="user-profile">
-					<img class="img-rounded" src="/assets/img/user.jpg" alt="">
-					asdasdsadsaaasd
-				</div>
-				<div class="comment-content">
-					<small>2021.01.21</small><br>
-					<p>asdasdasdasdasdsadasdasdasdasdasdsadasdasdasdasdasdsadasdasdasdasdasdsadasdasdasdasdasdsadasdasdasdasdasdsadasdasdasdasdasdsad</p>
-					<p>asdasdasdasdasdsad</p>
-					<p>asdasdasdasdasdsad</p>
-					<p>asdasdasdasdasdsad</p>
-				</div>
-			</div>
-			<nav id="nav-pagination" aria-label="Page navigation">
-				<ul class="pagination justify-content-center">
-						<li class="page-item">
-							<a class="page-link" href="/?page=" aria-label="Previous">
-							<span aria-hidden="true">&laquo;</span>
-							<span class="sr-only">Previous</span>
-							</a>
-						</li>
-						<li class="page-item active"><a class="page-link" href="/?page=">11</a></li>
-						<li class="page-item">
-							<a class="page-link" href="/?page=" aria-label="Next">
-							<span aria-hidden="true">&raquo;</span>
-							<span class="sr-only">Next</span>
-							</a>
-						</li>
-				</ul>
-			</nav>
 			<div class="comment-write-container">
-				<div class="comment-write">
-					<textarea id="comment"></textarea>
-				</div>
-				<div class="comment-btn">
-					<button type="button" class="btn btn-primary">등록</button>
-				</div>
+				<form id="comment-form">
+					<div class="comment-write">
+						<textarea id="comment" name="comment"></textarea>
+					</div>
+					<div class="comment-btn">
+						<button id="comment-submit" type="submit" class="btn btn-primary">등록</button>
+					</div>
+					<input type="hidden" name="post-id" value="{{item.id}}">
+				</form>
 			</div>
 		</section>
+		{{/if}}
 	{{/inline}}
 	{{#*inline "js"}}
 		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
