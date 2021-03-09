@@ -17,10 +17,10 @@ public class CrawlingScheduler {
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void crawlingAll() {
+        youtubeCrawler.crawling();
         kakaoDevPostCrawler.crawling();
         lineDevPostCrawler.crawling();
         naverDevPostCrawler.crawling();
         woowaDevPostCrawler.crawling();
-        youtubeCrawler.crawling();
     }
 }
