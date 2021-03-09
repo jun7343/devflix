@@ -54,17 +54,17 @@ public class APIController {
 
     @RequestMapping(path = "/a/dev-post-list", method = RequestMethod.POST)
     @ResponseBody
-    public ImmutableMap<String, Object> actionGetDevPostList(@RequestParam(name = "category", required = false)final String category,
-            @RequestParam(name = "tag", required = false)final String tag, @RequestParam(name = "page", required = false, defaultValue = "0")int page) {
+    public ImmutableMap<String, Object> actionGetDevPostList(@RequestParam(name = "type", required = false)final String type,
+            @RequestParam(name = "parameter", required = false)final String parameter, @RequestParam(name = "page", required = false, defaultValue = "0")int page) {
         Page<DevPost> findAll = null;
         Map<String, Object> paging = new HashMap<>();
 
-        if (StringUtils.isBlank(category) && StringUtils.isBlank(tag)) {
+        if (StringUtils.isBlank(type) && StringUtils.isBlank(parameter)) {
             findAll = devPostService.findAllByStatusAndPageRequest(Status.POST, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
-        } else if (! StringUtils.isBlank(category)) {
-            findAll = devPostService.findAllByCategoryOrderByUploadAt(category, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
-        } else if (! StringUtils.isBlank(tag)) {
-            findAll = devPostService.findAllByTagOrderByUploadAt(tag, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
+        } else if (! StringUtils.isBlank(type) && StringUtils.equals(type, "category")) {
+            findAll = devPostService.findAllByCategoryOrderByUploadAt(parameter, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
+        } else if (! StringUtils.isBlank(type) && StringUtils.equals(type, "tag")) {
+            findAll = devPostService.findAllByTagOrderByUploadAt(parameter, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
         }
 
         List<Map<String, Object>> resultAll = new ArrayList<>();
