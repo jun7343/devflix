@@ -1,5 +1,4 @@
 $(function () {
-    const API_VIEW_COUNT_URL = '/a/view-count';
     const API_SEARCH_URL = '/a/search';
     const POST_TYPE = 'POST';
     const MATCH_URL = '{{url}}';
@@ -16,15 +15,7 @@ $(function () {
     let search = null;
     let lastSearchConent = '';
 
-    $('.view-anchor').on('click', function () {
-        $.ajax({
-            url: API_VIEW_COUNT_URL,
-            type: POST_TYPE,
-            data: {'url': $(this).attr('href')},
-            success: function (data) {
-            }
-        })
-    });
+
 
     $('#search-input').on('keyup', function () {
         if (search != null) {
@@ -60,6 +51,6 @@ $(function () {
             } else if (CONTENT.length === 0) {
                 $SEARCH_RESULT_FIELD.empty();
             }
-        }, 200);
+        }, 400);
     });
 })
