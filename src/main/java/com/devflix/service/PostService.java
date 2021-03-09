@@ -47,6 +47,25 @@ public class PostService {
     }
 
     @Transactional
+    public void updatePost(PostDto dto) {
+        Post post = Post.builder()
+                .id(dto.getId())
+                .status(dto.getStatus())
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .writer(dto.getWriter())
+                .pathBase(dto.getPathBase())
+                .devPostUrl(dto.getDevPostUrl())
+                .images(dto.getImages())
+                .view(dto.getView())
+                .createAt(dto.getCreateAt())
+                .updateAt(dto.getUpdateAt())
+                .build();
+
+        postRepository.save(post);
+    }
+
+    @Transactional
     public Page<Post> findAllByStatusAndPageRequest(Status status, int page, int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("status"), status);

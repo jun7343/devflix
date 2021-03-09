@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,7 +90,7 @@ public class PostController {
                 .content(content)
                 .writer(writer)
                 .pathBase(pathBase)
-                .images(images)
+                .images(images == null? new ArrayList<>() : images)
                 .devPostUrl(devPostURL == null? new ArrayList<>() : devPostURL)
                 .view(0)
                 .build();
@@ -100,20 +101,19 @@ public class PostController {
     }
 
     @RequestMapping(path = "/post/read/{id}", method = RequestMethod.GET)
-    public String readForm(@PathVariable(name = "id")long id, HttpServletRequest request, Model model) {
+    public String readForm(@PathVariable(name = "id")long id, HttpServletRequest request, Model model, @AuthenticationPrincipal Member user) {
         Optional<Post> postItem = postService.findOneById(id);
 
-        if (postItem.isPresent()) {
+        if (postItem.isPresent() && postItem.get().getStatus() == Status.POST) {
             Post post = postItem.get();
 
             model.addAttribute("item", post);
             model.addAttribute("siteUrl", request.getRequestURL());
+            model.addAttribute("postOwner", user != null && post.getWriter().getId().equals(user.getId()));
 
-            if (post.getStatus() == Status.POST) {
-                List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(post.getDevPostUrl(), Status.POST);
+            List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(post.getDevPostUrl(), Status.POST);
 
-                model.addAttribute("devPostList", findDevPostList);
-            }
+            model.addAttribute("devPostList", findDevPostList);
 
             return "/post/read";
         } else {
@@ -121,5 +121,60 @@ public class PostController {
 
             return "redirect:/post";
         }
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/post/modify/{id}", method = RequestMethod.GET)
+    public String modifyForm(@PathVariable(name = "id")final long id, Model model, @AuthenticationPrincipal Member user) {
+        Optional<Post> postItem = postService.findOneById(id);
+
+        if (postItem.isPresent() && postItem.get().getWriter().getId().equals(user.getId()) && postItem.get().getStatus() == Status.POST) {
+            model.addAttribute("item", postItem.get());
+
+            List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(postItem.get().getDevPostUrl(), Status.POST);
+
+            model.addAttribute("devPostList", findDevPostList);
+
+            return "/post/modify";
+        } else {
+            return "redirect:/post";
+        }
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/post/modify/{id}", method = RequestMethod.POST)
+    public String modifyAction(@PathVariable(name = "id")final long id, @RequestParam(name = "title", required = false)final String title, @RequestParam(name = "post-url", required = false) List<String> devPostURL,
+                               @RequestParam(name = "path-base", required = false)final String pathBase, @RequestParam(name = "images", required = false)List<String> images,
+                               @RequestParam(name = "content", required = false)final String content, @AuthenticationPrincipal Member user,
+                               RedirectAttributes attrs) {
+        if (StringUtils.isBlank(title)) {
+            attrs.addFlashAttribute("errorMessage", "제목 기입해 주세요.");
+
+            return "redirect:/post/write";
+        }
+
+        Optional<Post> postItem = postService.findOneById(id);
+
+        if (postItem.isPresent() && postItem.get().getStatus() == Status.POST && postItem.get().getWriter().getId().equals(user.getId())) {
+            PostDto dto = PostDto.builder()
+                    .id(postItem.get().getId())
+                    .status(Status.POST)
+                    .title(title)
+                    .content(content)
+                    .writer(postItem.get().getWriter())
+                    .pathBase(pathBase)
+                    .images(images == null? new ArrayList<>() : images)
+                    .devPostUrl(devPostURL == null ? new ArrayList<>() : devPostURL)
+                    .view(postItem.get().getView())
+                    .createAt(postItem.get().getCreateAt())
+                    .updateAt(new Date())
+                    .build();
+
+            System.out.println(dto.toString());
+
+            postService.updatePost(dto);
+        }
+
+        return "redirect:/post";
     }
 }
