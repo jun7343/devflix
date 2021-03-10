@@ -108,4 +108,11 @@ public class DevPostService {
 
         return findList;
     }
+
+    @Transactional
+    public List<DevPost> findAllByStatus(Status status) {
+        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("status"), status);
+        });
+    }
 }
