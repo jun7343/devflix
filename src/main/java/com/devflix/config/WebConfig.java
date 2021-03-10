@@ -9,11 +9,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Collections;
+import java.util.concurrent.Executor;
 
 @Configuration
 @EnableWebMvc
@@ -34,7 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
         } else if (environment.acceptsProfiles(Profiles.of("dev"))) {
             registry.addResourceHandler("/assets/**").addResourceLocations("file:/srv/devflix/assets/");
         } else {
-            registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/assets/");
+
         }
     }
 
@@ -56,5 +60,15 @@ public class WebConfig implements WebMvcConfigurer {
         filterFilterRegistrationBean.addUrlPatterns("/*");
 
         return filterFilterRegistrationBean;
+    }
+
+    @Bean
+    public TaskScheduler taskScheduler() {
+        return new ConcurrentTaskScheduler();
+    }
+
+    @Bean
+    public Executor taskExecutor() {
+        return new SimpleAsyncTaskExecutor();
     }
 }
