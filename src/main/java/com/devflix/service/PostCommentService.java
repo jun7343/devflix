@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +45,19 @@ public class PostCommentService {
         return postCommentRepository.count((root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("post").get("id"), id), criteriaBuilder.equal(root.get("status"), status));
         });
+    }
+
+    @Transactional
+    public Optional<PostComment> findOneById(final long id) {
+        return postCommentRepository.findOne((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("id"), id);
+        });
+    }
+
+    @Transactional
+    public void updatePostComment(final PostComment comment) {
+        if (comment.getId() != null) {
+            postCommentRepository.save(comment);
+        }
     }
 }
