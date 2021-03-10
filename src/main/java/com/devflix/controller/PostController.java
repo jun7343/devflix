@@ -1,7 +1,7 @@
 package com.devflix.controller;
 
-import com.devflix.constant.Status;
 import com.devflix.constant.RoleType;
+import com.devflix.constant.Status;
 import com.devflix.dto.PostDto;
 import com.devflix.entity.DevPost;
 import com.devflix.entity.Member;
@@ -173,6 +173,36 @@ public class PostController {
             System.out.println(dto.toString());
 
             postService.updatePost(dto);
+        }
+
+        return "redirect:/post";
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/post/delete/{id}", method = RequestMethod.GET)
+    public String deleteAction(@PathVariable(name = "id")final long id, @AuthenticationPrincipal Member user) {
+        Optional<Post> item = postService.findOneById(id);
+
+        if (item.isPresent()) {
+            Post post = item.get();
+
+            if (post.getStatus() == Status.POST && post.getWriter().getId().equals(user.getId())) {
+                postService.updatePost(PostDto.builder()
+                        .id(post.getId())
+                        .status(Status.DELETE)
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .writer(post.getWriter())
+                        .pathBase(post.getPathBase())
+                        .images(post.getImages())
+                        .devPostUrl(post.getDevPostUrl())
+                        .view(post.getView())
+                        .createAt(post.getCreateAt())
+                        .updateAt(new Date())
+                        .build());
+
+                return "redirect:/post";
+            }
         }
 
         return "redirect:/post";
