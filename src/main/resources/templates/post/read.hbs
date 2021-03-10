@@ -11,7 +11,7 @@
 				<h1 class="post-title">{{{item.title}}}</h1>
 				{{#if devPostList}}
 					{{#each devPostList}}
-						<p class="dev-post-item"><a href="{{url}}"><img src="{{thumbnail}}" class="post-cover" alt="{{{title}}}">
+						<p class="dev-post-item"><a href="{{url}}"><img src="{{thumbnail}}" class="post-cover view-anchor" alt="{{{title}}}">
 							<span class="post-subtitle">{{category}} - {{postType}}</span><br><strong class="dev-post-title">{{{title}}}</strong></a>
 						</p>
 					{{/each}}
@@ -74,7 +74,8 @@
 		<section class="button-section">
 			<a href="/post" class="btn btn-secondary">목록</a>
 			{{#if postOwner}}
-			<a href="/post/modify/{{item.id}}" class="btn btn-primary">수정</a>
+				<a href="/post/modify/{{item.id}}" class="btn btn-primary">수정</a>
+				<a href="/post/delete/{{item.id}}" class="btn btn-danger" id="delete">삭제</a>
 			{{/if}}
 		</section>
 		<section class="comments" id="comment-list">
