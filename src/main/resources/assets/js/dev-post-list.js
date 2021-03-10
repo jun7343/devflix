@@ -17,14 +17,14 @@ $(function () {
     const MATCH_VALUE = '{{value}}';
     const MATCH_NUM = '{{num}}';
     const DEV_POST_TEMPLATE = '<article class="box-item"><span class="category"><a href="/category/{{category}}"><span>{{category}} - {{postType}}</span></a></span><div class="box-body">' +
-            '<a class="cover view-anchor" href="{{url}}"><svg width="50" height="50" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" class="loader"><defs>' +
-        '<linearGradient x1="0%" y1="100%" x2="100%" y2="100%" id="a"><stop stop-color="currentColor" stop-opacity="0" offset="0%"/><stop stop-color="currentColor" stop-opacity=".631" offset="63.146%"/><stop stop-color="currentColor" offset="100%"/>\n' +
-        '</linearGradient></defs><g fill="none" fill-rule="evenodd"><g transform="translate(1 1)"><path d="M0,18.0000525 C0,27.9411416 8.05885836,36 18.0000525,36 C27.9411416,36 36,27.9411416 36,18.0000525" id="Oval-2" stroke="url(#a)" stroke-width="2">\n' +
+            '<a class="cover view-anchor" href="{{url}}" target="_blank"><svg width="50" height="50" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" class="loader"><defs>' +
+        '<linearGradient x1="0%" y1="100%" x2="100%" y2="100%" id="a"><stop stop-color="currentColor" stop-opacity="0" offset="0%"/><stop stop-color="currentColor" stop-opacity=".631" offset="63.146%"/><stop stop-color="currentColor" offset="100%"/>' +
+        '</linearGradient></defs><g fill="none" fill-rule="evenodd"><g transform="translate(1 1)"><path d="M0,18.0000525 C0,27.9411416 8.05885836,36 18.0000525,36 C27.9411416,36 36,27.9411416 36,18.0000525" id="Oval-2" stroke="url(#a)" stroke-width="2">' +
         '<animateTransform tattributeName="transform" type="rotate" from="360 18 18" to="0 18 18" dur="1.9s" repeatCount="indefinite"/></path><circle fill="currentColor" cx="36" cy="18" r="1">' +
         '<animateTransform tattributeName="transform" type="rotate" from="360 18 18" to="0 18 18" dur="1.9s" repeatCount="indefinite"/></circle>\</g></g></svg>' +
         '<img src="/assets/img/placeholder.png" width="100%" data-url="{{thumbnail}}" class="preload"><noscript><img src="{{thumbnail}}" width="100%"></noscript>{{isNew}}' +
         '<div class="read-icon"><svg><use xlink:href="#icon-read"></use></svg></div><div class="watch-icon"><svg><use xlink:href="#icon-watch"></use></svg></div>' +
-        '</a><div class="box-info"><time datetime="{{uploadAt}}" class="date">{{uploadAt}}</time><a class="post-link view-anchor" href="{{url}}"><h2 class="post-title">{{title}}</h2></a>\<a class="post-link view-anchor" href="{{url}}">' +
+        '</a><div class="box-info"><time datetime="{{uploadAt}}" class="date">{{uploadAt}}</time><a class="post-link view-anchor" href="{{url}}" target="_blank"><h2 class="post-title">{{title}}</h2></a>\<a class="post-link view-anchor" href="{{url}}" target="_blank">' +
         '<p class="description">{{description}}</p></a>{{tag}}</div></div></article>';
     const $PAGINATION = $('#pagination');
     const PAGING_PREVIOUS_TEMPLATE = '<a class="page-item previous" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
