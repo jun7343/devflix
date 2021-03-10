@@ -16,7 +16,7 @@ $(function () {
     const MATCH_TAG = '{{tag}}'
     const MATCH_VALUE = '{{value}}';
     const MATCH_NUM = '{{num}}';
-    const DEV_POST_TEMPLATE = '<article class="box-item"><span class="category"><a href="/category/{{category}}"><span>{{category}} - {{postType}}</span></a></span><div class="box-body">' +
+    const DEV_POST_TEMPLATE = '<article class="box-item"><span class="category"><a href="/category?c={{category}}"><span>{{category}} - {{postType}}</span></a></span><div class="box-body">' +
             '<a class="cover view-anchor" href="{{url}}" target="_blank"><svg width="50" height="50" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" class="loader"><defs>' +
         '<linearGradient x1="0%" y1="100%" x2="100%" y2="100%" id="a"><stop stop-color="currentColor" stop-opacity="0" offset="0%"/><stop stop-color="currentColor" stop-opacity=".631" offset="63.146%"/><stop stop-color="currentColor" offset="100%"/>' +
         '</linearGradient></defs><g fill="none" fill-rule="evenodd"><g transform="translate(1 1)"><path d="M0,18.0000525 C0,27.9411416 8.05885836,36 18.0000525,36 C27.9411416,36 36,27.9411416 36,18.0000525" id="Oval-2" stroke="url(#a)" stroke-width="2">' +
@@ -72,7 +72,6 @@ $(function () {
             data: {'type': type, 'parameter': parameter, 'page': page},
             success: function (data) {
                 $DEV_POST_LIST.empty();
-                console.log(data);
 
                 for (const post of data.devPostList) {
                     let template = DEV_POST_TEMPLATE.replaceAll(MATCH_TITLE, post.title)
@@ -90,7 +89,7 @@ $(function () {
                         tagTemplate = '<div class="tags">';
 
                         for (const tag of post.tagList) {
-                            tagTemplate += '<a href="/tag/' + tag + '">#' + tag + '</a>';
+                            tagTemplate += '<a href="/tag?t=' + tag + '">#' + tag + '</a>';
                         }
                         tagTemplate += '</div>';
                     }
