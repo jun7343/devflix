@@ -21,10 +21,9 @@ public class HomeController {
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String index(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
-        List<DevPost> findAll = devPostService.findAllByStatus(Status.POST);
-        Random random = new Random();
+        final DevPost banner = devPostService.findRandomOneByStatus(Status.POST);
 
-        model.addAttribute("banner", findAll.get(random.nextInt(findAll.size())));
+        model.addAttribute("banner", banner);
 
         return "home";
     }

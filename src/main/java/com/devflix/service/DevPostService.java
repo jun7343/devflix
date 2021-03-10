@@ -110,9 +110,7 @@ public class DevPostService {
     }
 
     @Transactional
-    public List<DevPost> findAllByStatus(Status status) {
-        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("status"), status);
-        });
+    public DevPost findRandomOneByStatus(Status status) {
+        return devPostRepository.findOneByStatusOrderByRandom(status.name());
     }
 }

@@ -1,6 +1,7 @@
 package com.devflix.repository;
 
 import com.devflix.constant.PostType;
+import com.devflix.constant.Status;
 import com.devflix.entity.DevPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,7 @@ public interface DevPostRepository extends PagingAndSortingRepository<DevPost, L
     Page<DevPost> findAllByTagIn(final String tag, Pageable pageable);
 
     DevPost findTopOneByCategoryAndPostTypeOrderByUploadAtDesc(final String category, PostType postType);
+
+    @Query(nativeQuery = true, value = "select * from dev_post where status = :status order by random() limit 1")
+    DevPost findOneByStatusOrderByRandom(final String status);
 }
