@@ -1,10 +1,9 @@
 package com.devflix.controller;
 
-import com.devflix.constant.Status;
 import com.devflix.constant.RoleType;
+import com.devflix.constant.Status;
 import com.devflix.entity.DevPost;
 import com.devflix.entity.Member;
-import com.devflix.entity.Post;
 import com.devflix.entity.PostComment;
 import com.devflix.service.DevPostService;
 import com.devflix.service.PostCommentService;
@@ -263,7 +262,7 @@ public class APIController {
                                                          @AuthenticationPrincipal Member user) {
         Page<PostComment> findAll = null;
 
-        if (page >= 9999) {
+        if (page >= 999) {
             long totalCount = postCommentService.getCountAllByPostIdAndStatus(id, Status.POST);
 
             findAll = postCommentService.findAllByPostIdAndStatusAndPageRequest(id, Status.POST, (int) (totalCount / DEFAULT_COMMENT_PAGE_PER_SIZE), DEFAULT_COMMENT_PAGE_PER_SIZE);
@@ -276,6 +275,7 @@ public class APIController {
 
         for (PostComment comment : content) {
             commentList.add(ImmutableMap.<String, Object>builder()
+                    .put("id", comment.getId())
                     .put("writer", comment.getWriter().getUsername())
                     .put("userImg", comment.getWriter().getPathBasae() == null? DEFAULT_USER_PROFILE_IMG_PATH : comment.getWriter().getImages().size() == 0? DEFAULT_USER_PROFILE_IMG_PATH
                             : "/images/" + comment.getWriter().getPathBasae() + comment.getWriter().getImages().get(comment.getWriter().getImages().size() - 1))
@@ -317,5 +317,32 @@ public class APIController {
                 .put("commentList", commentList)
                 .put("paging", paging)
                 .build();
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/a/post-comment-delete", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> actionCommentDelete(@RequestParam(name = "id")final long id, @AuthenticationPrincipal Member user) {
+        Optional<PostComment> item = postCommentService.findOneById(id);
+
+        if (item.isPresent()) {
+            PostComment comment = item.get();
+
+            if (comment.getStatus() == Status.POST && comment.getWriter().getId().equals(user.getId())) {
+                postCommentService.updatePostComment(PostComment.builder()
+                        .id(comment.getId())
+                        .writer(comment.getWriter())
+                        .post(comment.getPost())
+                        .comment(comment.getComment())
+                        .status(Status.DELETE)
+                        .createAt(comment.getCreateAt())
+                        .updateAt(new Date())
+                        .build());
+
+                return ImmutableMap.of("result", true);
+            }
+        }
+
+        return ImmutableMap.of("result", false);
     }
 }
