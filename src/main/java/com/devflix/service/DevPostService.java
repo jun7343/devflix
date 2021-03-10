@@ -113,4 +113,11 @@ public class DevPostService {
     public DevPost findRandomOneByStatus(Status status) {
         return devPostRepository.findOneByStatusOrderByRandom(status.name());
     }
+
+    @Transactional
+    public Optional<DevPost> findOneByUrl(final String url) {
+        return devPostRepository.findOne((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("url"), url);
+        });
+    }
 }

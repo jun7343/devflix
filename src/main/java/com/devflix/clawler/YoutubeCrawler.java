@@ -1,7 +1,7 @@
 package com.devflix.clawler;
 
-import com.devflix.constant.Status;
 import com.devflix.constant.PostType;
+import com.devflix.constant.Status;
 import com.devflix.entity.CrawlingLog;
 import com.devflix.entity.DevPost;
 import com.devflix.entity.YoutubeChannel;
@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /*
     reference - https://developers.google.com/youtube/v3/docs/search
@@ -77,7 +78,6 @@ public class YoutubeCrawler implements Crawler {
 
         for (int channelNum = 0; channelNum < findAll.size(); channelNum++) {
             final YoutubeChannel channel = findAll.get(channelNum);
-            final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(channel.getCategory(), PostType.YOUTUBE, channel.getChannelTitle());
             int totalCrawling = 0;
             String message = "";
             long startAt = 0;
@@ -124,11 +124,11 @@ public class YoutubeCrawler implements Crawler {
                         logger.error("Youtube video publish date parsing error !! " + e.getMessage());
                     }
 
-                    if (recentlyDevPost != null) {
-                        if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
-                            success = true;
-                            break;
-                        }
+                    Optional<DevPost> findItem = devPostService.findOneByUrl(YOUTUBE_VIDEO_URL + videoId.asText());
+
+                    if (findItem.isPresent()) {
+                        success = true;
+                        break;
                     }
 
                     DevPost post = DevPost.builder()
@@ -205,11 +205,11 @@ public class YoutubeCrawler implements Crawler {
                                 logger.error("Youtube " + channel.getChannelTitle() +" video publish date parsing error !! " + e.getMessage());
                             }
 
-                            if (recentlyDevPost != null) {
-                                if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
-                                    success = true;
-                                    break;
-                                }
+                            Optional<DevPost> findItem = devPostService.findOneByUrl(YOUTUBE_VIDEO_URL + videoId.asText());
+
+                            if (findItem.isPresent()) {
+                                success = true;
+                                break;
                             }
 
                             DevPost post = DevPost.builder()
@@ -298,7 +298,6 @@ public class YoutubeCrawler implements Crawler {
             return;
         }
 
-        final DevPost recentlyDevPost = devPostService.findRecentlyDevPost(channel.getCategory(), PostType.YOUTUBE, channel.getChannelTitle());
         int totalCrawling = 0;
         boolean success = false;
         String message = "";
@@ -345,11 +344,11 @@ public class YoutubeCrawler implements Crawler {
                     logger.error("Youtube " + channel.getChannelTitle() + " video publish date parsing error !! " + e.getMessage());
                 }
 
-                if (recentlyDevPost != null) {
-                    if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
-                        success = true;
-                        break;
-                    }
+                Optional<DevPost> findItem = devPostService.findOneByUrl(YOUTUBE_VIDEO_URL + videoId.asText());
+
+                if (findItem.isPresent()) {
+                    success = true;
+                    break;
                 }
 
                 DevPost post = DevPost.builder()
@@ -426,13 +425,11 @@ public class YoutubeCrawler implements Crawler {
                             logger.error("Youtube " + channel.getChannelTitle() + "  video publish date parsing error !! " + e.getMessage());
                         }
 
-                        if (recentlyDevPost != null) {
-                            if (recentlyDevPost != null) {
-                                if (StringUtils.equals(recentlyDevPost.getUrl(), YOUTUBE_VIDEO_URL + videoId.asText())) {
-                                    success = true;
-                                    break;
-                                }
-                            }
+                        Optional<DevPost> findItem = devPostService.findOneByUrl(YOUTUBE_VIDEO_URL + videoId.asText());
+
+                        if (findItem.isPresent()) {
+                            success = true;
+                            break;
                         }
 
                         DevPost post = DevPost.builder()
