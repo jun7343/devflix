@@ -1,7 +1,7 @@
 {{#> layout/default title="Devflix" background-black=true}}
 	{{#*inline "content"}}
 		<main class="home no-padding" role="main">
-			<div class="col-md-12 empty">
+			<div class="col-md-12 empty-div">
 			</div>
 			<h1 class="title-category">{{#eq type 'tag'}}#{{else}}/{{/eq}}  {{parameter}}</h1>
 			<section id="grid" class="row-main flex-grid" data-type="{{type}}" data-parameter="{{parameter}}"></section>
