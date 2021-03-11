@@ -111,9 +111,11 @@ public class PostController {
             model.addAttribute("siteUrl", request.getRequestURL());
             model.addAttribute("postOwner", user != null && post.getWriter().getId().equals(user.getId()));
 
-            Optional<DevPost> findDevPost = devPostService.findOneByUrlAndStatus(post.getDevPostUrl(), Status.POST);
+            if (! StringUtils.isBlank(post.getDevPostUrl())) {
+                Optional<DevPost> findDevPost = devPostService.findOneByUrlAndStatus(post.getDevPostUrl(), Status.POST);
 
-            findDevPost.ifPresent(devPost -> model.addAttribute("devPost", devPost));
+                findDevPost.ifPresent(devPost -> model.addAttribute("devPost", devPost));
+            }
 
             return "/post/read";
         } else {
@@ -131,9 +133,11 @@ public class PostController {
         if (postItem.isPresent() && postItem.get().getWriter().getId().equals(user.getId()) && postItem.get().getStatus() == Status.POST) {
             model.addAttribute("item", postItem.get());
 
-            Optional<DevPost> findDevPost = devPostService.findOneByUrlAndStatus(postItem.get().getDevPostUrl(), Status.POST);
+            if (! StringUtils.isBlank(postItem.get().getDevPostUrl())) {
+                Optional<DevPost> findDevPost = devPostService.findOneByUrlAndStatus(postItem.get().getDevPostUrl(), Status.POST);
 
-            findDevPost.ifPresent(devPost -> model.addAttribute("devPost", devPost));
+                findDevPost.ifPresent(devPost -> model.addAttribute("devPost", devPost));
+            }
 
             return "/post/modify";
         } else {
