@@ -65,10 +65,7 @@ $(function () {
     });
 
     $(document).on('click', '.comment-modify', function (e) {
-        e.preventDefault();
-
-        $(this).parent().parent().parent().append($(COMMENT_WRITE_TEMPLATE));
-        $(this).parent().parent().parent().empty();
+        location.href = '/post/comment?pId=' + POST_ID + '&cId=' +  $(this).parent().parent().parent().data('comment');
     });
 
     $('#comment-form').on('submit', function (e) {

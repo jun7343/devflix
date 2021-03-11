@@ -4,10 +4,12 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.DevPost;
 import kr.devflix.entity.Member;
+import kr.devflix.entity.Post;
 import kr.devflix.entity.PostComment;
 import kr.devflix.service.DevPostService;
 import kr.devflix.service.PostCommentService;
 import com.google.common.collect.ImmutableMap;
+import kr.devflix.service.PostService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.core.env.Environment;
@@ -16,11 +18,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +37,7 @@ public class APIController {
 
     private final DevPostService devPostService;
     private final PostCommentService postCommentService;
+    private final PostService postService;
     private final String IMAGE_ROOT_DIR_PATH;
     private final int DEFAULT_COMMENT_PAGE_PER_SIZE = 10;
     private final int DEFAULT_DEV_POST_PAGE_PER_SIZE = 20;
@@ -40,9 +45,11 @@ public class APIController {
     private final String DEFAULT_USER_PROFILE_IMG_PATH = "/assets/img/user.jpg";
     private final SimpleDateFormat devPostDateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
 
-    public APIController(DevPostService devPostService, PostCommentService postCommentService, Environment environment) {
+    public APIController(DevPostService devPostService, PostCommentService postCommentService, PostService postService,
+                         Environment environment) {
         this.devPostService = devPostService;
         this.postCommentService = postCommentService;
+        this.postService = postService;
 
         if (StringUtils.isBlank(environment.getProperty("image.root-drectory"))) {
             IMAGE_ROOT_DIR_PATH = "images/";
@@ -344,5 +351,63 @@ public class APIController {
         }
 
         return ImmutableMap.of("result", false);
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/post/comment", method = RequestMethod.GET)
+    public String commentModifyForm(@RequestParam(name = "pId")final long pId, @RequestParam(name = "cId")final long cId,
+                                    @AuthenticationPrincipal Member user, Model model) {
+        final Optional<Post> findPost = postService.findOneById(pId);
+        final Optional<PostComment> findComment = postCommentService.findOneById(cId);
+
+        if (findPost.isPresent() && findComment.isPresent()) {
+            Post post = findPost.get();
+            PostComment comment = findComment.get();
+
+            if (post.getStatus() == Status.POST && comment.getStatus() == Status.POST && comment.getWriter().getId().equals(user.getId())) {
+                model.addAttribute("pId", pId);
+                model.addAttribute("cId", cId);
+
+                return "/post/comment-modify";
+            }
+        }
+
+        return "redirect:/post";
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/post/comment", method = RequestMethod.POST)
+    public String commentModifyAction(@RequestParam(name = "pId")final long pId, @RequestParam(name = "cId")final long cId,
+                                    @RequestParam(name = "content", required = false)final String content,
+                                    @AuthenticationPrincipal Member user, RedirectAttributes attrs) {
+        if (StringUtils.isBlank(content)) {
+            attrs.addFlashAttribute("errorMessage", "수정 내용 기입해 주세요.");
+
+            return "redirect:/post/comment?pId=" + pId + "&cId=" + cId;
+        }
+
+        final Optional<Post> findPost = postService.findOneById(pId);
+        final Optional<PostComment> findComment = postCommentService.findOneById(cId);
+
+        if (findPost.isPresent() && findComment.isPresent()) {
+            Post post = findPost.get();
+            PostComment comment = findComment.get();
+
+            if (post.getStatus() == Status.POST && comment.getStatus() == Status.POST && comment.getWriter().getId().equals(user.getId())) {
+                postCommentService.updatePostComment(PostComment.builder()
+                            .id(comment.getId())
+                            .comment(content)
+                            .writer(comment.getWriter())
+                            .status(comment.getStatus())
+                            .post(comment.getPost())
+                            .createAt(comment.getCreateAt())
+                            .updateAt(new Date())
+                            .build());
+
+                return "redirect:/post/read/" + pId;
+            }
+        }
+
+        return "redirect:/post";
     }
 }
