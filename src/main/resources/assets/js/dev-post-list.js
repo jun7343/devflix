@@ -50,11 +50,12 @@ $(function () {
         const VALUE = $(this).data('val');
 
         history.pushState({'page' : VALUE}, 'main',  '?page=' + VALUE);
-        devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, VALUE);
 
         $('html, body').stop().animate({
             scrollTop: $DEV_POST_LIST.offset().top - $('.bar-header').eq(0).innerHeight()
         }, 800);
+
+        devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, VALUE);
     });
 
     $(window).on('popstate', function () {
