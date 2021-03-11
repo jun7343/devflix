@@ -1,7 +1,7 @@
 package kr.devflix.entity;
 
-import kr.devflix.constant.Status;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import kr.devflix.constant.Status;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -30,9 +30,8 @@ public class Post {
     @JoinColumn(name = "writer_id")
     private Member writer;
 
-    @Column(name = "dev_post_url", columnDefinition = "varchar[]")
-    @Type(type = "list-array")
-    private List<String> devPostUrl;
+    @Column(name = "dev_post_url")
+    private String devPostUrl;
 
     @Column
     private String title;
@@ -59,7 +58,7 @@ public class Post {
     private Date updateAt;
 
     @Builder
-    public Post(final Long id, final Status status, final Member writer, List<String> devPostUrl,
+    public Post(final Long id, final Status status, final Member writer, String devPostUrl,
                 final String title, final String content, final int view, final String pathBase,
                 List<String> images, final Date createAt, final Date updateAt) {
         this.id = id;

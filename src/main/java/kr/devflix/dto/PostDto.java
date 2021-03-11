@@ -22,8 +22,7 @@ public class PostDto {
     private final int view;
     private final String pathBase;
     private final List<String> images;
-    private final List<DevPost> devPostList;
-    private final List<String> devPostUrl;
+    private final String devPostUrl;
     private final Date createAt;
     private final Date updateAt;
 }

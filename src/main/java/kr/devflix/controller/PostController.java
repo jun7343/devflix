@@ -74,7 +74,7 @@ public class PostController {
 
     @Secured(RoleType.USER)
     @RequestMapping(path = "/post/write", method = RequestMethod.POST)
-    public String writeAction(@RequestParam(name = "title", required = false)final String title, @RequestParam(name = "post-url", required = false) List<String> devPostURL,
+    public String writeAction(@RequestParam(name = "title", required = false)final String title, @RequestParam(name = "post-url", required = false)final String devPostUrl,
                               @RequestParam(name = "path-base", required = false)final String pathBase, @RequestParam(name = "images", required = false)List<String> images,
                               @RequestParam(name = "content", required = false)final String content, @AuthenticationPrincipal Member writer,
                               RedirectAttributes attrs) {
@@ -91,7 +91,7 @@ public class PostController {
                 .writer(writer)
                 .pathBase(pathBase)
                 .images(images == null? new ArrayList<>() : images)
-                .devPostUrl(devPostURL == null? new ArrayList<>() : devPostURL)
+                .devPostUrl(devPostUrl)
                 .view(0)
                 .build();
 
@@ -111,9 +111,9 @@ public class PostController {
             model.addAttribute("siteUrl", request.getRequestURL());
             model.addAttribute("postOwner", user != null && post.getWriter().getId().equals(user.getId()));
 
-            List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(post.getDevPostUrl(), Status.POST);
+            Optional<DevPost> findDevPost = devPostService.findOneByUrlAndStatus(post.getDevPostUrl(), Status.POST);
 
-            model.addAttribute("devPostList", findDevPostList);
+            findDevPost.ifPresent(devPost -> model.addAttribute("devPost", devPost));
 
             return "/post/read";
         } else {
@@ -131,9 +131,9 @@ public class PostController {
         if (postItem.isPresent() && postItem.get().getWriter().getId().equals(user.getId()) && postItem.get().getStatus() == Status.POST) {
             model.addAttribute("item", postItem.get());
 
-            List<DevPost> findDevPostList = devPostService.findAllByUrlAndStatus(postItem.get().getDevPostUrl(), Status.POST);
+            Optional<DevPost> findDevPost = devPostService.findOneByUrlAndStatus(postItem.get().getDevPostUrl(), Status.POST);
 
-            model.addAttribute("devPostList", findDevPostList);
+            findDevPost.ifPresent(devPost -> model.addAttribute("devPost", devPost));
 
             return "/post/modify";
         } else {
@@ -143,7 +143,7 @@ public class PostController {
 
     @Secured(RoleType.USER)
     @RequestMapping(path = "/post/modify/{id}", method = RequestMethod.POST)
-    public String modifyAction(@PathVariable(name = "id")final long id, @RequestParam(name = "title", required = false)final String title, @RequestParam(name = "post-url", required = false) List<String> devPostURL,
+    public String modifyAction(@PathVariable(name = "id")final long id, @RequestParam(name = "title", required = false)final String title, @RequestParam(name = "post-url", required = false)final String devPostUrl,
                                @RequestParam(name = "path-base", required = false)final String pathBase, @RequestParam(name = "images", required = false)List<String> images,
                                @RequestParam(name = "content", required = false)final String content, @AuthenticationPrincipal Member user,
                                RedirectAttributes attrs) {
@@ -164,7 +164,7 @@ public class PostController {
                     .writer(postItem.get().getWriter())
                     .pathBase(pathBase)
                     .images(images == null? new ArrayList<>() : images)
-                    .devPostUrl(devPostURL == null ? new ArrayList<>() : devPostURL)
+                    .devPostUrl(devPostUrl)
                     .view(postItem.get().getView())
                     .createAt(postItem.get().getCreateAt())
                     .updateAt(new Date())

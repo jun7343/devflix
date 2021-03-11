@@ -9,12 +9,10 @@
 					</time>
 				</p>
 				<h1 class="post-title">{{{item.title}}}</h1>
-				{{#if devPostList}}
-					{{#each devPostList}}
-						<p class="dev-post-item"><a href="{{url}}"><img src="{{thumbnail}}" class="post-cover view-anchor" alt="{{{title}}}">
-							<span class="post-subtitle">{{category}} - {{postType}}</span><br><strong class="dev-post-title">{{{title}}}</strong></a>
+				{{#if devPost}}
+						<p class="dev-post-item"><a href="{{devPost.url}}"><img src="{{devPost.thumbnail}}" class="post-cover view-anchor" alt="{{{devPost.title}}}">
+							<span class="post-subtitle">{{devPost.category}} - {{devPost.postType}}</span><br><strong class="dev-post-title">{{{devPost.title}}}</strong></a>
 						</p>
-					{{/each}}
 				{{/if}}
 				{{{unEscape item.content}}}
 			</article>

@@ -1,7 +1,7 @@
 package kr.devflix.service;
 
-import kr.devflix.constant.Status;
 import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.DevPost;
 import kr.devflix.repository.DevPostRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -32,11 +31,6 @@ public class DevPostService {
     @Transactional
     public DevPost findRecentlyDevPost(final String category, PostType postType) {
         return devPostRepository.findTopOneByCategoryAndPostTypeOrderByUploadAtDesc(category, postType);
-    }
-
-    @Transactional
-    public DevPost findRecentlyDevPost(final String category, PostType postType, final String writer) {
-        return devPostRepository.findTopOneByCategoryAndPostTypeAndWriterOrderByUploadAtDesc(category, postType, writer);
     }
 
     @Transactional
@@ -95,21 +89,6 @@ public class DevPostService {
     }
 
     @Transactional
-    public List<DevPost> findAllByUrlAndStatus(List<String> urlList, Status status) {
-        List<DevPost> findList = new ArrayList<>();
-
-        for (String url : urlList) {
-            Optional<DevPost> findOne = devPostRepository.findOne((root, query, criteriaBuilder) -> {
-                return criteriaBuilder.and(criteriaBuilder.equal(root.get("url"), url), criteriaBuilder.equal(root.get("status"), status));
-            });
-
-            findOne.ifPresent(findList::add);
-        }
-
-        return findList;
-    }
-
-    @Transactional
     public DevPost findRandomOneByStatus(Status status) {
         return devPostRepository.findOneByStatusOrderByRandom(status.name());
     }
@@ -118,6 +97,13 @@ public class DevPostService {
     public Optional<DevPost> findOneByUrl(final String url) {
         return devPostRepository.findOne((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("url"), url);
+        });
+    }
+
+    @Transactional
+    public Optional<DevPost> findOneByUrlAndStatus(final String url, Status status) {
+        return devPostRepository.findOne((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("url"), url), criteriaBuilder.equal(root.get("status"), status));
         });
     }
 }
