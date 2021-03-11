@@ -51,6 +51,6 @@ $(function () {
             } else if (CONTENT.length === 0) {
                 $SEARCH_RESULT_FIELD.empty();
             }
-        }, 400);
+        }, 300);
     });
 })
