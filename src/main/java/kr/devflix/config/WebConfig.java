@@ -34,10 +34,8 @@ public class WebConfig implements WebMvcConfigurer {
         if (environment.acceptsProfiles(Profiles.of("local"))) {
             registry.addResourceHandler("/assets/**").addResourceLocations("file:src/main/resources/assets/");
             registry.addResourceHandler("/images/**").addResourceLocations("file:images/");
-        } else if (environment.acceptsProfiles(Profiles.of("dev"))) {
-            registry.addResourceHandler("/assets/**").addResourceLocations("file:/srv/devflix/assets/");
         } else {
-
+            registry.addResourceHandler("/assets/**").addResourceLocations("/resources/**");
         }
     }
 
