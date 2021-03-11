@@ -41,13 +41,13 @@ $(function () {
     $('#share-twiter').on('click', function (e) {
         e.preventDefault();
 
-        window.open($(this).attr('href'), 'twiter-share', 'width=550,height=235');
+        window.open($(this).data('url'), 'twiter-share', 'width=550,height=235');
     });
 
     $('#share-facebook').on('click', function (e) {
         e.preventDefault();
 
-        window.open($(this).attr('href'), 'facebook-share', 'width=580,height=296');
+        window.open($(this).data('url'), 'facebook-share', 'width=580,height=296');
     });
 
     $('.view-anchor').on('click', function () {
