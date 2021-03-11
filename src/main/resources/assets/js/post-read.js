@@ -83,6 +83,12 @@ $(function () {
     $('#comment-form').on('submit', function (e) {
         e.preventDefault();
 
+        if ($COMMENT.summernote('isEmpty')) {
+            alert('댓글 기입해 주세요.');
+
+            return false;
+        }
+
         $.ajax({
             url: API_COMMENT_SAVE_URL,
             type: POST_TYPE,
@@ -91,7 +97,7 @@ $(function () {
                 $COMMENT.summernote('reset');
                 commentDrawing(DEFAULT_PAGE);
             }
-        })
+        });
     });
 
     function commentDrawing(page) {
