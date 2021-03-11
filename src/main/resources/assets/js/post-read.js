@@ -38,6 +38,18 @@ $(function () {
         return confirm('정말 삭제 하시겠습니까??');
     });
 
+    $('#share-twiter').on('click', function (e) {
+        e.preventDefault();
+
+        window.open($(this).attr('href'), 'twiter-share', 'width=550,height=235');
+    });
+
+    $('#share-facebook').on('click', function (e) {
+        e.preventDefault();
+
+        window.open($(this).attr('href'), 'facebook-share', 'width=580,height=296');
+    });
+
     $('.view-anchor').on('click', function () {
         $.ajax({
             url: API_VIEW_COUNT_URL,
