@@ -10,7 +10,15 @@
 	{{#if isAuthentication}}
 		<div id="profile" class="dropdown header-icon">
 			<a role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				<img src="/assets/img/user.jpg" class="icon-profile">
+				{{#if user.pathBase}}
+					{{#if user.imagePath}}
+						<img src="/images/{{user.pathBase}}{{user.imagePath}}" class="icon-profile">
+					{{else}}
+						<img src="/assets/img/user.jpg" class="icon-profile">
+					{{/if}}
+				{{else}}
+					<img src="/assets/img/user.jpg" class="icon-profile">
+				{{/if}}
 			</a>
 			<div class="dropdown-menu" aria-labelledby="profile">
 				<a class="dropdown-item" href="/my-page">My Page</a>
