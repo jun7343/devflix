@@ -55,6 +55,21 @@ $(function () {
         return this.optional(element) ||  /^.*(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/.test(value);
     }, '비밀번호는 영문자, 숫자, 특수문자 조합해 주세요.');
 
+    $('#my-page-form').validate({
+        rules: {
+            'username': {
+                required: true,
+                maxLength: 50
+            }
+        },
+        messages: {
+            'username': {
+                required: '유저 이름 기입해 주세요.',
+                maxLength: '유저 이름 최대 50자 입니다.'
+            }
+        }
+    });
+
     $('#my-page-password-form').validate({
         rules: {
             'current-password': {
