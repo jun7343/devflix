@@ -29,8 +29,10 @@
 		<section class="author">
 			<div class="details">
 				{{#if item.writer.pathBase}}
-					{{#if item.writer.images}}
-						<img class="img-rounded" src="/images/{{pathBase}}{{item.writer.images}}" alt="">
+					{{#if item.writer.imagePath}}
+						<img class="img-rounded" src="/images/{{item.writer.pathBase}}{{item.writer.imagePath}}" alt="">
+					{{else}}
+						<img class="img-rounded" src="/assets/img/user.jpg" alt="">
 					{{/if}}
 				{{else}}
 					<img class="img-rounded" src="/assets/img/user.jpg" alt="">
