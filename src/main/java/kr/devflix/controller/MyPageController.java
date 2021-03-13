@@ -1,6 +1,8 @@
 package kr.devflix.controller;
 
+import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.RoleType;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.Member;
 import kr.devflix.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +32,7 @@ public class MyPageController {
     @Secured(RoleType.USER)
     @RequestMapping(path = "/my-page", method = RequestMethod.GET)
     public String myPageForm(@AuthenticationPrincipal Member user, Model model) {
-
         model.addAttribute("item", user);
-
-        System.out.println(user.toString());
 
         return "/my-page/index";
     }
@@ -134,6 +133,59 @@ public class MyPageController {
                         .createAt(user.getCreateAt())
                         .updateAt(new Date())
                         .build());
+
+        return "redirect:/logout";
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/my-page/withdrawal", method = RequestMethod.GET)
+    public String myPageWithdrawlForm(@AuthenticationPrincipal Member user, Model model) {
+        model.addAttribute("id", user.getId());
+
+        return "/my-page/withdrawal";
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/my-page/withdrawal", method = RequestMethod.POST)
+    public String myPAgeWithdrawlAction(@RequestParam(name = "email", required = false)final String email,
+                                        @RequestParam(name = "password", required = false)final String password,
+                                        @AuthenticationPrincipal Member user, RedirectAttributes attrs) {
+        if (StringUtils.isBlank(email)) {
+            attrs.addFlashAttribute("errorMessage", "이메일 기입해 주세요.");
+
+            return "redirect:/my-page/withdrawl";
+        } else if (StringUtils.isBlank(password)) {
+            attrs.addFlashAttribute("errorMessage", "패스워드 기입해 주세요.");
+
+            return "redirect:/my-page/withdrawl";
+        } else if (! StringUtils.equals(user.getEmail(), email)) {
+            attrs.addFlashAttribute("errorMessage", "이메일이 맞지 않습니다.");
+
+            return "redirect:/my-page/withdrawal";
+        } else if (! passwordEncoder.matches(password, user.getPassword())) {
+            attrs.addFlashAttribute("errorMessage", "비밀번호가 맞지 않습니다.");
+
+            return "redirect:/my-page/withdrawal";
+        }
+
+        memberService.updateMemberInfo(Member.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .username(user.getUsername())
+                .status(MemberStatus.WITHDRAWAL)
+                .description(user.getDescription())
+                .github(user.getGithub())
+                .facebook(user.getFacebook())
+                .twiter(user.getTwiter())
+                .instagram(user.getInstagram())
+                .linkedIn(user.getLinkedIn())
+                .pathBase(user.getPathBase())
+                .imagePath(user.getImagePath())
+                .authority(user.getAuthority())
+                .createAt(user.getCreateAt())
+                .updateAt(new Date())
+                .build());
 
         return "redirect:/logout";
     }

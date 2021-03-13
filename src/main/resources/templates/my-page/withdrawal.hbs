@@ -1,0 +1,39 @@
+{{#> layout/default title="My Page"}}
+	{{#*inline "content"}}
+		<div class="post">
+			<article class="post-content fullwidth">
+				<div class="login-container">
+					<div id="form" class="contact-form my-page">
+						<h1>My Page - Withdrawl</h1>
+						{{#if errorMessage}}
+							<div class="row">
+								<div class="alert alert-danger col-md-12" role="alert">
+									{{errorMessage}}
+								</div>
+							</div>
+						{{/if}}
+						<form id="my-page-withdrawl-form" method="post" action="/my-page/withdrawal" class="needs-validation">
+							<div class="row">
+								<div class="form-group col-md-12">
+									<label for="email">Email</label>
+									<input type="email" id="email" name="email" class="form-control" placeholder="Email">
+								</div>
+								<div class="form-group col-md-12">
+									<label for="password">Password</label>
+									<input type="password" id="password" name="password" class="form-control" placeholder="Password">
+								</div>
+								<div class="form-group col-md-12">
+									<button type="submit" class="btn btn-danger">탈퇴</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</article>
+		</div>
+	{{/inline}}
+	{{#*inline "js"}}
+		<script src="/assets/libs/js/jquery.validate.min.js"></script>
+		<script src="/assets/js/my-page.js"></script>
+	{{/inline}}
+{{/layout/default}}

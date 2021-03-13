@@ -97,25 +97,25 @@ public class Member implements UserDetails {
     // 추후에 세팅
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return this.status != MemberStatus.EXPIRED;
     }
 
     // 추후에 세팅
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.status != MemberStatus.LOCK;
     }
 
     // 추후에 세팅
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return this.status != MemberStatus.CREDENTIAL_EXPIRED;
     }
 
     // 추후에 세팅
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.status != MemberStatus.WITHDRAWAL;
     }
 
     @Builder

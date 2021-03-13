@@ -4,11 +4,11 @@ $(function () {
     const $PATH_BASE = $('#path-base');
     const $IMAGE = $('#image');
 
-    $('#password').on('click', function () {
+    $('button#password').on('click', function () {
         location.href = '/my-page/password';
     });
 
-    $('#withdrawal').on('click', function () {
+    $('button#withdrawal').on('click', function () {
         location.href = '/my-page/withdrawal';
     });
 
@@ -79,6 +79,27 @@ $(function () {
             'new-password-confirm': {
                 required: '새로운 비밀번호 확인 기입해 주세요.',
                 equalTo: '새로운 비밀번호와 똑같이 기입해 주세요.'
+            }
+        }
+    });
+
+    $('#my-page-withdrawl-form').validate({
+        rules: {
+            'email': {
+                required: true,
+                email: true
+            },
+            'password': {
+                required: true
+            }
+        },
+        messages: {
+            'email': {
+                required: '이메일 기입해 주세요.',
+                email: '이메일 형식이 올바르지 않습니다.'
+            },
+            'password': {
+                required: '패스워드 기입해 주세요.'
             }
         }
     });

@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     } else if (exception instanceof LockedException) {
                         request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, new LockedException("계정이 잠금 상태 입니다."));
                     } else if (exception instanceof DisabledException) {
-                        request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, new DisabledException("계정 비활성화 상태 입니다."));
+                        request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, new DisabledException("회원 탈퇴한 계정 입니다."));
                     } else if (exception instanceof AccountExpiredException) {
                         request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, new AccountExpiredException("만료된 계정 입니다."));
                     } else if (exception instanceof CredentialsExpiredException) {
