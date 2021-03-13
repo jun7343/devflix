@@ -284,8 +284,8 @@ public class APIController {
             commentList.add(ImmutableMap.<String, Object>builder()
                     .put("id", comment.getId())
                     .put("writer", comment.getWriter().getUsername())
-                    .put("userImg", comment.getWriter().getPathBasae() == null? DEFAULT_USER_PROFILE_IMG_PATH : comment.getWriter().getImages().size() == 0? DEFAULT_USER_PROFILE_IMG_PATH
-                            : "/images/" + comment.getWriter().getPathBasae() + comment.getWriter().getImages().get(comment.getWriter().getImages().size() - 1))
+                    .put("userImg", !StringUtils.isBlank(comment.getWriter().getPathBase()) && !StringUtils.isBlank(comment.getWriter().getImagePath())?
+                            "/images/" + comment.getWriter().getPathBase() + comment.getWriter().getImagePath() : DEFAULT_USER_PROFILE_IMG_PATH)
                     .put("uploadAt", commentDateFormat.format(comment.getCreateAt()))
                     .put("comment", StringEscapeUtils.unescapeHtml4(comment.getComment()))
                     .put("owner", user != null && comment.getWriter().getId().equals(user.getId()))
