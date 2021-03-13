@@ -65,7 +65,8 @@ $(function () {
                 'password-check': true
             },
             'new-password-confirm': {
-                equalsTo: ':new-password'
+                required: true,
+                equalTo: '#new-password'
             }
         },
         messages: {
@@ -76,7 +77,8 @@ $(function () {
                 required: '새로운 비밀번호 기입해 주세요.'
             },
             'new-password-confirm': {
-                equalsTo: '새로운 비밀번호와 똑같이 기입해 주세요.'
+                required: '새로운 비밀번호 확인 기입해 주세요.',
+                equalTo: '새로운 비밀번호와 똑같이 기입해 주세요.'
             }
         }
     });

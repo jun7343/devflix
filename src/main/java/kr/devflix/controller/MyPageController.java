@@ -5,13 +5,10 @@ import kr.devflix.entity.Member;
 import kr.devflix.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
-import org.jsoup.Jsoup;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Date;
-import java.util.LinkedList;
 
 @Controller
 @RequiredArgsConstructor
@@ -106,9 +102,6 @@ public class MyPageController {
     public String myPagePasswordAction(@RequestParam(name = "current-password", required = false)final String currentPassword,
                                        @RequestParam(name = "new-password", required = false)final String newPassword,
                                        @AuthenticationPrincipal Member user, RedirectAttributes attrs) {
-        System.out.println("current password = " + currentPassword);
-        System.out.println("new password = " + newPassword);
-        System.out.println("user password compare current password = " + passwordEncoder.matches(currentPassword, user.getPassword()));
         if (StringUtils.isBlank(currentPassword)) {
             attrs.addFlashAttribute("errorMessage", "현재 비밀번호 기입해 주세요.");
 
