@@ -1,0 +1,74 @@
+{{#> layout/default title="My Page"}}
+	{{#*inline "content"}}
+		<div class="post">
+			<article class="post-content fullwidth">
+				<div class="login-container">
+					<div id="form" class="contact-form my-page">
+						<h1>My Page</h1>
+						{{#if errorMessage}}
+							<div class="row">
+								<div class="alert alert-danger col-md-12" role="alert">
+									{{errorMessage}}
+								</div>
+							</div>
+						{{/if}}
+						<form id="my-page-form" method="post" action="/my-page" class="needs-validation">
+							<div class="row">
+								<div class="form-group col-md-12 d-flex justify-content-center profile-div">
+									<div class="col-md-6">
+										<a href="" class="profile"><img src="{{#if item.imagePath}}/images/{{item.pathBase}}{{item.imagePath}}{{else}}/assets/img/user.jpg{{/if}}" class="img-rounded profile" id="profile-img"></a>
+										<input type="hidden" name="path-base" id="path-base" value="{{item.pathBase}}">
+										<input type="hidden" name="image" id="image" value="{{item.imagePath}}">
+										<input type="file" style="display: none" id="img-upload">
+									</div>
+								</div>
+								<div class="form-group col-md-12">
+									<label for="username">User name</label>
+									<input type="text" id="username" name="username" class="form-control col-md-6" placeholder="User name" value="{{item.username}}">
+								</div>
+								<div class="form-group col-md-12">
+									<label for="description">Description</label>
+									<input type="text" id="description" name="description" class="form-control col-md-12" placeholder="Description" value="{{{item.description}}}">
+								</div>
+								<div class="form-group col-md-12">
+									<label for="password">Password</label><br>
+									<button type="button" id="password" class="form-control btn btn-primary col-md-3">비밀번호 수정</button>
+								</div>
+								<div class="form-group col-md-12">
+									<label for="github">Github - (https://github.com/{Github})</label>
+									<input type="text" id="github" name="github" class="form-control col-md-6" placeholder="Github" value="{{item.github}}">
+								</div>
+								<div class="form-group col-md-12">
+									<label for="facebook">Facebook - (https://www.facebook.com/{Facebook})</label>
+									<input type="text" id="facebook" name="facebook" class="form-control col-md-6" placeholder="Facebook" value="{{item.facebook}}">
+								</div>
+								<div class="form-group col-md-12">
+									<label for="twitter">Twitter - (https://twitter.com/{Twitter})</label>
+									<input type="text" id="twitter" name="twitter" class="form-control col-md-6" placeholder="Twitter" value="{{item.twitter}}">
+								</div>
+								<div class="form-group col-md-12">
+									<label for="instagram">Instagram - (https://www.instagram.com/{Instagram})</label>
+									<input type="text" id="instagram" name="instagram" class="form-control col-md-6" placeholder="Instagram" value="{{item.instagram}}">
+								</div>
+								<div class="form-group col-md-12">
+									<label for="linked-in">Linked In - (https://www.linkedin.com/in/{Linked In})</label>
+									<input type="text" id="linked-in" name="linked-in" class="form-control col-md-6" placeholder="Linked In" value="{{item.linkedIn}}">
+								</div>
+								<input type="hidden" name="id" value="{{item.id}}">
+								<div class="form-group col-md-12">
+									<button type="submit" class="btn btn-primary">수정</button>
+								</div>
+								<div class="form-group col-md-12">
+									<button type="button" id="withdrawal" class="btn btn-danger col-md-12">회원 탈퇴</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</article>
+		</div>
+	{{/inline}}
+	{{#*inline "js"}}
+		<script src="/assets/js/my-page.js"></script>
+	{{/inline}}
+{{/layout/default}}
