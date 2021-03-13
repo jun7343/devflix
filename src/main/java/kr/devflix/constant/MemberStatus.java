@@ -1,5 +1,5 @@
 package kr.devflix.constant;
 
 public enum MemberStatus {
-    WAIT, LOCK, EXPIRED, ACTIVE, WITHDRAWAL
+    WAIT, LOCK, EXPIRED, ACTIVE, WITHDRAWAL, CREDENTIAL_EXPIRED
 }
