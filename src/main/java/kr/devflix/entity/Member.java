@@ -39,16 +39,15 @@ public class Member implements UserDetails {
     @Column
     private String username;
 
-    @Type(type = "list-array")
     @Column(nullable = false, columnDefinition = "varchar[]")
+    @Type(type = "list-array")
     private List<String> authority;
 
     @Column(name = "path_base")
-    private String pathBasae;
+    private String pathBase;
 
-    @Column(name = "image_path", columnDefinition = "varchar[]")
-    @Type(type = "list-array")
-    private List<String> images;
+    @Column(name = "image_path")
+    private String imagePath;
 
     @Column
     private String description;
@@ -121,7 +120,7 @@ public class Member implements UserDetails {
 
     @Builder
     public Member(final Long id, final MemberStatus status, final String email, final String password, final String username,
-                  final List<String> authority, final String pathBasae, List<String> images, final String description,
+                  final List<String> authority, final String pathBase, final String imagePath, final String description,
                   final String github, final String facebook, final String twiter, final String instagram,
                   final String linkedIn, final Date createAt, final Date updateAt) {
         this.id = id;
@@ -130,8 +129,8 @@ public class Member implements UserDetails {
         this.password = password;
         this.username = username;
         this.authority = authority;
-        this.pathBasae = pathBasae;
-        this.images = images;
+        this.pathBase = pathBase;
+        this.imagePath = imagePath;
         this.description = description;
         this.github = github;
         this.facebook = facebook;

@@ -1,6 +1,7 @@
 package kr.devflix.security.interceptor;
 
 import kr.devflix.constant.RoleType;
+import kr.devflix.entity.Member;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             modelAndView.addObject("isAuthentication", isAuthentication.get());
 
             if (isAuthentication.get()) {
-                modelAndView.addObject("user", authentication.getDetails());
+                modelAndView.addObject("user", authentication.getPrincipal());
             }
         }
     }

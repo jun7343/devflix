@@ -6,7 +6,7 @@ create table "member" (
   password varchar(300) not null,
   authority varchar[] not null default '{}',
   path_base varchar(500),
-  image_path varchar[],
+  image_path varchar(500),
   description text,
   github varchar(400),
   facebook varchar(400),

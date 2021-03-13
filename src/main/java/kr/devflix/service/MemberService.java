@@ -132,6 +132,13 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(updateUser);
     }
 
+    @Transactional
+    public void updateMemberInfo(final Member member) {
+        if (member != null && member.getId() != null) {
+            memberRepository.save(member);
+        }
+    }
+
     @Override
     public Member loadUserByUsername(final String email) throws UsernameNotFoundException {
         final Member user = memberRepository.findByEmailEquals(email);
