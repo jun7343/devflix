@@ -4,6 +4,7 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.entity.Member;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -32,11 +33,15 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 }
             });
 
-            modelAndView.addObject("isAuthentication", isAuthentication.get());
-
             if (isAuthentication.get()) {
                 modelAndView.addObject("user", authentication.getPrincipal());
             }
+
+            DefaultCsrfToken token = (DefaultCsrfToken) request.getAttribute("_csrf");
+
+            modelAndView.addObject("csrf_parameter", token.getParameterName());
+            modelAndView.addObject("csrf_header", token.getHeaderName());
+            modelAndView.addObject("csrf_token", token.getToken());
         }
     }
 }
