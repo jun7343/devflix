@@ -12,6 +12,8 @@ import com.google.common.collect.ImmutableMap;
 import kr.devflix.service.PostService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -44,6 +46,7 @@ public class APIController {
     private final SimpleDateFormat commentDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     private final String DEFAULT_USER_PROFILE_IMG_PATH = "/assets/img/user.jpg";
     private final SimpleDateFormat devPostDateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+    private final Logger logger = LoggerFactory.getLogger(APIController.class);
 
     public APIController(DevPostService devPostService, PostCommentService postCommentService, PostService postService,
                          Environment environment) {
@@ -179,6 +182,8 @@ public class APIController {
             pathBase = getPathBase();
         }
 
+        System.out.println("file upload.......");
+
         List<Object> list = new LinkedList<>();
 
         for (MultipartFile img : images) {
@@ -190,6 +195,8 @@ public class APIController {
 
                 try {
                     File file = new File(IMAGE_ROOT_DIR_PATH + pathBase + imageName.toString());
+
+                    System.out.println("gogo file upload");
                     img.transferTo(Paths.get(file.getPath()));
 
                     ImmutableMap<String, Object> map = ImmutableMap.<String, Object>builder()
@@ -240,8 +247,10 @@ public class APIController {
 
         File file = new File(IMAGE_ROOT_DIR_PATH + builder.toString());
 
-        if (! file.exists()) {
-            file.mkdirs();
+        if (file.mkdirs()) {
+            logger.debug("path base directory create done!!");
+        } else{
+            logger.error("path base directory create error!!");
         }
 
         return builder.toString();
