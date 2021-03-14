@@ -12,7 +12,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfToken;
 
 import javax.servlet.RequestDispatcher;
 
@@ -53,19 +52,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/login");
                     dispatcher.forward(request, response);
                 })
-                .and()
-                    .logout()
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/")
-                    .deleteCookies("JSESSIONID")
-                .and()
-                    .csrf()
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
-                    .sessionManagement()
-                    .maximumSessions(1)
-                    .maxSessionsPreventsLogin(true)
-                    .expiredUrl("/login");
+            .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+            .and()
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
     @Bean
