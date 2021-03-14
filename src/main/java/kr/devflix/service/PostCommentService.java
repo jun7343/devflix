@@ -2,7 +2,10 @@ package kr.devflix.service;
 
 import kr.devflix.constant.Status;
 import kr.devflix.entity.Member;
+import kr.devflix.entity.Post;
 import kr.devflix.entity.PostComment;
+import kr.devflix.entity.PostCommentAlert;
+import kr.devflix.repository.PostCommentAlertRepository;
 import kr.devflix.repository.PostCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,18 +22,33 @@ import java.util.Optional;
 public class PostCommentService {
 
     private final PostCommentRepository postCommentRepository;
+    private final PostCommentAlertRepository postCommentAlertRepository;
     private final PostService postService;
 
     @Transactional
     public PostComment createComment(final long postId, final String comment, final Member writer) {
-        return postCommentRepository.save(PostComment.builder()
+        final Post post = postService.findOneById(postId).orElse(null);
+
+        final PostComment save = postCommentRepository.save(PostComment.builder()
                 .status(Status.POST)
-                .post(postService.findOneById(postId).orElse(null))
+                .post(post)
                 .writer(writer)
                 .comment(comment)
                 .createAt(new Date())
                 .updateAt(new Date())
                 .build());
+
+        if (post != null && ! post.getWriter().getId().equals(writer.getId())) {
+            postCommentAlertRepository.save(PostCommentAlert.builder()
+                    .comment(save)
+                    .user(post.getWriter())
+                    .confirm(false)
+                    .createAt(new Date())
+                    .updateAt(new Date())
+                    .build());
+        }
+
+        return save;
     }
 
     @Transactional
