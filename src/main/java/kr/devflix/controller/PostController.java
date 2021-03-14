@@ -1,5 +1,6 @@
 package kr.devflix.controller;
 
+import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.dto.PostDto;
@@ -37,7 +38,7 @@ public class PostController {
 
     @RequestMapping(path = "/post", method = RequestMethod.GET)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
-        Page<Post> findList = postService.findAllByStatusAndPageRequest(Status.POST, page, DEFAULT_SIZE_VALUE);
+        Page<Post> findList = postService.findAllByStatusAndWriterStatusAndPageRequest(Status.POST, MemberStatus.ACTIVE, page, DEFAULT_SIZE_VALUE);
         List<Integer> pageNumList = new ArrayList<>();
 
         model.addAttribute("list", findList);

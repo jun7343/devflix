@@ -1,10 +1,10 @@
 package kr.devflix.service;
 
+import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.Status;
 import kr.devflix.dto.PostDto;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
-import kr.devflix.repository.DevPostRepository;
 import kr.devflix.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,16 +21,14 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final DevPostRepository devPostRepository;
 
     @Transactional
-    public Post write(Post post) {
-
+    public Post write(final Post post) {
         return postRepository.save(post);
     }
 
     @Transactional
-    public Post createPost(PostDto dto) {
+    public Post createPost(final PostDto dto) {
         Post post = Post.builder()
                 .status(dto.getStatus())
                 .title(dto.getTitle())
@@ -48,7 +46,7 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(PostDto dto) {
+    public void updatePost(final PostDto dto) {
         Post post = Post.builder()
                 .id(dto.getId())
                 .status(dto.getStatus())
@@ -74,7 +72,7 @@ public class PostService {
     }
 
     @Transactional
-    public Optional<Post> findOneById(long id) {
+    public Optional<Post> findOneById(final long id) {
         return postRepository.findOne((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("id"), id);
         });
@@ -83,5 +81,11 @@ public class PostService {
     @Transactional
     public void updateAllStatusByWriter(Status status, final Member writer) {
         postRepository.updateAllStatusByWriter(status, writer);
+    }
+
+    public Page<Post> findAllByStatusAndWriterStatusAndPageRequest(Status postStatus, MemberStatus writerStatus, final int page, final int size) {
+        return postRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("status"), postStatus), criteriaBuilder.equal(root.join("writer").get("status"), writerStatus));
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 }
