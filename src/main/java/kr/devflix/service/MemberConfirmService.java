@@ -4,8 +4,9 @@ import kr.devflix.entity.MemberConfirm;
 import kr.devflix.repository.MemberConfirmRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+
 import java.util.List;
 
 @Service
