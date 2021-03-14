@@ -3,6 +3,8 @@ $(function () {
     const POST_TYPE = 'POST';
     const $PATH_BASE = $('#path-base');
     const $IMAGE = $('#image');
+    const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
+    const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
 
     $('button#password').on('click', function () {
         location.href = '/my-page/password';
@@ -31,6 +33,9 @@ $(function () {
         $.ajax({
             url: API_IMAGE_UPLOAD_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: data,
             contentType: false,
             cache: false,

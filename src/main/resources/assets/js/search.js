@@ -12,6 +12,8 @@ $(function () {
     const SEARCH_TEMPLATE = '<li><div class="search-thumbnail"><a href="{{url}}" target="_blank"><img src="{{thumbnail}}"></a></div>' +
         '<div class="search-content"><a href="{{url}}" target="_blank"><span class="category">{{category}} - {{postType}}</span><br><p>{{title}}</p></a></div><div class="search-date">' +
         '<a href="{{url}}" target="_blank"><span class="entry-date"><time datetime="{{uploadAt}}"></time>{{uploadAt}}</time></span></a></div></li>';
+    const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
+    const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
     let search = null;
     let lastSearchConent = '';
 
@@ -29,6 +31,9 @@ $(function () {
                 $.ajax({
                     url: API_SEARCH_URL,
                     type: POST_TYPE,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+                    },
                     data: {'content': CONTENT},
                     success: function (data) {
                         $SEARCH_RESULT_FIELD.empty();

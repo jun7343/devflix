@@ -22,6 +22,8 @@ $(function () {
     const PAGING_PREVIOUS_TEMPLATE = '<li class="page-item"><button class="page-link" aria-label="Previous" value="{{value}}"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></button></li>';
     const PAGING_NEXT_TEMPLATE = '<li class="page-item"><button class="page-link" aria-label="Next" value="{{value}}"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></button></li>';
     const PAGING_NUM_TEMPLATE = '<li class="page-item"><button class="page-link" value="{{value}}">{{num}}</button></li>';
+    const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
+    const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
 
     $COMMENT.summernote({
         toolbar: false,
@@ -54,6 +56,9 @@ $(function () {
         $.ajax({
             url: API_VIEW_COUNT_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: {'url': $(this).attr('href')},
             success: function (data) {
             }
@@ -68,6 +73,9 @@ $(function () {
             $.ajax({
                 url: API_COMMENT_DELETE_URL,
                 type: POST_TYPE,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+                },
                 data: {'id': ID},
                 success:function () {
                     commentDrawing(DEFAULT_PAGE);
@@ -92,6 +100,9 @@ $(function () {
         $.ajax({
             url: API_COMMENT_SAVE_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: $(this).serialize(),
             success: function () {
                 $COMMENT.summernote('reset');
@@ -107,6 +118,9 @@ $(function () {
         $.ajax({
             url: API_COMMENT_DRAWING_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: {'post-id': POST_ID, 'page': page},
             success: function (data) {
                 if (data.commentList) {

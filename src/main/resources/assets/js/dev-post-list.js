@@ -32,6 +32,8 @@ $(function () {
     const PAGING_PREVIOUS_TEMPLATE = '<a class="page-item previous" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
     const PAGING_NEXT_TEMPLATE = '<a class="page-item next" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
     const PAGING_NUM_TEMPLATE = '<a class="page-item page-number" data-val="{{value}}"><span>{{num}}</span></a>';
+    const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
+    const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
 
     devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, getParameterByName('page'));
 
@@ -39,6 +41,9 @@ $(function () {
         $.ajax({
             url: API_VIEW_COUNT_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: {'url': $(this).attr('href')},
             success: function (data) {
             }
@@ -72,6 +77,9 @@ $(function () {
         $.ajax({
             url: API_DEV_POST_DRAWING_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: {'type': type, 'parameter': parameter, 'page': page},
             success: function (data) {
                 $DEV_POST_LIST.empty();

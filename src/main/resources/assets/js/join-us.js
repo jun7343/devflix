@@ -1,8 +1,9 @@
 $(function () {
     const CODE_CONFIRM_URL = '/login/join-us/code-authentication';
     const EMAIL_CONFIRM_URL = '/login/join-us/email-authentication';
-    const ALL_CONFIRM_URL = '/login/join-us/all-confirm';
     const POST_TYPE = 'POST';
+    const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
+    const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
 
     $('#join-us-form').validate({
         rules: {
@@ -77,6 +78,9 @@ $(function () {
             url: EMAIL_CONFIRM_URL,
             type: POST_TYPE,
             data: {'email' : EMAIL},
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             success: function (data) {
                 const ALERT_MESSAGE = data.msg;
 
@@ -104,6 +108,9 @@ $(function () {
         $.ajax({
             url: CODE_CONFIRM_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: {'email' : EMAIL, 'code' : CODE},
             success: function (data) {
                 const ALERT_MESSAGE = data.msg;

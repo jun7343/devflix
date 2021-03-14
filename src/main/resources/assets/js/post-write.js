@@ -17,6 +17,8 @@ $(function () {
     const MATCH_FOR_PERFECT_SEARCH = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
     const SEARCH_LIST_TEMPLATE = '<li class="list-group-item"><a href="#" class="item-link" data-url="{{url}}" data-thumbnail="{{thumbnail}}" data-upload-at="{{uploadAt}}" data-category="{{category}}" data-post-type="{{postType}}" data-title="{{title}}"><span class="item-category">{{category}}-{{postType}}</span><span class="item-title">{{title}}</span></a></li>';
     const SEARCH_RESULT_ITEM_TEMPLATE = '<div class="card col-md-12 bg-light result-item"><div class="row g-0"><div class="col-md-4 result-item-img-div"><img src="{{thumbnail}}" class="result-item-img"></div><div class="col-md-8"><div class="card-body"><button type="button" class="result-item-close btn btn-danger btn-sm">X</button><h5 class="card-title">{{category}} - {{postType}}</h5><p class="card-text">{{title}}</p><p class="card-text"><small class="text-muted">{{uploadAt}}</small></p><input type="hidden" name="post-url" value="{{url}}"></div></div></div></div>';
+    const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
+    const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
     let search = null;
     let lastSearchContent = '';
 
@@ -56,6 +58,9 @@ $(function () {
         $.ajax({
             url: API_IMAGE_UPLOAD_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: data,
             contentType: false,
             cache: false,
@@ -84,6 +89,9 @@ $(function () {
         $.ajax({
             url: API_IMAGE_DELETE_URL,
             type: POST_TYPE,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+            },
             data: { 'pathBase': pathBase, 'imageName': imageName },
             success: function (data) {
             }
@@ -155,6 +163,9 @@ $(function () {
                     $.ajax({
                         url: API_SEARCH_URL,
                         type: POST_TYPE,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
+                        },
                         data: { 'content': CONTENT },
                         success: function (data) {
                             $SEARCH_LIST.empty();
