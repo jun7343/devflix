@@ -2,7 +2,6 @@ package kr.devflix.controller;
 
 import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.RoleType;
-import kr.devflix.constant.Status;
 import kr.devflix.entity.Member;
 import kr.devflix.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -134,7 +133,10 @@ public class MyPageController {
                         .updateAt(new Date())
                         .build());
 
-        return "redirect:/logout";
+        SecurityContextHolder.clearContext();
+        attrs.addFlashAttribute("successMessage", "비밀번호 변경이 완료 되었습니다. 재로그인해 주세요.");
+
+        return "redirect:/login";
     }
 
     @Secured(RoleType.USER)
@@ -149,6 +151,7 @@ public class MyPageController {
     @RequestMapping(path = "/my-page/withdrawal", method = RequestMethod.POST)
     public String myPAgeWithdrawlAction(@RequestParam(name = "email", required = false)final String email,
                                         @RequestParam(name = "password", required = false)final String password,
+                                        @RequestParam(name = "_csrf", required = false)final String token,
                                         @AuthenticationPrincipal Member user, RedirectAttributes attrs) {
         if (StringUtils.isBlank(email)) {
             attrs.addFlashAttribute("errorMessage", "이메일 기입해 주세요.");
@@ -187,6 +190,9 @@ public class MyPageController {
                 .updateAt(new Date())
                 .build());
 
-        return "redirect:/logout";
+        SecurityContextHolder.clearContext();
+        attrs.addFlashAttribute("successMessage", "정상적으로 회원 탈퇴 되었습니다.");
+
+        return "redirect:/login";
     }
 }
