@@ -2,8 +2,10 @@ package kr.devflix.controller;
 
 import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.RoleType;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.Member;
 import kr.devflix.service.MemberService;
+import kr.devflix.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.annotation.Secured;
@@ -26,6 +28,7 @@ import java.util.Date;
 public class MyPageController {
 
     private final MemberService memberService;
+    private final PostService postService;
     private final PasswordEncoder passwordEncoder;
 
     @Secured(RoleType.USER)
@@ -141,9 +144,7 @@ public class MyPageController {
 
     @Secured(RoleType.USER)
     @RequestMapping(path = "/my-page/withdrawal", method = RequestMethod.GET)
-    public String myPageWithdrawlForm(@AuthenticationPrincipal Member user, Model model) {
-        model.addAttribute("id", user.getId());
-
+    public String myPageWithdrawlForm() {
         return "/my-page/withdrawal";
     }
 
@@ -151,7 +152,6 @@ public class MyPageController {
     @RequestMapping(path = "/my-page/withdrawal", method = RequestMethod.POST)
     public String myPAgeWithdrawlAction(@RequestParam(name = "email", required = false)final String email,
                                         @RequestParam(name = "password", required = false)final String password,
-                                        @RequestParam(name = "_csrf", required = false)final String token,
                                         @AuthenticationPrincipal Member user, RedirectAttributes attrs) {
         if (StringUtils.isBlank(email)) {
             attrs.addFlashAttribute("errorMessage", "이메일 기입해 주세요.");
@@ -189,6 +189,8 @@ public class MyPageController {
                 .createAt(user.getCreateAt())
                 .updateAt(new Date())
                 .build());
+
+        postService.updateAllStatusByWriter(Status.DELETE, user);
 
         SecurityContextHolder.clearContext();
         attrs.addFlashAttribute("successMessage", "정상적으로 회원 탈퇴 되었습니다.");
