@@ -54,6 +54,7 @@
 									<label for="linked-in">Linked In - (https://www.linkedin.com/in/{Linked In})</label>
 									<input type="text" id="linked-in" name="linked-in" class="form-control col-md-6" placeholder="Linked In" value="{{item.linkedIn}}">
 								</div>
+								<input type="hidden" name="{{csrf_parameter}}" value="{{csrf_token}}">
 								<input type="hidden" name="id" value="{{item.id}}">
 								<div class="form-group col-md-12">
 									<button type="submit" class="btn btn-primary">수정</button>

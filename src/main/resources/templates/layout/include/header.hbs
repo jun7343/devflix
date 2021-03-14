@@ -22,7 +22,10 @@
 			</a>
 			<div class="dropdown-menu" aria-labelledby="profile">
 				<a class="dropdown-item" href="/my-page">My Page</a>
-				<a class="dropdown-item" href="/logout">Logout</a>
+				<form action="/logout" method="post">
+					<input type="hidden" name="{{csrf_parameter}}" value="{{csrf_token}}">
+					<button type="submit" class="dropdown-item">Logout</button>
+				</form>
 			</div>
 		</div>
 	{{else}}
