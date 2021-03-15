@@ -38,18 +38,18 @@
 				  <ul class="pagination justify-content-center">
 					  {{#if previousPage}}
 						  <li class="page-item">
-							  <a class="page-link" href="/?page={{previousPageNum}}" aria-label="Previous">
+							  <a class="page-link" href="/post?page={{previousPageNum}}" aria-label="Previous">
 								  <span aria-hidden="true">&laquo;</span>
 								  <span class="sr-only">Previous</span>
 							  </a>
 						  </li>
 					  {{/if}}
 					  {{#each pageNumList}}
-						  <li class="page-item {{#eq this currentPageNum}}active{{/eq}}"><a class="page-link" href="/?page={{sub this 1}}">{{this}}</a></li>
+						  <li class="page-item {{#eq this currentPageNum}}active{{/eq}}"><a class="page-link" href="/post?page={{sub this 1}}">{{this}}</a></li>
 					  {{/each}}
 					  {{#if nextPage}}
 						  <li class="page-item">
-							  <a class="page-link" href="/?page={{nextPageNum}}" aria-label="Next">
+							  <a class="page-link" href="/post?page={{nextPageNum}}" aria-label="Next">
 								  <span aria-hidden="true">&raquo;</span>
 								  <span class="sr-only">Next</span>
 							  </a>
