@@ -3,11 +3,8 @@ package kr.devflix.controller;
 import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.*;
-import kr.devflix.service.DevPostService;
-import kr.devflix.service.PostCommentAlertService;
-import kr.devflix.service.PostCommentService;
+import kr.devflix.service.*;
 import com.google.common.collect.ImmutableMap;
-import kr.devflix.service.PostService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -40,6 +37,8 @@ public class APIController {
     private final DevPostService devPostService;
     private final PostCommentService postCommentService;
     private final PostService postService;
+    private final DevBlogService devBlogService;
+    private final YoutubeChannelService youtubeChannelService;
     private final String IMAGE_ROOT_DIR_PATH;
     private final int DEFAULT_COMMENT_PAGE_PER_SIZE = 10;
     private final int DEFAULT_DEV_POST_PAGE_PER_SIZE = 20;
@@ -48,11 +47,13 @@ public class APIController {
     private final SimpleDateFormat devPostDateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
     private final Logger logger = LoggerFactory.getLogger(APIController.class);
 
-    public APIController(DevPostService devPostService, PostCommentService postCommentService, PostService postService,
-                         Environment environment) {
+    public APIController(final DevPostService devPostService, final PostCommentService postCommentService, final PostService postService,
+                         final DevBlogService devBlogService, final YoutubeChannelService youtubeChannelService, final Environment environment) {
         this.devPostService = devPostService;
         this.postCommentService = postCommentService;
         this.postService = postService;
+        this.devBlogService = devBlogService;
+        this.youtubeChannelService = youtubeChannelService;
 
         if (StringUtils.isBlank(environment.getProperty("image.root-drectory"))) {
             IMAGE_ROOT_DIR_PATH = "images/";
@@ -424,7 +425,29 @@ public class APIController {
 
     @RequestMapping(path = "/a/all-category", method = RequestMethod.POST)
     @ResponseBody
-    public ImmutableMap<String, Object> actionGetDevPostByCategory(@RequestParam(name = "category", required = false)final String category) {
-        return ImmutableMap.of();
+    public ImmutableMap<String, Object> actionGetDevPostByCategory(@RequestParam(name = "type", required = false)final String type) {
+        List<ImmutableMap<String, Object>> result = new ArrayList<>();
+
+        if (StringUtils.equalsIgnoreCase("blog", type)) {
+            List<DevBlog> findAll = devBlogService.findAllDevBlogByStatus(Status.POST);
+
+            for (DevBlog blog : findAll) {
+                result.add(ImmutableMap.<String, Object>builder()
+                        .put("category", blog.getCategory())
+                        .put("thumbnail", blog.getThumbnail())
+                        .build());
+            }
+        } else if (StringUtils.equalsIgnoreCase("youtube", type)) {
+            List<YoutubeChannel> findAll = youtubeChannelService.findAllByStatusOrderByCreateAtDesc(Status.POST);
+
+            for (YoutubeChannel channel : findAll) {
+                result.add(ImmutableMap.<String, Object>builder()
+                        .put("category", channel.getCategory())
+                        .put("thumbnail", channel.getThumbnail())
+                        .build());
+            }
+        }
+
+        return ImmutableMap.of("result", result);
     }
 }
