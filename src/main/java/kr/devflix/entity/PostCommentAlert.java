@@ -16,6 +16,10 @@ public class PostCommentAlert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(targetEntity = Post.class)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
     @ManyToOne(targetEntity = PostComment.class)
     @JoinColumn(name = "comment_id")
     private PostComment comment;
@@ -36,9 +40,10 @@ public class PostCommentAlert {
     private Date updateAt;
 
     @Builder
-    public PostCommentAlert(final Long id, final PostComment comment, final Member user, final boolean confirm,
-                            final Date createAt, final Date updateAt) {
+    public PostCommentAlert(final Long id, final Post post, final PostComment comment, final Member user,
+                            final boolean confirm, final Date createAt, final Date updateAt) {
         this.id = id;
+        this.post = post;
         this.comment = comment;
         this.user = user;
         this.confirm = confirm;
