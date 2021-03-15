@@ -27,6 +27,7 @@ import java.util.concurrent.Executor;
 public class WebConfig implements WebMvcConfigurer {
 
     private final Environment environment;
+    private final LoginInterceptor loginInterceptor;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -41,7 +42,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**").excludePathPatterns("/assets/**");
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/**").excludePathPatterns("/assets/**");
     }
 
     @Override
