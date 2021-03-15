@@ -40,6 +40,7 @@ public class PostCommentService {
 
         if (post != null && ! post.getWriter().getId().equals(writer.getId())) {
             postCommentAlertRepository.save(PostCommentAlert.builder()
+                    .post(post)
                     .comment(save)
                     .user(post.getWriter())
                     .confirm(false)

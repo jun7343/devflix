@@ -8,6 +8,7 @@ import kr.devflix.entity.DevPost;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
 import kr.devflix.service.DevPostService;
+import kr.devflix.service.PostCommentAlertService;
 import kr.devflix.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +36,7 @@ public class PostController {
     private final int DEFAULT_SIZE_VALUE = 20;
     private final PostService postService;
     private final DevPostService devPostService;
+    private final PostCommentAlertService postCommentAlertService;
 
     @RequestMapping(path = "/post", method = RequestMethod.GET)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
@@ -102,7 +104,8 @@ public class PostController {
     }
 
     @RequestMapping(path = "/post/read/{id}", method = RequestMethod.GET)
-    public String readForm(@PathVariable(name = "id")long id, HttpServletRequest request, Model model, @AuthenticationPrincipal Member user) {
+    public String readForm(@PathVariable(name = "id")long id, HttpServletRequest request,
+                           @RequestParam(name = "ca", required = false)final Long ca, Model model, @AuthenticationPrincipal Member user) {
         Optional<Post> postItem = postService.findOneById(id);
 
         if (postItem.isPresent() && postItem.get().getStatus() == Status.POST) {
@@ -111,6 +114,10 @@ public class PostController {
             model.addAttribute("item", post);
             model.addAttribute("siteUrl", request.getRequestURL());
             model.addAttribute("postOwner", user != null && post.getWriter().getId().equals(user.getId()));
+
+            if (ca != null && user != null) {
+                postCommentAlertService.updateAllConfirmByPostAndUser(post, user);
+            }
 
             if (! StringUtils.isBlank(post.getDevPostUrl())) {
                 Optional<DevPost> findDevPost = devPostService.findOneByUrlAndStatus(post.getDevPostUrl(), Status.POST);
