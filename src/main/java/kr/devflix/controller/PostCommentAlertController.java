@@ -37,8 +37,6 @@ public class PostCommentAlertController {
             model.addAttribute("previousPageNum", (findList.getNumber() / 5) * 5 - 1);
         }
 
-        model.addAttribute("nextPage", (findList.getNumber() / 5) * 5 + 6 <= findList.getTotalPages());
-
         if ((findList.getNumber() / 5) * 5 + 6 <= findList.getTotalPages()) {
             model.addAttribute("nextPageNum", (findList.getNumber() / 5 + 1) * 5);
         }
