@@ -77,11 +77,19 @@ public class HandlebarHelper {
         return Jsoup.parse(StringEscapeUtils.unescapeHtml4(arg)).text();
     }
 
-    public Object getItem(List<Object> arg1, int index) {
+    public Object getItem(List<Object> arg1, final int index) {
         if (arg1.size() > 0 && arg1.size() > index) {
             return arg1.get(index);
         }
 
         return null;
+    }
+
+    public CharSequence contain(List<Object> arg1, final Object arg2, final Options options) throws IOException {
+        if (arg1.contains(arg2)) {
+            return options.fn();
+        } else {
+            return options.inverse();
+        }
     }
 }
