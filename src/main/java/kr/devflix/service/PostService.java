@@ -7,6 +7,7 @@ import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
 import kr.devflix.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -66,13 +67,6 @@ public class PostService {
     }
 
     @Transactional
-    public Page<Post> findAllByStatusAndPageRequest(Status status, int page, int size) {
-        return postRepository.findAll((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("status"), status);
-        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
-    }
-
-    @Transactional
     public Optional<Post> findOneById(final long id) {
         return postRepository.findOne((root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("id"), id);
@@ -84,9 +78,17 @@ public class PostService {
         postRepository.updateAllStatusByWriter(status, writer);
     }
 
+    @Transactional
     public Page<Post> findAllByStatusAndWriterStatusAndPageRequest(Status postStatus, MemberStatus writerStatus, final int page, final int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("status"), postStatus), criteriaBuilder.equal(root.join("writer").get("status"), writerStatus));
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+    }
+
+    @Transactional
+    public Page<Post> findAllByWriterAndStatusAndPageRequest(final Member user, Status status, final int page, final int size) {
+        return postRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("writer"), user), criteriaBuilder.equal(root.get("status"), status));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 }
