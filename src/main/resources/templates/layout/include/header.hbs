@@ -31,13 +31,20 @@
 		<div id="alert" class="dropdown header-icon">
 			<a role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<svg class="icon-alert"><use xlink:href="#icon-alert"></use></svg>
+				{{#if commentAlert}}
 				<span class="alert-dots"></span>
+				{{/if}}
 			</a>
-			<div class="dropdown-menu" aria-labelledby="alert">
-				<a class="dropdown-item" href="#">Action</a>
-				<a class="dropdown-item" href="#">Another action</a>
-				<a class="dropdown-item" href="#">Something else here</a>
-			</div>
+			<ul class="dropdown-menu" id="comment-alert" style="width:300px;text-align: center; text-decoration: none; color: black">
+				{{#if commentAlert}}
+					{{#each commentAlert}}
+						<li class="item"><a href="/post/read/{{comment.post.id}}?ca={{this.id}}"><small>댓글: </small>{{removeHtmlTag comment.comment}}</a></li>
+					{{/each}}
+				{{else}}
+					<li><p>알람 없음.</p></li>
+				{{/if}}
+				<li class="item"><a href="/comment-alert">전체 댓글 알람 확인하기...</a></li>
+			</ul>
 		</div>
 	{{else}}
 		<div id="login" class="header-icon">
