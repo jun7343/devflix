@@ -35,13 +35,15 @@ public class DevPostService {
     }
 
     @Transactional
-    public Page<DevPost> findAllByCategoryOrderByUploadAt(final String category, final int page, final int size) {
-        return devPostRepository.findAllByCategoryOrderByUploadAtDesc(category, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
+    public Page<DevPost> findAllByCategoryAndStatusOrderByUploadAt(final String category, Status status, final int page, final int size) {
+        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("category"), category), criteriaBuilder.equal(root.get("status"), status));
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
     }
 
     @Transactional
-    public Page<DevPost> findAllByTagOrderByUploadAt(final String tag, final int page, final int size) {
-        return devPostRepository.findAllByTagIn(tag, PageRequest.of(page, size));
+    public Page<DevPost> findAllByTagAndStatusOrderByUploadAt(final String tag, Status status, final int page, final int size) {
+        return devPostRepository.findAllByTagIn(tag, status.name(), PageRequest.of(page, size));
     }
 
     @Transactional

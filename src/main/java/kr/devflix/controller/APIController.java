@@ -71,9 +71,9 @@ public class APIController {
         if (StringUtils.isBlank(type) && StringUtils.isBlank(parameter)) {
             findAll = devPostService.findAllByStatusAndPageRequest(Status.POST, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
         } else if (! StringUtils.isBlank(type) && StringUtils.equals(type, "category")) {
-            findAll = devPostService.findAllByCategoryOrderByUploadAt(parameter, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
+            findAll = devPostService.findAllByCategoryAndStatusOrderByUploadAt(parameter, Status.POST, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
         } else if (! StringUtils.isBlank(type) && StringUtils.equals(type, "tag")) {
-            findAll = devPostService.findAllByTagOrderByUploadAt(parameter, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
+            findAll = devPostService.findAllByTagAndStatusOrderByUploadAt(parameter, Status.POST, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
         }
 
         List<Map<String, Object>> resultAll = new ArrayList<>();
@@ -420,5 +420,11 @@ public class APIController {
         }
 
         return "redirect:/post";
+    }
+
+    @RequestMapping(path = "/a/all-category", method = RequestMethod.POST)
+    @ResponseBody
+    public ImmutableMap<String, Object> actionGetDevPostByCategory(@RequestParam(name = "category", required = false)final String category) {
+        return ImmutableMap.of();
     }
 }
