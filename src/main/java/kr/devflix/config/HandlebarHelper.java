@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 @HandlebarsHelper
@@ -74,5 +75,13 @@ public class HandlebarHelper {
         }
 
         return Jsoup.parse(StringEscapeUtils.unescapeHtml4(arg)).text();
+    }
+
+    public Object getItem(List<Object> arg1, int index) {
+        if (arg1.size() > 0 && arg1.size() > index) {
+            return arg1.get(index);
+        }
+
+        return null;
     }
 }

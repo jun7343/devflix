@@ -22,7 +22,7 @@
 				  {{#if list}}
 				    {{#each list}}
 					  <tr>
-						  <td class="item-title"><a href="/post/read/{{id}}" class="post-list-title">{{{title}}}</a></td>
+						  <td class="item-title"><a href="/post/read/{{id}}" class="post-list-title">{{{title}}}<small>{{getItem countList @index}}</small></a></td>
 						  <td class="item-writer">{{{writer.username}}}</td>
 						  <td class="item-publish-at">{{df createAt "yyyy.MM.dd"}}</td>
 					  </tr>

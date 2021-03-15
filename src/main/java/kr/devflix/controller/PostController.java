@@ -9,6 +9,7 @@ import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
 import kr.devflix.service.DevPostService;
 import kr.devflix.service.PostCommentAlertService;
+import kr.devflix.service.PostCommentService;
 import kr.devflix.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -36,14 +37,21 @@ public class PostController {
     private final int DEFAULT_SIZE_VALUE = 20;
     private final PostService postService;
     private final DevPostService devPostService;
+    private final PostCommentService postCommentService;
     private final PostCommentAlertService postCommentAlertService;
 
     @RequestMapping(path = "/post", method = RequestMethod.GET)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
         Page<Post> findList = postService.findAllByStatusAndWriterStatusAndPageRequest(Status.POST, MemberStatus.ACTIVE, page, DEFAULT_SIZE_VALUE);
         List<Integer> pageNumList = new ArrayList<>();
+        List<Long> postCommentTotalCount = new ArrayList<>();
+
+        for (Post post : findList.getContent()) {
+            postCommentTotalCount.add(postCommentService.getTotalCountByPost(post));
+        }
 
         model.addAttribute("list", findList);
+        model.addAttribute("countList", postCommentTotalCount);
 
         if (findList.getNumber() / 5 != 0 && ((findList.getNumber() / 5) * 5 - 1) > 0) {
             model.addAttribute("previousPageNum", (findList.getNumber() / 5) * 5 - 1);
