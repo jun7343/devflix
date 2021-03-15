@@ -562,6 +562,7 @@ public class YoutubeCrawler implements Crawler {
                     }
 
                     YoutubeChannel channel = YoutubeChannel.builder()
+                            .status(Status.POST)
                             .category(category)
                             .channelId(id.asText())
                             .etag(etag.asText())

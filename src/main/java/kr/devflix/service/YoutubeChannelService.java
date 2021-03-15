@@ -1,5 +1,6 @@
 package kr.devflix.service;
 
+import kr.devflix.constant.Status;
 import kr.devflix.entity.YoutubeChannel;
 import kr.devflix.repository.YoutubeChennelRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,10 @@ public class YoutubeChannelService {
     @Transactional
     public YoutubeChannel updateYoutubeChannel(final YoutubeChannel channel) {
         return youtubeChennelRepository.save(channel);
+    }
+
+    @Transactional
+    public List<YoutubeChannel> findAllByStatusOrderByCreateAtDesc(Status status) {
+        return youtubeChennelRepository.findAllByStatusOrderByCreateAtDesc(status);
     }
 }

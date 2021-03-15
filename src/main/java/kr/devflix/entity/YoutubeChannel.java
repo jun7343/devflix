@@ -1,5 +1,6 @@
 package kr.devflix.entity;
 
+import kr.devflix.constant.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,6 +16,10 @@ public class YoutubeChannel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Column
     private String category;
@@ -50,10 +55,11 @@ public class YoutubeChannel {
     private Date updateAt;
 
     @Builder
-    public YoutubeChannel(final Long id, final String channelId, final String channelTitle, final String category,
+    public YoutubeChannel(final Long id, Status status, final String channelId, final String channelTitle, final String category,
                           final String etag, final String description, final String thumbnail,
                           final Date publishAt, final long crawlingAt, final Date createAt, final Date updateAt) {
         this.id = id;
+        this.status = status;
         this.category = category;
         this.channelId = channelId;
         this.channelTitle = channelTitle;

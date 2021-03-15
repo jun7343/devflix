@@ -1,5 +1,6 @@
 create table youtube_channel (
     id serial,
+    status varchar(300) not null,
     category varchar(200) not null,
     channel_id varchar(300) not null,
     channel_title varchar(500) not null,
