@@ -33,7 +33,7 @@
 				{{#if pagination}}
 					<nav id="nav-pagination" aria-label="Page navigation">
 						<ul class="pagination justify-content-center">
-							{{#if previousPage}}
+							{{#if previousPageNum}}
 								<li class="page-item">
 									<a class="page-link" href="/my-page/post-write?page={{previousPageNum}}" aria-label="Previous">
 									<span aria-hidden="true">&laquo;</span>
@@ -44,7 +44,7 @@
 							{{#each pageNumList}}
 								<li class="page-item {{#eq this currentPageNum}}active{{/eq}}"><a class="page-link" href="/my-page/post-write?page={{sub this 1}}">{{this}}</a></li>
 							{{/each}}
-							{{#if nextPage}}
+							{{#if nextPageNum}}
 								<li class="page-item">
 									<a class="page-link" href="/my-page/post-write?page={{nextPageNum}}" aria-label="Next">
 									<span aria-hidden="true">&raquo;</span>
