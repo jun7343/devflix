@@ -47,7 +47,7 @@ public class PostController {
         List<Long> postCommentTotalCount = new ArrayList<>();
 
         for (Post post : findList.getContent()) {
-            postCommentTotalCount.add(postCommentService.getTotalCountByPost(post));
+            postCommentTotalCount.add(postCommentService.getTotalCountByPostAndSatus(post, Status.POST));
         }
 
         model.addAttribute("list", findList);

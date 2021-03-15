@@ -88,9 +88,9 @@ public class PostCommentService {
     }
 
     @Transactional
-    public long getTotalCountByPost(final Post post) {
+    public long getTotalCountByPostAndSatus(final Post post, Status status) {
         return postCommentRepository.count((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("post"), post);
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("post"), post), criteriaBuilder.equal(root.get("status"), status));
         });
     }
 }
