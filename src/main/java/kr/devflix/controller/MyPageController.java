@@ -5,7 +5,9 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
+import kr.devflix.entity.PostComment;
 import kr.devflix.service.MemberService;
+import kr.devflix.service.PostCommentService;
 import kr.devflix.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +35,7 @@ public class MyPageController {
 
     private final MemberService memberService;
     private final PostService postService;
+    private final PostCommentService postCommentService;
     private final PasswordEncoder passwordEncoder;
     private final int DEFAULT_SIZE_VALUE = 20;
 
@@ -216,8 +219,6 @@ public class MyPageController {
             model.addAttribute("previousPageNum", (findList.getNumber() / 5) * 5 - 1);
         }
 
-        model.addAttribute("nextPage", (findList.getNumber() / 5) * 5 + 6 <= findList.getTotalPages());
-
         if ((findList.getNumber() / 5) * 5 + 6 <= findList.getTotalPages()) {
             model.addAttribute("nextPageNum", (findList.getNumber() / 5 + 1) * 5);
         }
@@ -235,5 +236,36 @@ public class MyPageController {
 
 
         return "/my-page/post-write";
+    }
+
+    @Secured(RoleType.USER)
+    @RequestMapping(path = "/my-page/post-comment", method = RequestMethod.GET)
+    public String myPagePostCommentList(@RequestParam(name = "page", required = false, defaultValue = "0")final int page,
+                                        @AuthenticationPrincipal Member user, Model model) {
+        Page<PostComment> findList = postCommentService.findAllByWriterAndStatusAndPageRequest(user, Status.POST, page, DEFAULT_SIZE_VALUE);
+        List<Integer> pageNumList = new ArrayList<>();
+
+        model.addAttribute("list", findList);
+
+        if (findList.getNumber() / 5 != 0 && ((findList.getNumber() / 5) * 5 - 1) > 0) {
+            model.addAttribute("previousPageNum", (findList.getNumber() / 5) * 5 - 1);
+        }
+
+        if ((findList.getNumber() / 5) * 5 + 6 <= findList.getTotalPages()) {
+            model.addAttribute("nextPageNum", (findList.getNumber() / 5 + 1) * 5);
+        }
+
+        int start = (findList.getNumber() / 5) * 5 + 1;
+        int end = Math.min((findList.getNumber() / 5 + 1) * 5, findList.getTotalPages());
+
+        for (int i = start; i <= end; i++) {
+            pageNumList.add(i);
+        }
+
+        model.addAttribute("pageNumList", pageNumList);
+        model.addAttribute("currentPageNum", findList.getNumber() + 1);
+        model.addAttribute("pagination", findList.getTotalPages() > 1);
+
+        return "/my-page/post-comment";
     }
 }

@@ -5,6 +5,7 @@ import kr.devflix.constant.Status;
 import kr.devflix.dto.PostDto;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
+import kr.devflix.entity.PostComment;
 import kr.devflix.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Or;

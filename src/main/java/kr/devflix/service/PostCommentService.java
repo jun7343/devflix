@@ -79,4 +79,11 @@ public class PostCommentService {
             postCommentRepository.save(comment);
         }
     }
+
+    @Transactional
+    public Page<PostComment> findAllByWriterAndStatusAndPageRequest(final Member user, Status status, final int page, final int size) {
+        return postCommentRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("writer"), user), criteriaBuilder.equal(root.get("status"), status));
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+    }
 }
