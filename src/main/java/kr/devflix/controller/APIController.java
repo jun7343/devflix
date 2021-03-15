@@ -280,8 +280,10 @@ public class APIController {
 
         if (page >= 999) {
             long totalCount = postCommentService.getCountAllByPostIdAndStatus(id, Status.POST);
+            int p = (int) totalCount / DEFAULT_COMMENT_PAGE_PER_SIZE > 0 && (int) totalCount % DEFAULT_COMMENT_PAGE_PER_SIZE == 0?
+                    (int) totalCount / DEFAULT_COMMENT_PAGE_PER_SIZE - 1 : (int) totalCount / DEFAULT_COMMENT_PAGE_PER_SIZE;
 
-            findAll = postCommentService.findAllByPostIdAndStatusAndPageRequest(id, Status.POST, (int) (totalCount / DEFAULT_COMMENT_PAGE_PER_SIZE), DEFAULT_COMMENT_PAGE_PER_SIZE);
+            findAll = postCommentService.findAllByPostIdAndStatusAndPageRequest(id, Status.POST, p, DEFAULT_COMMENT_PAGE_PER_SIZE);
         } else {
             findAll = postCommentService.findAllByPostIdAndStatusAndPageRequest(id, Status.POST, page, DEFAULT_COMMENT_PAGE_PER_SIZE);
         }
