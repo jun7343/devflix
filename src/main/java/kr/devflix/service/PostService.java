@@ -131,9 +131,7 @@ public class PostService {
                 list.add(criteriaBuilder.equal(root.get("status"), status));
             }
 
-            Predicate[] predicates = list.toArray(new Predicate[0]);
-
-            return criteriaBuilder.and(predicates);
+            return criteriaBuilder.and(list.toArray(new Predicate[0]));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 }

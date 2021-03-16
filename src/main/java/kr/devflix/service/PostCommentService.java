@@ -8,13 +8,17 @@ import kr.devflix.entity.PostCommentAlert;
 import kr.devflix.repository.PostCommentAlertRepository;
 import kr.devflix.repository.PostCommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -92,5 +96,37 @@ public class PostCommentService {
         return postCommentRepository.count((root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("post"), post), criteriaBuilder.equal(root.get("status"), status));
         });
+    }
+
+    @Transactional
+    public Page<PostComment> findAll(final int page, final int size) {
+        return postCommentRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+    }
+
+    @Transactional
+    public Page<PostComment> findAllBySearch(final String comment, final String writer, Status status,
+                                             final int page, final int size) {
+        return postCommentRepository.findAll((root, query, criteriaBuilder) -> {
+            List<Predicate> list = new ArrayList<>();
+
+            if (! StringUtils.isBlank(comment)) {
+                list.add(criteriaBuilder.like(root.get("comment"), "%" + comment + "%"));
+            }
+
+            if (! StringUtils.isBlank(writer)) {
+                list.add(criteriaBuilder.equal(root.join("writer").get("username"), writer));
+            }
+
+            if (status != null) {
+                list.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+
+            return criteriaBuilder.and(list.toArray(new Predicate[0]));
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+    }
+
+    @Transactional
+    public void updateStatusByIdList(Status status, List<Long> idList) {
+        postCommentRepository.updateStatusByIdList(status, idList);
     }
 }
