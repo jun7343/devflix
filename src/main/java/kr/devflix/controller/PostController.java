@@ -41,8 +41,18 @@ public class PostController {
     private final PostCommentAlertService postCommentAlertService;
 
     @RequestMapping(path = "/post", method = RequestMethod.GET)
-    public String list(@RequestParam(name = "page", required = false, defaultValue = "0")int page, Model model) {
-        Page<Post> findList = postService.findAllByStatusAndWriterStatusAndPageRequest(Status.POST, MemberStatus.ACTIVE, page, DEFAULT_SIZE_VALUE);
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "0")int page,
+                       @RequestParam(name = "search", required = false)final String search, Model model) {
+        Page<Post> findList = null;
+
+        if (StringUtils.isBlank(search)) {
+             findList = postService.findAllByStatusAndWriterStatusAndPageRequest(Status.POST, MemberStatus.ACTIVE, page, DEFAULT_SIZE_VALUE);
+        } else {
+            findList = postService.findAllBySearchAndStatusAndWrtierStatusAndPageRequest(search, Status.POST, MemberStatus.ACTIVE, page, DEFAULT_SIZE_VALUE);
+
+            model.addAttribute("search", search);
+        }
+
         List<Integer> pageNumList = new ArrayList<>();
         List<Long> postCommentTotalCount = new ArrayList<>();
 

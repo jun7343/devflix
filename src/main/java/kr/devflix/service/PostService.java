@@ -5,16 +5,13 @@ import kr.devflix.constant.Status;
 import kr.devflix.dto.PostDto;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
-import kr.devflix.entity.PostComment;
 import kr.devflix.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.Date;
 import java.util.Optional;
@@ -90,6 +87,15 @@ public class PostService {
     public Page<Post> findAllByWriterAndStatusAndPageRequest(final Member user, Status status, final int page, final int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("writer"), user), criteriaBuilder.equal(root.get("status"), status));
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+    }
+
+    @Transactional
+    public Page<Post> findAllBySearchAndStatusAndWrtierStatusAndPageRequest(final String search, Status postStatus, final MemberStatus writerStatus,
+                                                                            final int page, final int size) {
+        return postRepository.findAll((root, query, criteriaBuilder) -> {
+            return criteriaBuilder.and(criteriaBuilder.like(root.get("title"), "%" + search + "%"), criteriaBuilder.equal(root.get("status"), postStatus),
+                    criteriaBuilder.equal(root.join("writer").get("status"), writerStatus));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 }
