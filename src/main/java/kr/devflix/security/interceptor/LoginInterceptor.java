@@ -48,6 +48,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
             DefaultCsrfToken token = (DefaultCsrfToken) request.getAttribute("_csrf");
 
+            modelAndView.addObject("meta-url", request.getRequestURL());
             modelAndView.addObject("csrf_parameter", token.getParameterName());
             modelAndView.addObject("csrf_header", token.getHeaderName());
             modelAndView.addObject("csrf_token", token.getToken());
