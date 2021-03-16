@@ -92,4 +92,14 @@ public class HandlebarHelper {
             return options.inverse();
         }
     }
+
+    public CharSequence eqList(final String context, final Options options) throws IOException {
+        for (Object obj : options.params) {
+            if (StringUtils.equals(context, (CharSequence) obj)) {
+                return options.fn();
+            }
+        }
+
+        return options.inverse();
+    }
 }
