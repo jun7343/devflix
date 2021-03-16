@@ -9,10 +9,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PostRepository extends PagingAndSortingRepository<Post, Long>, JpaSpecificationExecutor<Post> {
 
     @Query(value = "update Post p set p.status = :status where p.writer = :writer")
     @Modifying
     int updateAllStatusByWriter(Status status, final Member writer);
+
+    @Query(value = "update Post p set p.status = :status where p.id in (:idList)")
+    @Modifying
+    void updateStatusByIdList(Status status, List<Long> idList);
 }
