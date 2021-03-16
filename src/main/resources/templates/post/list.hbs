@@ -57,7 +57,7 @@
 					  {{#each pageNumList}}
 						  <li class="page-item {{#eq this currentPageNum}}active{{/eq}}"><a class="page-link" href="/post?page={{sub this 1}}">{{this}}</a></li>
 					  {{/each}}
-					  {{#if nextPage}}
+					  {{#if nextPageNum}}
 						  <li class="page-item">
 							  <a class="page-link" href="/post?page={{nextPageNum}}" aria-label="Next">
 								  <span aria-hidden="true">&raquo;</span>
