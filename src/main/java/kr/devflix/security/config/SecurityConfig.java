@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //정적 파일 Authentication 패스
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/assets/**");
+        web.ignoring().antMatchers("/assets/img/**", "/assets/js/**", "/assets/libs/**");
     }
 
     @Override
