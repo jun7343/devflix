@@ -25,7 +25,7 @@ public class AdminPostListController {
     private final PostService postService;
     private final int DEFAULT_PER_PAGE_SIZE = 20;
 
-    @RequestMapping(path = "/dfa/post-list", method = RequestMethod.GET)
+    @RequestMapping(path = "/dfa/post/post-list", method = RequestMethod.GET)
     public String postList(@RequestParam(name = "page", required = false, defaultValue = "0")final int page,
                                 @RequestParam(name = "title", required = false)final String title,
                                 @RequestParam(name = "writer", required = false)final String writer,
@@ -70,33 +70,33 @@ public class AdminPostListController {
         return "/admin/post/post-list";
     }
 
-    @RequestMapping(path = "/dfa/post-list/delete", method = RequestMethod.POST)
+    @RequestMapping(path = "/dfa/post/post-list/delete", method = RequestMethod.POST)
     public String postListDelete(@RequestParam(name = "ids", required = false)List<Long> idList,
                                        @RequestParam(name = "page", required = false, defaultValue = "0")int page) {
         if (idList != null) {
             postService.updateStatusByIdList(Status.DELETE, idList);
         }
 
-        return "redirect:/dfa/post-list?page=" + page;
+        return "redirect:/dfa/post/post-list?page=" + page;
     }
 
-    @RequestMapping(path = "/dfa/post-list/hidden", method = RequestMethod.POST)
+    @RequestMapping(path = "/dfa/post/post-list/hidden", method = RequestMethod.POST)
     public String postListHidden(@RequestParam(name = "ids", required = false)List<Long> idList,
                                  @RequestParam(name = "page", required = false, defaultValue = "0")int page) {
         if (idList != null) {
             postService.updateStatusByIdList(Status.HIDDEN, idList);
         }
 
-        return "redirect:/dfa/post-list?page=" + page;
+        return "redirect:/dfa/post/post-list?page=" + page;
     }
 
-    @RequestMapping(path = "/dfa/post-list/post", method = RequestMethod.POST)
+    @RequestMapping(path = "/dfa/post/post-list/post", method = RequestMethod.POST)
     public String postListPost(@RequestParam(name = "ids", required = false)List<Long> idList,
                                  @RequestParam(name = "page", required = false, defaultValue = "0")int page) {
         if (idList != null) {
             postService.updateStatusByIdList(Status.POST, idList);
         }
 
-        return "redirect:/dfa/post-list?page=" + page;
+        return "redirect:/dfa/post/post-list?page=" + page;
     }
 }

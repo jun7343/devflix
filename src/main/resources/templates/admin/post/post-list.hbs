@@ -15,7 +15,7 @@
 				<div class="card mb-4">
 					<div class="card-body">
 						<div id="form" class="contact-form">
-							<form id="post-list-search-form" action="/dfa/post-list" method="get">
+							<form id="post-list-search-form" action="/dfa/post/post-list" method="get">
 								<div class="form-group row">
 									<label for="title" class="col-sm-1 col-form-label">Title</label>
 									<div class="col-sm-10">
@@ -98,9 +98,9 @@
 								</table>
 							</form>
 							<div class="col-md-12 d-flex justify-content-end btn-div">
-								<button type="submit" id="post-btn" class="btn btn-success" form="post-list-form" formaction="/dfa/post-list/post">선택 게시</button>
-								<button type="submit" id="hidden-btn" class="btn btn-secondary" form="post-list-form" formaction="/dfa/post-list/hidden">선택 숨김</button>
-								<button type="submit" id="delete-btn" class="btn btn-danger" form="post-list-form" formaction="/dfa/post-list/delete">선택 삭제</button>
+								<button type="submit" id="post-btn" class="btn btn-success" form="post-list-form" formaction="/dfa/post/post-list/post">선택 게시</button>
+								<button type="submit" id="hidden-btn" class="btn btn-secondary" form="post-list-form" formaction="/dfa/post/post-list/hidden">선택 숨김</button>
+								<button type="submit" id="delete-btn" class="btn btn-danger" form="post-list-form" formaction="/dfa/post/post-list/delete">선택 삭제</button>
 							</div>
 							<div class="col-md-12 d-flex justify-content-center">
 								{{#if pagination}}
@@ -164,7 +164,7 @@
 					}
 				});
 
-				$('#post-post-btn').on('click', function () {
+				$('#post-btn').on('click', function () {
 					if ($('input:checkbox[name="ids"]:checked').length === 0) {
 						alert('게시글 체크박스 선택해 주세요.');
 						return false;
