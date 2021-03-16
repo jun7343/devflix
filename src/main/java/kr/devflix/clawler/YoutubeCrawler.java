@@ -230,7 +230,7 @@ public class YoutubeCrawler implements Crawler {
                                     .build();
 
                             DevPost createPost = devPostService.createDevPost(post);
-                            logger.info("Youtube " + channel.getChannelTitle() + " video save success !! post = " + createPost.toString());
+                            logger.info("Youtube " + channel.getChannelTitle() + " video crawling success !! post = " + createPost.toString());
                             totalCrawling++;
                         }
 
@@ -450,7 +450,7 @@ public class YoutubeCrawler implements Crawler {
                                 .build();
 
                         DevPost createPost = devPostService.createDevPost(post);
-                        logger.info("Youtube " + channel.getChannelTitle() + " video save success !! post = " + createPost.toString());
+                        logger.info("Youtube " + channel.getChannelTitle() + " video crawling success !! post = " + createPost.toString());
                         totalCrawling++;
                     }
 
