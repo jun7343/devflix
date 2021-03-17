@@ -20,7 +20,7 @@ import java.util.List;
 @Controller
 @Secured(RoleType.MANAGER)
 @RequiredArgsConstructor
-public class AdminPostListController {
+public class AdminPostController {
 
     private final PostService postService;
     private final int DEFAULT_PER_PAGE_SIZE = 20;
