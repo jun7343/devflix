@@ -280,6 +280,7 @@ public class YoutubeCrawler implements Crawler {
                     .channelId(channel.getChannelId())
                     .channelTitle(channel.getChannelTitle())
                     .etag(channel.getEtag())
+                    .status(Status.POST)
                     .description(channel.getDescription())
                     .thumbnail(channel.getThumbnail())
                     .publishAt(channel.getPublishAt())
@@ -496,6 +497,7 @@ public class YoutubeCrawler implements Crawler {
 
         YoutubeChannel updateChannel = YoutubeChannel.builder()
                 .id(channel.getId())
+                .status(Status.POST)
                 .category(channel.getCategory())
                 .channelId(channel.getChannelId())
                 .channelTitle(channel.getChannelTitle())
