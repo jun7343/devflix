@@ -4,6 +4,7 @@ import kr.devflix.constant.Status;
 import kr.devflix.entity.DevBlog;
 import kr.devflix.repository.DevBlogRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public class DevBlogService {
 
     @Transactional
     public List<DevBlog> findAll() {
-        return devBlogRepository.findAll();
+        return devBlogRepository.findAll(Sort.by(Sort.Order.desc("createAt")));
     }
 
     @Transactional
