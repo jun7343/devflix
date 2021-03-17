@@ -1,6 +1,9 @@
 package kr.devflix.utils;
 
+import kr.devflix.entity.ContactMe;
 import kr.devflix.entity.MemberConfirm;
+import org.apache.commons.text.StringEscapeUtils;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -127,5 +130,38 @@ public class JavaMailUtil {
                 "</div>";
 
         sendMail(title, content, confirm.getEmail());
+    }
+
+    @Async("threadPoolTaskExecutor")
+    public void contactMeSendMail(final ContactMe contactMe, final String answer, HttpServletRequest request) {
+        final String title = "Devflix 문의 메일 답변 입니다.";
+        final String SITE_URL = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+
+        String content = "<div style=\"max-width:100%;width:600px;margin:0 auto;box-sizing:border-box;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;font-size:16px;line-height:22px;color:#252525;word-wrap:break-word;word-break:break-word;text-align:left;\">" +
+                "<div id=\"email\" style=\"padding:24px 40px 24px 40px;margin:0\">" +
+                "<div title=\"title\" style=\"font-size:24px;line-height:1.17;color:#252525;margin:0 0 40px 0;padding:0\">Devflix 패스워드 찾기</div>" +
+                "<div title=\"content\" style=\"font-size:16px;line-height:22px;color:#252525\">\n" +
+                "      <u></u> 안녕하세요 고객님 문의 메일 답변 드립니다.<br>\n" +
+                "      <br>\n" +
+                "      <u></u>" + contactMe.getTitle() +"<br><br>\n" +
+                "      <u></u>" + contactMe.getContent() +"<br><br>\n" +
+                "      <p style=\"margin:40px 0 8px 0;padding:0;text-align:center;color:#8f8f8f;font-size:14px\"><u></u> 답변 내용</p>\n" +
+                "      <p style=\"margin:0 0 40px 0;padding:0;text-align:center;color:#252525;font-size:30px;letter-spacing:0.83;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word;line-height:33px\">" + Jsoup.parse(StringEscapeUtils.unescapeHtml4(answer)).text() + "</p>\n" +
+                "      <p style=\"margin:0 0 40px 0;padding:0;font-size:16px;color:#252525;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\"><u></u> Devflix</p>\n" +
+                "      <p style=\"margin:0 0 24px 0;padding:0;color:#252525;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word;font-size:12px;line-height:16px;color:#909090\">\n" +
+                "        <u></u> 참고 : 이 메일은 발신 전용이므로 회신하실 수 없습니다. 궁금하신 사항은 다음 웹사이트로 문의해 주시기 바랍니다. :<br>\n" +
+                "        <a href=\"" + SITE_URL + "\" style=\"color:#0072de;text-decoration:underline;font-size:12px;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://help.content.samsung.com/csweb/faq/searchFaq.do&amp;source=gmail&amp;ust=1613893849033000&amp;usg=AFQjCNFi5S8q0vP09p7u2fywGkDfVl1Kig\"><u></u> Devflix 바로가기</a>\n" +
+                "      </p>\n" +
+                "      <div title=\"footer\" style=\"margin:0;padding:40px 0 0 0;box-sizing:border-box\">\n" +
+                "        <div title=\"footer-logo\" style=\"margin:0 0 2px 0;padding:0\"></div>\n" +
+                "        <div title=\"copyright\" style=\"margin:0;padding:0;font-size:10px;opacity:0.6;font-weight:300;line-height:12px;color:#252525;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\">\n" +
+                "          \n" +
+                "        </div><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
+                "      </div></div><div class=\"adL\">\n" +
+                "    </div></div>" +
+                "</div>" +
+                "</div>";
+
+        sendMail(title, content, contactMe.getEmail());
     }
 }
