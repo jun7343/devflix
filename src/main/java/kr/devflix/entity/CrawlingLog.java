@@ -20,16 +20,16 @@ public class CrawlingLog {
     private String jobName;
 
     @Column(name = "job_start_at")
-    private long jobStartAt;
+    private Long jobStartAt;
 
     @Column(name = "job_end_at")
-    private long jobEndAt;
+    private Long jobEndAt;
 
     @Column(name = "total_crawling")
-    private int totalCrawling;
+    private Integer totalCrawling;
 
     @Column
-    private boolean success;
+    private Boolean success;
 
     @Column
     private String message;
@@ -43,8 +43,8 @@ public class CrawlingLog {
     private Date updateAt;
 
     @Builder
-    public CrawlingLog(final Long id, final String jobName, final long jobStartAt,
-                       final long jobEndAt, final int totalCrawling, final boolean success,
+    public CrawlingLog(final Long id, final String jobName, final Long jobStartAt,
+                       final Long jobEndAt, final Integer totalCrawling, final Boolean success,
                        final String message, final Date createAt, final Date updateAt) {
         this.id = id;
         this.jobName = jobName;
