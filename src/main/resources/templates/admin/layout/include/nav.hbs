@@ -29,7 +29,7 @@
 				</nav>
 			</div>
 		{{/eqList}}
-		{{#eqList nav 'dev-post' 'dev-blog' 'youtube-channel'}}
+		{{#eqList nav 'dev-post' 'dev-blog' 'youtube-list'}}
 			<a class="nav-link" href="#" data-toggle="collapse" data-target="#dev-post" aria-expanded="true" aria-controls="collapseLayouts">
 				<div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
 				Dev Post
@@ -39,7 +39,7 @@
 				<nav class="sb-sidenav-menu-nested nav">
 					<a class="nav-link {{#eq nav 'dev-post'}}active{{/eq}}" href="/dfa/dev-post/list">Dev Post List</a>
 					<a class="nav-link {{#eq nav 'dev-blog'}}active{{/eq}}" href="/dfa/dev-post/blog-list">Dev Blog List</a>
-					<a class="nav-link {{#eq nav 'youtube-channel'}}active{{/eq}}" href="/dfa/dev-post/youtube-list">Youtube Channel List</a>
+					<a class="nav-link {{#eq nav 'youtube-list'}}active{{/eq}}" href="/dfa/dev-post/youtube-list">Youtube Channel List</a>
 				</nav>
 			</div>
 		{{else}}
