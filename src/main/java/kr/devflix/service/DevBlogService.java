@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,17 @@ public class DevBlogService {
     }
 
     @Transactional
-    public DevBlog createDevBlog(final DevBlog devBlog) {
-        return devBlogRepository.save(devBlog);
+    public List<DevBlog> findAll() {
+        return devBlogRepository.findAll();
+    }
+
+    @Transactional
+    public Optional<DevBlog> findOneById(long id) {
+        return devBlogRepository.findById(id);
+    }
+
+    @Transactional
+    public void updateDevBlog(final DevBlog blog) {
+        devBlogRepository.save(blog);
     }
 }

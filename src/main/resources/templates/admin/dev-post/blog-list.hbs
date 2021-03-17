@@ -1,0 +1,46 @@
+{{#>admin/layout/default title="Devflix Admin Dev Blog List" nav='dev-blog'}}
+	{{#*inline "content"}}
+		<style>
+			.btn-div .btn {
+				margin: 0 8px;
+			}
+		</style>
+		<main>
+			<div class="container-fluid">
+				<h1 class="mt-4">Dev Blog List</h1>
+				<ol class="breadcrumb mb-4">
+					<li class="breadcrumb-item">Dev Post</li>
+					<li class="breadcrumb-item active">Dev Blog List</li>
+				</ol>
+				<div class="card mb-12">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th scope="col">Name</th>
+										<th scope="col">URL</th>
+										<th scope="col">Category</th>
+										<th scope="col">Status</th>
+									</tr>
+								</thead>
+								<tbody>
+								{{#each list}}
+									<tr>
+										<td><a href="/dfa/dev-post/blog-list/{{id}}">{{blogName}}</a></td>
+										<td><a href="{{url}}" target="_blank">{{url}}</a></td>
+										<td>{{category}}</td>
+										<td>{{status}}</td>
+									</tr>
+								{{/each}}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	{{/inline}}
+	{{#*inline "js"}}
+	{{/inline}}
+{{/admin/layout/default}}

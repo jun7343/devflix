@@ -1,0 +1,97 @@
+{{#>admin/layout/default title=item.blogName nav='dev-blog'}}
+	{{#*inline "content"}}
+		<style>
+			.btn-div .btn {
+				margin: 0 8px;
+			}
+		</style>
+		<main>
+			<div class="container-fluid">
+				<h1 class="mt-4">{{item.blogName}}</h1>
+				<ol class="breadcrumb mb-4">
+					<li class="breadcrumb-item">Dev Post</li>
+					<li class="breadcrumb-item">Dev Blog List</li>
+					<li class="breadcrumb-item active">{{item.blogName}}</li>
+				</ol>
+				<div class="card mb-12">
+					<div class="card-body">
+						{{#if errorMessage}}
+							<div class="row">
+								<div class="alert alert-danger col-md-12" role="alert" style="text-align: center">
+									{{errorMessage}}
+								</div>
+							</div>
+						{{/if}}
+						{{#if successMessage}}
+							<div class="row">
+								<div class="alert alert-success col-md-12" role="alert" style="text-align: center">
+									{{successMessage}}
+								</div>
+							</div>
+						{{/if}}
+						<div class="table-responsive">
+							<form id="blog-detail-form" action="/dfa/dev-post/blog-list/{{item.id}}" method="post">
+								<div class="form-group row">
+									<label for="blog-name" class="col-sm-2 col-form-label">Blog Name</label>
+									<div class="col-sm-10">
+										<input type="text" name="blog-name" class="form-control" id="blog-name" placeholder="Blog Name" value="{{item.blogName}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="url" class="col-sm-2 col-form-label">URL</label>
+									<div class="col-sm-10">
+										<input type="text" name="url" class="form-control" id="url" placeholder="URL" value="{{item.url}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="thumnail" class="col-sm-2 col-form-label">Thumbnail</label>
+									<div class="col-sm-10">
+										<input type="text" name="thumbnail" class="form-control" id="thumnail" placeholder="Thumbnail" value="{{item.thumbnail}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="category" class="col-sm-2 col-form-label">Category</label>
+									<div class="col-sm-10">
+										<input type="text" name="category" class="form-control" id="category" placeholder="Category" value="{{item.category}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<legend class="col-form-label col-sm-2 pt-0">Status</legend>
+									<div class="col-sm-10">
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-post" value="POST" {{#eq item.status 'POST'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-post">
+												POST
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-hidden" value="HIDDEN" {{#eq item.status 'HIDDEN'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-hidden">
+												HIDDEN
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-delete" value="DELETE" {{#eq item.status 'DELETE'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-delete">
+												DELETE
+											</label>
+										</div>
+									</div>
+								</div>
+								<input type="hidden" name="{{csrf_parameter}}" value="{{csrf_token}}">
+								<div class="form-group row">
+									<label for="writer" class="col-sm-2 col-form-label"></label>
+									<div class="col-sm-10">
+										<button type="submit" class="btn btn-primary col-sm-2">수정</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	{{/inline}}
+	{{#*inline "js"}}
+	{{/inline}}
+{{/admin/layout/default}}
