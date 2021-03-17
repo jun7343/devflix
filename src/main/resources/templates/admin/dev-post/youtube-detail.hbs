@@ -1,0 +1,119 @@
+{{#>admin/layout/default title=item.channelTitle nav='youtube-list'}}
+	{{#*inline "content"}}
+		<style>
+			.btn-div .btn {
+				margin: 0 8px;
+			}
+		</style>
+		<main>
+			<div class="container-fluid">
+				<h1 class="mt-4">{{item.channelTitle}}</h1>
+				<ol class="breadcrumb mb-4">
+					<li class="breadcrumb-item">Dev Post</li>
+					<li class="breadcrumb-item">Dev Youtube List</li>
+					<li class="breadcrumb-item active">{{item.channelTitle}}</li>
+				</ol>
+				<div class="card mb-12">
+					<div class="card-body">
+						{{#if errorMessage}}
+							<div class="row">
+								<div class="alert alert-danger col-md-12" role="alert" style="text-align: center">
+									{{errorMessage}}
+								</div>
+							</div>
+						{{/if}}
+						{{#if successMessage}}
+							<div class="row">
+								<div class="alert alert-success col-md-12" role="alert" style="text-align: center">
+									{{successMessage}}
+								</div>
+							</div>
+						{{/if}}
+						<div class="table-responsive">
+							<form id="youtube-detail-form" action="/dfa/dev-post/youtube-list/{{item.id}}" method="post">
+								<div class="form-group row">
+									<label for="channel-id" class="col-sm-2 col-form-label">Channel Id</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" id="channel-id" value="{{item.channelId}}" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="channel-title" class="col-sm-2 col-form-label">Channel Title</label>
+									<div class="col-sm-10">
+										<input type="text" name="channel-title" class="form-control" id="channel-title" placeholder="Channel Title" value="{{item.channelTitle}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="etag" class="col-sm-2 col-form-label">Etag</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" id="etag" value="{{item.etag}}" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="thumnail" class="col-sm-2 col-form-label">Thumbnail</label>
+									<div class="col-sm-10">
+										<input type="text" name="thumbnail" class="form-control" id="thumnail" placeholder="Thumbnail" value="{{item.thumbnail}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="category" class="col-sm-2 col-form-label">Category</label>
+									<div class="col-sm-10">
+										<input type="text" name="category" class="form-control" id="category" placeholder="Category" value="{{item.category}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="description" class="col-sm-2 col-form-label">Description</label>
+									<div class="col-sm-10">
+										<textarea id="description" name="description">{{{item.description}}}</textarea>
+									</div>
+								</div>
+								<div class="form-group row">
+									<legend class="col-form-label col-sm-2 pt-0">Status</legend>
+									<div class="col-sm-10">
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-post" value="POST" {{#eq item.status 'POST'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-post">
+												POST
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-hidden" value="HIDDEN" {{#eq item.status 'HIDDEN'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-hidden">
+												HIDDEN
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-delete" value="DELETE" {{#eq item.status 'DELETE'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-delete">
+												DELETE
+											</label>
+										</div>
+									</div>
+								</div>
+								<input type="hidden" name="{{csrf_parameter}}" value="{{csrf_token}}">
+								<div class="form-group row">
+									<label for="writer" class="col-sm-2 col-form-label"></label>
+									<div class="col-sm-10">
+										<button type="submit" class="btn btn-primary col-sm-2">수정</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	{{/inline}}
+	{{#*inline "js"}}
+		<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+		<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+		<script>
+			$(function () {
+				$('#description').summernote({
+					toolbar: false,
+					height: 500
+				});
+			})
+		</script>
+	{{/inline}}
+{{/admin/layout/default}}

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +29,22 @@ public class YoutubeChannelService {
     }
 
     @Transactional
-    public YoutubeChannel updateYoutubeChannel(final YoutubeChannel channel) {
-        return youtubeChennelRepository.save(channel);
+    public void updateYoutubeChannel(final YoutubeChannel channel) {
+        youtubeChennelRepository.save(channel);
     }
 
     @Transactional
     public List<YoutubeChannel> findAllByStatusOrderByCreateAtDesc(Status status) {
         return youtubeChennelRepository.findAllByStatusOrderByCreateAtDesc(status);
+    }
+
+    @Transactional
+    public List<YoutubeChannel> findAll() {
+        return youtubeChennelRepository.findAll(Sort.by(Sort.Order.desc("createAt")));
+    }
+
+    @Transactional
+    public Optional<YoutubeChannel> findOneById(long id) {
+        return youtubeChennelRepository.findById(id);
     }
 }
