@@ -10,6 +10,11 @@ import kr.devflix.repository.MemberRepository;
 import kr.devflix.utils.JavaMailUtil;
 import com.google.common.collect.ImmutableList;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.dynamic.scaffold.MethodGraph;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,10 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -149,5 +154,33 @@ public class MemberService implements UserDetailsService {
         }
 
         return user;
+    }
+
+    @Transactional
+    public Page<Member> findAll(final int page, final int size) {
+        return memberRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+    }
+
+    @Transactional
+    public Page<Member> findAllBySearch(final String email, MemberStatus status,
+                                        final int page, final int size) {
+        return memberRepository.findAll((root, query, criteriaBuilder) -> {
+            List<Predicate> list = new LinkedList<>();
+
+            if (! StringUtils.isBlank(email)) {
+                list.add(criteriaBuilder.equal(root.get("email"), email));
+            }
+
+            if (status != null) {
+                list.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+
+            return criteriaBuilder.and(list.toArray(new Predicate[0]));
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+    }
+
+    @Transactional
+    public Optional<Member> findOneById(long id) {
+        return memberRepository.findById(id);
     }
 }
