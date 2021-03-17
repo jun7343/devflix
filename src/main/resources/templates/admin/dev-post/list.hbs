@@ -1,0 +1,203 @@
+{{#>admin/layout/default title="Devflix Admin Post List" nav='dev-post'}}
+	{{#*inline "content"}}
+		<style>
+			.btn-div .btn {
+				margin: 0 8px;
+			}
+		</style>
+		<main>
+			<div class="container-fluid">
+				<h1 class="mt-4">Dev Post List</h1>
+				<ol class="breadcrumb mb-4">
+					<li class="breadcrumb-item">Dev Post</li>
+					<li class="breadcrumb-item active">Dev Post List</li>
+				</ol>
+				<div class="card mb-4">
+					<div class="card-body">
+						<div id="form" class="contact-form">
+							<form id="dev-post-list-search-form" action="/dfa/dev-post/list" method="get">
+								<div class="form-group row">
+									<label for="title" class="col-sm-1 col-form-label">Title</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{{search-title}}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="category" class="col-sm-1 col-form-label">Category</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" id="category" name="category" placeholder="Category" value="{{{search-category}}}">
+									</div>
+								</div>
+								<div class="form-group row">
+									<legend class="col-form-label col-sm-1 pt-0">Type</legend>
+									<div class="col-sm-10">
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="type" id="type-all" value="" {{#unless search-type}}checked{{/unless}}>
+											<label class="form-check-label" for="type-all">
+												ALL
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="type" id="type-blog" value="BLOG" {{#eq search-type 'BLOG'}}checked{{/eq}}>
+											<label class="form-check-label" for="type-blog">
+												BLOG
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="type" id="type-youtube" value="YOUTUBE" {{#eq search-type 'YOUTUBE'}}checked{{/eq}}>
+											<label class="form-check-label" for="type-youtube">
+												YOUTUBE
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<legend class="col-form-label col-sm-1 pt-0">Status</legend>
+									<div class="col-sm-10">
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-all" value="" {{#unless search-status}}checked{{/unless}}>
+											<label class="form-check-label" for="status-all">
+												ALL
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-post" value="POST" {{#eq search-status 'POST'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-post">
+												POST
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-hidden" value="HIDDEN" {{#eq search-status 'HIDDEN'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-hidden">
+												HIDDEN
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="status" id="status-delete" value="DELETE" {{#eq search-status 'DELETE'}}checked{{/eq}}>
+											<label class="form-check-label" for="status-delete">
+												DELETE
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="writer" class="col-sm-1 col-form-label"></label>
+									<div class="col-sm-10">
+										<button type="submit" class="btn btn-primary col-sm-1 ">검색</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div class="card mb-12">
+					<div class="card-body">
+						<div class="table-responsive">
+							<form id="dev-post-list-form" method="post">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th scope="col"><input type="checkbox" id="all-item"></th>
+											<th scope="col">Title</th>
+											<th scope="col">Category</th>
+											<th scope="col">Type</th>
+											<th scope="col">Status</th>
+											<th scope="col">Upload At</th>
+										</tr>
+									</thead>
+									<tbody>
+									{{#each list}}
+										<tr>
+											<th><input type="checkbox" name="ids" value="{{id}}"></th>
+											<td>{{{title}}}</td>
+											<td>{{category}}</td>
+											<td>{{postType}}</td>
+											<td>{{status}}</td>
+											<td>{{df uploadAt "yyyy.MM.dd"}}</td>
+										</tr>
+									{{/each}}
+									</tbody>
+									<input type="hidden" name="{{csrf_parameter}}" value="{{csrf_token}}">
+									<input type="hidden" name="page" value="{{page}}">
+								</table>
+							</form>
+							<div class="col-md-12 d-flex justify-content-end btn-div">
+								<button type="submit" id="post-btn" class="btn btn-success" form="dev-post-list-form" formaction="/dfa/dev-post/list/post">선택 게시</button>
+								<button type="submit" id="hidden-btn" class="btn btn-secondary" form="dev-post-list-form" formaction="/dfa/dev-post/list/hidden">선택 숨김</button>
+								<button type="submit" id="delete-btn" class="btn btn-danger" form="dev-post-list-form" formaction="/dfa/dev-post/list/delete">선택 삭제</button>
+							</div>
+							<div class="col-md-12 d-flex justify-content-center">
+								{{#if pagination}}
+									<nav id="nav-pagination" aria-label="Page navigation">
+										<ul class="pagination justify-content-center">
+											{{#if previousPageNum}}
+												<li class="page-item">
+													<a class="page-link" href="/dfa/dev-post/list?page={{previousPageNum}}" aria-label="Previous">
+													<span aria-hidden="true">&laquo;</span>
+													<span class="sr-only">Previous</span>
+													</a>
+												</li>
+											{{/if}}
+											{{#each pageNumList}}
+												<li class="page-item {{#eq this currentPageNum}}active{{/eq}}"><a class="page-link" href="/dfa/dev-post/list?page={{sub this 1}}">{{this}}</a></li>
+											{{/each}}
+											{{#if nextPageNum}}
+												<li class="page-item">
+													<a class="page-link" href="/dfa/dev-post/list?page={{nextPageNum}}" aria-label="Next">
+													<span aria-hidden="true">&raquo;</span>
+													<span class="sr-only">Next</span>
+													</a>
+												</li>
+											{{/if}}
+										</ul>
+									</nav>
+								{{/if}}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	{{/inline}}
+	{{#*inline "js"}}
+		<script>
+			$(function () {
+				$('#all-item').on('click', function () {
+					if ($('#all-item').is(':checked')) {
+						$('input:checkbox[name="ids"]').prop('checked', true);
+					} else {
+						$('input:checkbox[name="ids"]').prop('checked', false);
+					}
+				});
+
+				$('#delete-btn').on('click', function () {
+					if ($('input:checkbox[name="ids"]:checked').length === 0) {
+						alert('게시글 체크박스 선택해 주세요.');
+						return false;
+					} else {
+						return confirm('정말 ' + $('input:checkbox[name="ids"]:checked').length + '개 게시물을 삭제 하시겠습니까?');
+					}
+				});
+
+				$('#hidden-btn').on('click', function () {
+					if ($('input:checkbox[name="ids"]:checked').length === 0) {
+						alert('게시글 체크박스 선택해 주세요.');
+						return false;
+					} else {
+						return confirm('정말 ' + $('input:checkbox[name="ids"]:checked').length + '개 게시물을 숨김 처리 하시겠습니까?');
+					}
+				});
+
+				$('#post-btn').on('click', function () {
+					if ($('input:checkbox[name="ids"]:checked').length === 0) {
+						alert('게시글 체크박스 선택해 주세요.');
+						return false;
+					} else {
+						return confirm('정말 ' + $('input:checkbox[name="ids"]:checked').length + '개 게시물을 게시 하시겠습니까?');
+					}
+				});
+			})
+		</script>
+	{{/inline}}
+{{/admin/layout/default}}

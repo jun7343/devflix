@@ -5,6 +5,7 @@ import kr.devflix.constant.Status;
 import kr.devflix.entity.DevPost;
 import kr.devflix.repository.DevPostRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -108,5 +110,41 @@ public class DevPostService {
         return devPostRepository.findOne((root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("url"), url), criteriaBuilder.equal(root.get("status"), status));
         });
+    }
+
+    @Transactional
+    public Page<DevPost> findAll(final int page, final int size) {
+        return devPostRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
+    }
+
+    @Transactional
+    public Page<DevPost> findAllBySearch(final String title, final String category, PostType type,
+                                         Status status, final int page, final int size) {
+        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
+            List<Predicate> list = new ArrayList<>();
+
+            if (! StringUtils.isBlank(title)) {
+                list.add(criteriaBuilder.like(root.get("title"), "%" + title + "%"));
+            }
+
+            if (! StringUtils.isBlank(category)) {
+                list.add(criteriaBuilder.equal(root.get("category"), category));
+            }
+
+            if (type != null) {
+                list.add(criteriaBuilder.equal(root.get("postType"), type));
+            }
+
+            if (status != null) {
+                list.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+
+            return criteriaBuilder.and(list.toArray(new Predicate[0]));
+        }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("uploadAt"))));
+    }
+
+    @Transactional
+    public void updateStatusByIdList(Status status, List<Long> idList) {
+        devPostRepository.updateStatusByIdList(status, idList);
     }
 }
