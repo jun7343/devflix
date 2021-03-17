@@ -1,5 +1,8 @@
 package kr.devflix.clawler;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import kr.devflix.constant.PostType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.CrawlingLog;
@@ -8,10 +11,8 @@ import kr.devflix.entity.YoutubeChannel;
 import kr.devflix.service.CrawlingLogService;
 import kr.devflix.service.DevPostService;
 import kr.devflix.service.YoutubeChannelService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -294,6 +296,10 @@ public class YoutubeCrawler implements Crawler {
     }
 
     public void targetCrawling(final YoutubeChannel channel) {
+        targetCrawling(channel, DEFAULT_MAX_RESULT_SIZE);
+    }
+
+    public void targetCrawling(final YoutubeChannel channel, final int resultSize) {
         if (channel == null) {
             logger.error("Youtube channel object is null!!");
             return;
@@ -308,7 +314,7 @@ public class YoutubeCrawler implements Crawler {
         UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                 .queryParam(KEY, YOUTUBE_API_KEY)
                 .queryParam(PART, "id", "snippet")
-                .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
+                .queryParam(MAX_RESULTS, resultSize)
                 .queryParam(ORDER, "date")
                 .queryParam(TYPE, "video")
                 .queryParam(CHANNEL_ID, channel.getChannelId())
@@ -391,7 +397,7 @@ public class YoutubeCrawler implements Crawler {
                     UriComponents build1 = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                             .queryParam(KEY, YOUTUBE_API_KEY)
                             .queryParam(PART, "id", "snippet")
-                            .queryParam(MAX_RESULTS, DEFAULT_MAX_RESULT_SIZE)
+                            .queryParam(MAX_RESULTS, resultSize)
                             .queryParam(ORDER, "date")
                             .queryParam(TYPE, "video")
                             .queryParam(CHANNEL_ID, channel.getChannelId())
@@ -625,5 +631,40 @@ public class YoutubeCrawler implements Crawler {
         crawlingLogService.createCrawlingSchedulerLog(log);
 
         return saveChannel;
+    }
+
+    public YoutubeChannel saveChannelInfoByChannelUsername(final String username, final String category) {
+        UriComponents components = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_CHANNEL_URL)
+                .queryParam(KEY, YOUTUBE_API_KEY)
+                .queryParam(PART, "id", "snippet")
+                .queryParam(FOR_URSE_NAME, username)
+                .build();
+
+        try {
+            URL url = components.toUri().toURL();
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                ObjectMapper mapper = new ObjectMapper();
+
+                final JsonNode result = mapper.readTree(connection.getInputStream());
+
+                if (result.has("items")) {
+                    JsonNode items = result.get("items");
+                    JsonNode item = items.get(0);
+
+                    return saveChannelInfoByChannelId(item.get("id").asText(), category);
+                } else {
+                    logger.error("Find Youtube Channel items is null !!");
+                }
+            } else {
+                logger.error("Find Youtube Channel Connection error !! status code = " + connection.getResponseCode());
+            }
+        } catch (Exception e) {
+            logger.error("Find Youtube Channel Id error !! " + e.getMessage());
+        }
+
+        return null;
     }
 }
