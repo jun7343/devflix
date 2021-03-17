@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -117,7 +114,7 @@ public class PostService {
     public Page<Post> findAllBySearch(final String title, final String writer, final Status status,
                                       final int page, final int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
-            List<Predicate> list = new ArrayList<>();
+            List<Predicate> list = new LinkedList<>();
 
             if (! StringUtils.isBlank(title)) {
                 list.add(criteriaBuilder.like(root.get("title"), "%" + title + "%"));

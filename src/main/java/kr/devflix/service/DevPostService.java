@@ -15,10 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -121,7 +118,7 @@ public class DevPostService {
     public Page<DevPost> findAllBySearch(final String title, final String category, PostType type,
                                          Status status, final int page, final int size) {
         return devPostRepository.findAll((root, query, criteriaBuilder) -> {
-            List<Predicate> list = new ArrayList<>();
+            List<Predicate> list = new LinkedList<>();
 
             if (! StringUtils.isBlank(title)) {
                 list.add(criteriaBuilder.like(root.get("title"), "%" + title + "%"));
