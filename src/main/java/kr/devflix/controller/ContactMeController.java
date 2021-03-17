@@ -2,7 +2,7 @@ package kr.devflix.controller;
 
 import kr.devflix.entity.ContactMe;
 import kr.devflix.entity.Member;
-import kr.devflix.service.ContactMeSearvice;
+import kr.devflix.service.ContactMeService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,7 +19,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class ContactMeController {
 
-    private final ContactMeSearvice contactMeSearvice;
+    private final ContactMeService contactMeService;
 
     @RequestMapping(path = "/contact-me", method = RequestMethod.GET)
     public String contactMeForm(@AuthenticationPrincipal Member user, Model model) {
@@ -45,7 +45,7 @@ public class ContactMeController {
             return "redirect:/contact-me";
         }
 
-        final ContactMe save = contactMeSearvice.createContactMe(ContactMe.builder()
+        final ContactMe save = contactMeService.createContactMe(ContactMe.builder()
                 .title(title)
                 .email(email)
                 .content(content)
