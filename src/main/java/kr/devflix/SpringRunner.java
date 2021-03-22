@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 public class SpringRunner implements ApplicationRunner {
 
     @Autowired
-    private CrawlingScheduler scheduler;
+    private YoutubeCrawler youtubeCrawler;
 
     @Autowired
-    private YoutubeCrawler youtubeCrawler;
+    private CrawlingScheduler crawlingScheduler;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
