@@ -16,7 +16,7 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Long>, 
 
     @Query(value = "update Post p set p.status = :status where p.writer = :writer")
     @Modifying
-    int updateAllStatusByWriter(Status status, final Member writer);
+    void updateAllStatusByWriter(Status status, final Member writer);
 
     @Query(value = "update Post p set p.status = :status where p.id in (:idList)")
     @Modifying

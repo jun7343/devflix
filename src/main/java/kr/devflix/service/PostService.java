@@ -29,7 +29,7 @@ public class PostService {
     }
 
     @Transactional
-    public Post createPost(final PostDto dto) {
+    public void createPost(final PostDto dto) {
         Post post = Post.builder()
                 .status(dto.getStatus())
                 .title(dto.getTitle())
@@ -43,7 +43,7 @@ public class PostService {
                 .updateAt(new Date())
                 .build();
 
-        return postRepository.save(post);
+        postRepository.save(post);
     }
 
     @Transactional
