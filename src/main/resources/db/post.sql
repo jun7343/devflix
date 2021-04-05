@@ -5,6 +5,7 @@ create table post (
   title varchar(5000) not null,
   content text,
   view int,
+  comment_count bigint default 0,
   dev_post_url varchar(800),
   path_base varchar(500),
   image_path varchar[],

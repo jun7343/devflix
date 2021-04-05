@@ -42,6 +42,9 @@ public class Post {
     @Column
     private int view;
 
+    @Column
+    private long commentCount;
+
     @Column(name = "path_base")
     private String pathBase;
 
@@ -59,7 +62,7 @@ public class Post {
 
     @Builder
     public Post(final Long id, final Status status, final Member writer, String devPostUrl,
-                final String title, final String content, final int view, final String pathBase,
+                final String title, final String content, final int view, final long commentCount, final String pathBase,
                 List<String> images, final Date createAt, final Date updateAt) {
         this.id = id;
         this.status = status;
@@ -68,6 +71,7 @@ public class Post {
         this.title = title;
         this.content = content;
         this.view = view;
+        this.commentCount = commentCount;
         this.pathBase = pathBase;
         this.images = images;
         this.createAt = createAt;

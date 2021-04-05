@@ -54,14 +54,8 @@ public class PostController {
         }
 
         List<Integer> pageNumList = new ArrayList<>();
-        List<Long> postCommentTotalCount = new ArrayList<>();
-
-        for (Post post : findList.getContent()) {
-            postCommentTotalCount.add(postCommentService.getTotalCountByPostAndSatus(post, Status.POST));
-        }
 
         model.addAttribute("list", findList);
-        model.addAttribute("countList", postCommentTotalCount);
 
         if (findList.getNumber() / 5 != 0 && ((findList.getNumber() / 5) * 5 - 1) > 0) {
             model.addAttribute("previousPageNum", (findList.getNumber() / 5) * 5 - 1);
