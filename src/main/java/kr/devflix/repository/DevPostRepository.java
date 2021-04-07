@@ -15,11 +15,8 @@ import java.util.List;
 
 @Repository
 public interface DevPostRepository extends PagingAndSortingRepository<DevPost, Long>, JpaSpecificationExecutor<DevPost> {
-    DevPost findTopOneByCategoryAndPostTypeAndWriterOrderByUploadAtDesc(final String category, PostType postType, final String writer);
 
     DevPost findTopOneByUrl(final String url);
-
-    Page<DevPost> findAllByCategoryOrderByUploadAtDesc(final String category, Pageable pageable);
 
     @Query(nativeQuery = true, value = "select * from dev_post where :tag = any(tag) and status = :status order by upload_at desc", countQuery = "select count(*) from dev_post where :tag = any(tag) and status = :status")
     Page<DevPost> findAllByTagIn(final String tag, final String status, Pageable pageable);
