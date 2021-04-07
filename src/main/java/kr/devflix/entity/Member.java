@@ -1,7 +1,7 @@
 package kr.devflix.entity;
 
-import kr.devflix.constant.MemberStatus;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import kr.devflix.constant.MemberStatus;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -94,25 +94,21 @@ public class Member implements UserDetails {
         return username;
     }
 
-    // 추후에 세팅
     @Override
     public boolean isAccountNonExpired() {
         return this.status != MemberStatus.EXPIRED;
     }
 
-    // 추후에 세팅
     @Override
     public boolean isAccountNonLocked() {
         return this.status != MemberStatus.LOCK;
     }
 
-    // 추후에 세팅
     @Override
     public boolean isCredentialsNonExpired() {
         return this.status != MemberStatus.CREDENTIAL_EXPIRED;
     }
 
-    // 추후에 세팅
     @Override
     public boolean isEnabled() {
         return this.status != MemberStatus.WITHDRAWAL;

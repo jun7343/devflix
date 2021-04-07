@@ -14,8 +14,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +72,7 @@ public class PostService {
     @Transactional
     public Optional<Post> findOneById(final long id) {
         return postRepository.findOne((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
             return criteriaBuilder.equal(root.get("id"), id);
         });
     }
@@ -80,13 +85,15 @@ public class PostService {
     @Transactional
     public Page<Post> findAllByStatusAndWriterStatusAndPageRequest(Status postStatus, MemberStatus writerStatus, final int page, final int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.and(criteriaBuilder.equal(root.get("status"), postStatus), criteriaBuilder.equal(root.join("writer").get("status"), writerStatus));
+            root.fetch("writer", JoinType.LEFT);
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("status"), postStatus), criteriaBuilder.equal(root.get("writer").get("status"), writerStatus));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 
     @Transactional
     public Page<Post> findAllByWriterAndStatusAndPageRequest(final Member user, Status status, final int page, final int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("writer"), user), criteriaBuilder.equal(root.get("status"), status));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
@@ -95,14 +102,18 @@ public class PostService {
     public Page<Post> findAllBySearchAndStatusAndWrtierStatusAndPageRequest(final String search, Status postStatus, final MemberStatus writerStatus,
                                                                             final int page, final int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
             return criteriaBuilder.and(criteriaBuilder.like(root.get("title"), "%" + search + "%"), criteriaBuilder.equal(root.get("status"), postStatus),
-                    criteriaBuilder.equal(root.join("writer").get("status"), writerStatus));
+                    criteriaBuilder.equal(root.get("writer").get("status"), writerStatus));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 
     @Transactional
     public Page<Post> findAll(final int page, final int size) {
-        return postRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+        return postRepository.findAll((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
+            return query.getRestriction();
+        },PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 
     @Transactional
@@ -114,6 +125,8 @@ public class PostService {
     public Page<Post> findAllBySearch(final String title, final String writer, final Status status,
                                       final int page, final int size) {
         return postRepository.findAll((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
+
             List<Predicate> list = new LinkedList<>();
 
             if (! StringUtils.isBlank(title)) {
