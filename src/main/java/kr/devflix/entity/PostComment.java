@@ -21,11 +21,11 @@ public class PostComment {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne(targetEntity = Member.class)
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private Member writer;
 
-    @ManyToOne(targetEntity = Post.class)
+    @ManyToOne(targetEntity = Post.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 

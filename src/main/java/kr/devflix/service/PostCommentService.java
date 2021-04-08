@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import java.util.*;
 
@@ -56,6 +57,9 @@ public class PostCommentService {
     @Transactional
     public Page<PostComment> findAllByPostIdAndStatusAndPageRequest(final long id, Status status, final int page, final int size) {
         return postCommentRepository.findAll((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
+            root.fetch("post", JoinType.LEFT);
+
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("post").get("id"), id), criteriaBuilder.equal(root.get("status"), status));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.asc("createAt"))));
     }
@@ -63,6 +67,7 @@ public class PostCommentService {
     @Transactional
     public long getCountAllByPostIdAndStatus(final long id, Status status) {
         return postCommentRepository.count((root, query, criteriaBuilder) -> {
+
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("post").get("id"), id), criteriaBuilder.equal(root.get("status"), status));
         });
     }
@@ -70,6 +75,9 @@ public class PostCommentService {
     @Transactional
     public Optional<PostComment> findOneById(final long id) {
         return postCommentRepository.findOne((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
+            root.fetch("post", JoinType.LEFT);
+
             return criteriaBuilder.equal(root.get("id"), id);
         });
     }
@@ -84,26 +92,30 @@ public class PostCommentService {
     @Transactional
     public Page<PostComment> findAllByWriterAndStatusAndPageRequest(final Member user, Status status, final int page, final int size) {
         return postCommentRepository.findAll((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
+            root.fetch("post", JoinType.LEFT);
+
             return criteriaBuilder.and(criteriaBuilder.equal(root.get("writer"), user), criteriaBuilder.equal(root.get("status"), status));
         }, PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 
     @Transactional
-    public long getTotalCountByPostAndSatus(final Post post, Status status) {
-        return postCommentRepository.count((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.and(criteriaBuilder.equal(root.get("post"), post), criteriaBuilder.equal(root.get("status"), status));
-        });
-    }
-
-    @Transactional
     public Page<PostComment> findAll(final int page, final int size) {
-        return postCommentRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
+        return postCommentRepository.findAll((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
+            root.fetch("post", JoinType.LEFT);
+
+            return query.getRestriction();
+        },PageRequest.of(page, size, Sort.by(Sort.Order.desc("createAt"))));
     }
 
     @Transactional
     public Page<PostComment> findAllBySearch(final String comment, final String writer, Status status,
                                              final int page, final int size) {
         return postCommentRepository.findAll((root, query, criteriaBuilder) -> {
+            root.fetch("writer", JoinType.LEFT);
+            root.fetch("post", JoinType.LEFT);
+
             List<Predicate> list = new LinkedList<>();
 
             if (! StringUtils.isBlank(comment)) {
