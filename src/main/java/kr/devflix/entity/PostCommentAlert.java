@@ -16,15 +16,15 @@ public class PostCommentAlert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = Post.class)
+    @ManyToOne(targetEntity = Post.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne(targetEntity = PostComment.class)
+    @ManyToOne(targetEntity = PostComment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private PostComment comment;
 
-    @ManyToOne(targetEntity = Member.class)
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member user;
 
