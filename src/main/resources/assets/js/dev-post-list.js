@@ -34,8 +34,19 @@ $(function () {
     const PAGING_NUM_TEMPLATE = '<a class="page-item page-number" data-val="{{value}}"><span>{{num}}</span></a>';
     const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
     const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
+    const SITE_PARAMETER = getAllSiteParameter();
 
     devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, getParameterByName('page'));
+
+    function getAllSiteParameter() {
+        const CATEGORY_PARAMETER = getParameterByName('c');
+
+        if (CATEGORY_PARAMETER !== '' && CATEGORY_PARAMETER !== undefined) {
+            return '?c=' + CATEGORY_PARAMETER + '&page=';
+        } else {
+            return '?page=';
+        }
+    }
 
     $('.view-anchor').on('click', function () {
         $.ajax({
@@ -54,7 +65,7 @@ $(function () {
         e.preventDefault();
         const VALUE = $(this).data('val');
 
-        history.pushState({'page' : VALUE}, 'main',  '?page=' + VALUE);
+        history.pushState({'page' : VALUE}, 'main',  SITE_PARAMETER + VALUE);
 
         $('html, body').stop().animate({
             scrollTop: $DEV_POST_LIST.offset().top - $('.bar-header').eq(0).innerHeight()
