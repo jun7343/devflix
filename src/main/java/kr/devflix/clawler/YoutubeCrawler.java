@@ -38,30 +38,30 @@ import java.util.Optional;
 @Component
 public class YoutubeCrawler implements Crawler {
 
-    private final String API_YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
-    private final String API_YOUTUBE_CHANNEL_URL = "https://www.googleapis.com/youtube/v3/channels";
-    private final String YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v=";
+    private static final String API_YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
+    private static final String API_YOUTUBE_CHANNEL_URL = "https://www.googleapis.com/youtube/v3/channels";
+    private static final String YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v=";
     // youtube channel id for search, channel parameter
-    private final String ID = "id";
+    private static final String ID = "id";
     // youtube channel name for search, channer parameter
-    private final String FOR_URSE_NAME = "forUsername";
+    private static final String FOR_URSE_NAME = "forUsername";
     // next page or previous page token for search, channel parameter
-    private final String PAGE_TOKEN = "pageToken";
+    private static final String PAGE_TOKEN = "pageToken";
     // result size(default 5) for search, channel parameter
-    private final String MAX_RESULTS = "maxResults";
-    private final int DEFAULT_MAX_RESULT_SIZE = 20;
+    private static final String MAX_RESULTS = "maxResults";
+    private static final Integer DEFAULT_MAX_RESULT_SIZE = 20;
     // search type(channel, playlist, video) for search parmeter
-    private final String TYPE = "type";
+    private static final String TYPE = "type";
     // search result ordering(date, rating, relevance, title, videoCount, viewCount) for search parmeter
-    private final String ORDER = "order";
+    private static final String ORDER = "order";
     // channel id for search parameter
-    private final String CHANNEL_ID = "channelId";
-    private final String KEY = "key";
-    private final String PART = "part";
-    private final String YOUTUBE_API_KEY;
+    private static final String CHANNEL_ID = "channelId";
+    private static final String KEY = "key";
+    private static final String PART = "part";
     // youtube date format ISO8601
-    private final StdDateFormat youtubeDateFormat = new StdDateFormat();
-    private final Logger logger = LoggerFactory.getLogger(YoutubeCrawler.class);
+    private static final StdDateFormat youtubeDateFormat = new StdDateFormat();
+    private static final Logger logger = LoggerFactory.getLogger(YoutubeCrawler.class);
+    private final String YOUTUBE_API_KEY;
     private final YoutubeChannelService youtubeChannelService;
     private final DevPostService devPostService;
     private final CrawlingLogService crawlingLogService;
@@ -80,11 +80,9 @@ public class YoutubeCrawler implements Crawler {
 
         for (int channelNum = 0; channelNum < findAll.size(); channelNum++) {
             final YoutubeChannel channel = findAll.get(channelNum);
-            int totalCrawling = 0;
-            String message = "";
-            long startAt = 0;
-            long endAt = 0;
-            boolean success = false;
+            Integer totalCrawling = 0;
+            StringBuilder message = new StringBuilder();
+            Boolean success = false;
 
             UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                     .queryParam(KEY, YOUTUBE_API_KEY)
@@ -96,7 +94,7 @@ public class YoutubeCrawler implements Crawler {
                     .build();
 
             logger.info("Youtube " + channel.getChannelTitle() + " video crawling start ...");
-            startAt = System.currentTimeMillis();
+            Long startAt = System.currentTimeMillis();
             try {
                 URL url = build.toUri().toURL();
 
@@ -156,6 +154,8 @@ public class YoutubeCrawler implements Crawler {
                 }
 
                 if (result.has("nextPageToken") && ! success) {
+                    result = null;
+
                     JsonNode pageInfo = result.get("pageInfo");
                     JsonNode totalResults = pageInfo.get("totalResults");
                     JsonNode resultsPerPage = pageInfo.get("resultsPerPage");
@@ -240,34 +240,36 @@ public class YoutubeCrawler implements Crawler {
                             nextPageToken = result1.get("nextPageToken");
                         } else {
                             logger.info("Youtube " + channel.getChannelTitle()  +" video crawling done !! total video crawling count = " + totalCrawling);
-                            message = "Youtube video crawling done!!";
+                            message.append("Youtube video crawling done!!");
                             success = true;
+                            result1 = null;
                             break;
                         }
                     }
                 } else {
                     logger.info("Youtube " + channel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
-                    message = "Youtube video crawling done!!";
+                    message.append("Youtube video crawling done!!");
                     success = true;
+                    result = null;
                 }
             } catch (MalformedURLException e) {
                 logger.error("Youtube " + channel.getChannelTitle() +" URL connetion error !! " + e.getMessage());
-                message = "Youtube URL connection error !!";
+                message.append("Youtube URL connection error !!");
                 success = false;
             } catch (IOException e) {
                 logger.error("Youtube " + channel.getChannelTitle() +" video IO Exception error !! " + e.getMessage());
-                message = "Youtube video IO Exception erorr !!";
+                message.append("Youtube video IO Exception erorr !!");
                 success = false;
             }
 
             logger.info("Youtube " + channel.getChannelTitle() + " video crawling end ...");
-            endAt = System.currentTimeMillis();
+            Long endAt = System.currentTimeMillis();
 
             CrawlingLog log = CrawlingLog.builder()
                     .jobName("Youtube " + channel.getChannelTitle() + " video crawling")
                     .jobStartAt(startAt)
                     .jobEndAt(endAt)
-                    .message(message)
+                    .message(message.toString())
                     .success(success)
                     .totalCrawling(totalCrawling)
                     .createAt(new Date())
@@ -305,11 +307,9 @@ public class YoutubeCrawler implements Crawler {
             return;
         }
 
-        int totalCrawling = 0;
-        boolean success = false;
-        String message = "";
-        long startAt = 0;
-        long endAt = 0;
+        Integer totalCrawling = 0;
+        Boolean success = false;
+        StringBuilder message = new StringBuilder();
 
         UriComponents build = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_SEARCH_URL)
                 .queryParam(KEY, YOUTUBE_API_KEY)
@@ -321,7 +321,7 @@ public class YoutubeCrawler implements Crawler {
                 .build();
 
         logger.info("Youtube " + channel.getChannelTitle() + " video crawling start ...");
-        startAt = System.currentTimeMillis();
+        Long startAt = System.currentTimeMillis();
         try {
             URL url = build.toUri().toURL();
 
@@ -381,6 +381,8 @@ public class YoutubeCrawler implements Crawler {
             }
 
             if (result.has("nextPageToken") && ! success) {
+                result = null;
+
                 JsonNode pageInfo = result.get("pageInfo");
                 JsonNode totalResults = pageInfo.get("totalResults");
                 JsonNode resultsPerPage = pageInfo.get("resultsPerPage");
@@ -465,35 +467,37 @@ public class YoutubeCrawler implements Crawler {
                         nextPageToken = result1.get("nextPageToken");
                     } else {
                         logger.info("Youtube " + channel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
-                        message = "Youtube " + channel.getChannelTitle() + " video crawling done !!";
+                        message.append("Youtube ").append(channel.getChannelTitle()).append(" video crawling done !!");
                         success = true;
+                        result1 = null;
                         break;
                     }
                 }
             } else {
                 logger.info("Youtube " + channel.getChannelTitle() + " video crawling done !! total video crawling count = " + totalCrawling);
-                message = "Youtube " + channel.getChannelTitle() + " video crawling done !!";
+                message.append("Youtube ").append(channel.getChannelTitle()).append(" video crawling done !!");
                 success = true;
+                result = null;
             }
         } catch (MalformedURLException e) {
             logger.error("Youtube " + channel.getChannelTitle() + " video URL connetion error !! " + e.getMessage());
-            message = "Youtube " + channel.getChannelTitle() + " video URL connection error !!";
+            message.append("Youtube ").append(channel.getChannelTitle()).append(" video URL connection error !!");
             success = false;
         } catch (IOException e) {
             logger.error("Youtube " + channel.getChannelTitle() + " video IO Exception error !! " + e.getMessage());
-            message = "Youtube " + channel.getChannelTitle() + " video IO Exception error !!";
+            message.append("Youtube ").append(channel.getChannelTitle()).append(" video IO Exception error !!");
             success = false;
         }
 
         logger.info("Youtube " + channel.getChannelTitle() + " video crawling end ...");
-        endAt = System.currentTimeMillis();
+        Long endAt = System.currentTimeMillis();
 
         CrawlingLog log = CrawlingLog.builder()
                 .jobName("Youtube " + channel.getChannelTitle() + " video crawling")
                 .jobStartAt(startAt)
                 .jobEndAt(endAt)
                 .success(success)
-                .message(message)
+                .message(message.toString())
                 .totalCrawling(totalCrawling)
                 .createAt(new Date())
                 .updateAt(new Date())
@@ -527,10 +531,8 @@ public class YoutubeCrawler implements Crawler {
             return saveChannel;
         }
 
-        String message = "";
-        boolean success = false;
-        long startAt = 0;
-        long endAt = 0;
+        StringBuilder message = new StringBuilder();
+        Boolean success = false;
 
         UriComponents components = UriComponentsBuilder.fromHttpUrl(API_YOUTUBE_CHANNEL_URL)
                 .queryParam(KEY, YOUTUBE_API_KEY)
@@ -539,7 +541,7 @@ public class YoutubeCrawler implements Crawler {
                 .build();
 
         logger.info("Youtube " + category + " channel save start .... channel id = " + channelId);
-        startAt = System.currentTimeMillis();
+        Long startAt = System.currentTimeMillis();
         try {
             URL url = components.toUri().toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -583,46 +585,48 @@ public class YoutubeCrawler implements Crawler {
                             .updateAt(new Date())
                             .build();
 
+                    result = null;
+
                     try {
                         saveChannel = youtubeChannelService.createYoutubeChannel(channel);
 
                         logger.info("Youtube " + category + " channel save success !! channel info = " + saveChannel.toString());
-                        message = "Youtube " + category + " channel save success !!";
+                        message.append("Youtube ").append(category).append(" channel save success !!");
                         success = true;
                     } catch (Exception e) {
                         logger.error("Youtube " + category + " channel save error !! ", e.getMessage());
-                        message = "Youtube " + category + " channel save error !!";
+                        message.append("Youtube ").append(category).append(" channel save error !!");
                         success = false;
                     }
                 } else {
                     logger.error("Youtbue " + category + " channel save error !! no items");
-                    message = "Youtube " + category + " channel save error !! no items";
+                    message.append("Youtube ").append(category).append(" channel save error !! no items");
                     success = false;
                 }
             } else {
                 logger.error("Youtube " + category + " channel URL connection error !! status code = " + connection.getResponseCode());
-                message = "Youtube " + category + " channel URL connection error !!";
+                message.append("Youtube ").append(category).append(" channel URL connection error !!");
                 success = false;
             }
         } catch (MalformedURLException e) {
             logger.error("Youtube " + category + " channel URL Exception error !! " + e.getMessage());
-            message = "Youtube " + category + "channel URL Exception error !!";
+            message.append("Youtube ").append(category).append("channel URL Exception error !!");
             success = false;
         } catch (IOException e) {
             logger.error("Yuotube " + category + " channel IO Exception error !! " + e.getMessage());
-            message = "Youtube " + category + " channel IO Exception error !!";
+            message.append("Youtube ").append(category).append(" channel IO Exception error !!");
             success = false;
         }
 
         logger.info("Youtube channel save end ....");
-        endAt = System.currentTimeMillis();
+        Long endAt = System.currentTimeMillis();
 
         CrawlingLog log = CrawlingLog.builder()
                 .jobName("Youtube " + category + " channel info crawling")
                 .jobStartAt(startAt)
                 .jobEndAt(endAt)
                 .success(success)
-                .message(message)
+                .message(message.toString())
                 .totalCrawling(success == Boolean.TRUE? 1 : 0)
                 .createAt(new Date())
                 .updateAt(new Date())

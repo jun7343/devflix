@@ -32,22 +32,22 @@ import java.util.*;
 public class NaverDevPostCrawler implements Crawler {
 
     private final DevPostService devPostService;
-    private final SimpleDateFormat naverDateFormat = new SimpleDateFormat("yyyy.MM.dd");
-    private final String NAVER_BLOG_URL = "https://d2.naver.com";
-    private final String DEFAULT_NAVER_THUMBNAIL = "https://d2.naver.com/static/img/app/common/sns_share_big_img1.png";
     private final CrawlingLogService crawlingLogService;
-    private final Logger logger = LoggerFactory.getLogger(NaverDevPostCrawler.class);
-    private final int DEFAULT_CRAWLING_MAX_PAGE = 3;
+    private static final SimpleDateFormat naverDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+    private static final String NAVER_BLOG_URL = "https://d2.naver.com";
+    private static final String DEFAULT_NAVER_THUMBNAIL = "https://d2.naver.com/static/img/app/common/sns_share_big_img1.png";
+    private static final Logger logger = LoggerFactory.getLogger(NaverDevPostCrawler.class);
+    private static final Integer DEFAULT_CRAWLING_MAX_PAGE = 3;
 
     @Override
     public void crawling() {
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("NAVER", PostType.BLOG);
-        int totalCrawling = 0;
-        boolean success = false;
-        String message = "";
+        Integer totalCrawling = 0;
+        Boolean success = false;
+        StringBuilder message = new StringBuilder();
 
         logger.info("Naver dev blog crawling start ....");
-        long startAt = System.currentTimeMillis();
+        Long startAt = System.currentTimeMillis();
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -155,7 +155,7 @@ public class NaverDevPostCrawler implements Crawler {
                                         if ((double) cnt / titleTokenSize >= 0.6 && (double) cnt1 / descTokenSize >= 0.6) {
                                             logger.info("Naver dev blog crawling done !! total crawling count = " + totalCrawling);
                                             success = true;
-                                            message = "Naver dev blog crawling done !!";
+                                            message.append("Naver dev blog crawling done !!");
                                             break;
                                         }
                                     }
@@ -178,6 +178,9 @@ public class NaverDevPostCrawler implements Crawler {
                                             .updateAt(new Date())
                                             .build();
 
+                                    map.clear();
+                                    writerAndTag.clear();
+
                                     devPostService.createDevPost(post);
                                     logger.info("Naver post crawling success !! URL = " + NAVER_BLOG_URL + "/helloworld?page=" + page + " post = " + post.toString());
                                     totalCrawling++;
@@ -190,41 +193,41 @@ public class NaverDevPostCrawler implements Crawler {
                         } else {
                             logger.error("Naver post item size zero !!");
                             success = false;
-                            message = "Naver post item size zero !!";
+                            message.append("Naver post item size zero !!");
                             break;
                         }
                     } else {
                         logger.error("Naver post list document not found !!");
                         success = false;
-                        message = "Naver post list document not found !!";
+                        message.append("Naver post list document not found !!");
                         break;
                     }
                 } else {
                     logger.error("Naver dev blog get error !! status code = " + response.getStatusCode());
                     success = false;
-                    message = "Naver dev blog get error !! status code = " + response.getStatusCode();
+                    message.append("Naver dev blog get error !! status code = ").append(response.getStatusCode());
                     break;
                 }
 
                 if (DEFAULT_CRAWLING_MAX_PAGE == page) {
                     success = true;
-                    message = "Naver dev blog crawling done !!";
+                    message.append("Naver dev blog crawling done !!");
                 }
             }
         } catch (Exception e) {
             logger.error("Naver dev blog Webclient error !! " + e.getMessage());
             success = false;
-            message = "Naver dev blog Webclient error !! " + e.getMessage();
+            message.append("Naver dev blog Webclient error !! ").append(e.getMessage());
         }
 
         logger.info("Naver dev blog crawling end ....");
-        long endAt = System.currentTimeMillis();
+        Long endAt = System.currentTimeMillis();
 
         CrawlingLog log = CrawlingLog.builder()
                 .jobName("Naver dev blog crawling")
                 .jobStartAt(startAt)
                 .jobEndAt(endAt)
-                .message(message)
+                .message(message.toString())
                 .success(success)
                 .totalCrawling(totalCrawling)
                 .createAt(new Date())

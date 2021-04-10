@@ -31,22 +31,22 @@ import java.util.*;
 @RequiredArgsConstructor
 public class WoowaDevPostCrawler implements Crawler {
 
-    private final SimpleDateFormat woowaDateFormat = new SimpleDateFormat("MMM d yyyy", Locale.ENGLISH);
-    private final String WOOWA_BLOG_URL = "https://woowabros.github.io";
-    private final Logger logger = LoggerFactory.getLogger(WoowaDevPostCrawler.class);
-    private final String DEFAULT_WOOWA_THUMBNAIL = "http://www.woowahan.com/img/mobile/woowabros.jpg";
     private final DevPostService devPostService;
     private final CrawlingLogService crawlingLogService;
+    private static final SimpleDateFormat woowaDateFormat = new SimpleDateFormat("MMM d yyyy", Locale.ENGLISH);
+    private static final String WOOWA_BLOG_URL = "https://woowabros.github.io";
+    private static final Logger logger = LoggerFactory.getLogger(WoowaDevPostCrawler.class);
+    private static final String DEFAULT_WOOWA_THUMBNAIL = "http://www.woowahan.com/img/mobile/woowabros.jpg";
 
     @Override
     public void crawling() {
-        String message = "";
-        boolean succcess = false;
-        int totalCrawling = 0;
+        StringBuilder message = new StringBuilder();
+        Boolean succcess = false;
+        Integer totalCrawling = 0;
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("WOOWA", PostType.BLOG);
 
         logger.info("Woowa dev blog crawling start ....");
-        long startAt = System.currentTimeMillis();
+        Long startAt = System.currentTimeMillis();
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -69,9 +69,9 @@ public class WoowaDevPostCrawler implements Crawler {
                     if (list.size() > 0) {
                         Map<String, String> map = new HashMap<>();
 
-                        for (int i = 0; i < list.size(); i++) {
+                        for (Element element : list) {
                             try {
-                                map.put("dateAndWriter", list.get(i).getElementsByClass("post-meta").get(0).text());
+                                map.put("dateAndWriter", element.getElementsByClass("post-meta").get(0).text());
                             } catch (Exception e) {
                                 map.put("writer", "우아한 형제들");
                                 map.put("uploadDate", woowaDateFormat.format(new Date()));
@@ -80,7 +80,7 @@ public class WoowaDevPostCrawler implements Crawler {
                             }
 
                             try {
-                                map.put("url", WOOWA_BLOG_URL + list.get(i).getElementsByTag("a").get(0).attr("href"));
+                                map.put("url", WOOWA_BLOG_URL + element.getElementsByTag("a").get(0).attr("href"));
                             } catch (Exception e) {
                                 map.put("url", WOOWA_BLOG_URL);
 
@@ -88,7 +88,7 @@ public class WoowaDevPostCrawler implements Crawler {
                             }
 
                             try {
-                                map.put("title", list.get(i).getElementsByTag("a").get(0).getElementsByClass("post-link").get(0).text());
+                                map.put("title", element.getElementsByTag("a").get(0).getElementsByClass("post-link").get(0).text());
                             } catch (Exception e) {
                                 map.put("title", "우아한 형제들 기술 블로그");
 
@@ -96,7 +96,7 @@ public class WoowaDevPostCrawler implements Crawler {
                             }
 
                             try {
-                                map.put("desc", list.get(i).getElementsByTag("a").get(0).getElementsByTag("p").text());
+                                map.put("desc", element.getElementsByTag("a").get(0).getElementsByTag("p").text());
                             } catch (Exception e) {
                                 map.put("desc", "");
 
@@ -186,32 +186,34 @@ public class WoowaDevPostCrawler implements Crawler {
                                     .updateAt(new Date())
                                     .build();
 
+                            map.clear();
+
                             devPostService.createDevPost(post);
                             logger.info("Woowa post crawling success !! URL = " + WOOWA_BLOG_URL + " post = " + post.toString());
                             totalCrawling++;
                         }
 
                         succcess = true;
-                        message = "Woowa dev blog crawling done !!";
+                        message.append("Woowa dev blog crawling done !!");
                     } else {
                         logger.warn("Woowa dev post list size zero!!");
                         succcess = false;
-                        message = "Woowa dev post list size zero!!";
+                        message.append("Woowa dev post list size zero!!");
                     }
                 } else {
                     logger.error("Woowa dev blog get error !! status code = " + response.getStatusCode());
                     succcess = false;
-                    message = "Woowa dev blog get error !! status code = " + response.getStatusCode();
+                    message.append("Woowa dev blog get error !! status code = ").append(response.getStatusCode());
                 }
             } else {
                 logger.error("Woowa deb blog get page error !! status code = " + response.getStatusCode());
                 succcess = false;
-                message = "Woowa deb blog get page error !! status code = " + response.getStatusCode();
+                message.append("Woowa deb blog get page error !! status code = ").append(response.getStatusCode());
             }
         } catch (Exception e) {
             logger.error("Woowa blog crawling error !! " + e.getMessage());
             succcess = false;
-            message = "Woowa blog crawling error !! " + e.getMessage();
+            message.append("Woowa blog crawling error !! ").append(e.getMessage());
         }
 
         logger.info("Woowa dev blog crawling end ....");
@@ -222,7 +224,7 @@ public class WoowaDevPostCrawler implements Crawler {
                 .jobStartAt(startAt)
                 .jobEndAt(endAt)
                 .success(succcess)
-                .message(message)
+                .message(message.toString())
                 .totalCrawling(totalCrawling)
                 .createAt(new Date())
                 .updateAt(new Date())

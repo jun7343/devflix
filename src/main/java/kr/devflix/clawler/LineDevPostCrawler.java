@@ -31,22 +31,22 @@ import java.util.*;
 public class LineDevPostCrawler implements Crawler {
 
     private final DevPostService devPostService;
-    private final SimpleDateFormat lineDateFormat = new SimpleDateFormat("yyyy.MM.dd");
-    private final String LINE_BLOG_URL = "https://engineering.linecorp.com/ko/blog/page/";
-    private final String DEFAULT_LINE_THUMBNAIL = "https://engineering.linecorp.com/wp-content/uploads/2018/11/linedev_logo.jpg";
     private final CrawlingLogService crawlingLogService;
-    private final Logger logger = LoggerFactory.getLogger(LineDevPostCrawler.class);
-    private final int DEFAULT_CRAWLING_MAX_PAGE = 3;
+    private static final SimpleDateFormat lineDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+    private static final String LINE_BLOG_URL = "https://engineering.linecorp.com/ko/blog/page/";
+    private static final String DEFAULT_LINE_THUMBNAIL = "https://engineering.linecorp.com/wp-content/uploads/2018/11/linedev_logo.jpg";
+    private static final Logger logger = LoggerFactory.getLogger(LineDevPostCrawler.class);
+    private static final Integer DEFAULT_CRAWLING_MAX_PAGE = 3;
 
     @Override
     public void crawling() {
         final DevPost recentlyDevPost = devPostService.findRecentlyDevPost("LINE", PostType.BLOG);
-        int totalCrawling = 0;
-        boolean success = false;
-        String message = "";
+        Integer totalCrawling = 0;
+        Boolean success = false;
+        StringBuilder message = new StringBuilder();
 
         logger.info("Line dev blog crawling start ....");
-        long startAt = System.currentTimeMillis();
+        Long startAt = System.currentTimeMillis();
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.setJavaScriptErrorListener(new DefaultJavaScriptErrorListener());
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -117,8 +117,8 @@ public class LineDevPostCrawler implements Crawler {
                             try {
                                 Elements tagElements = articleList.get(i).getElementsByClass("entry-content").get(0).getElementsByClass("post-tags-list").get(0).children();
 
-                                for (int j = 0; j < tagElements.size(); j++) {
-                                    tagList.add(tagElements.get(j).text().substring(1));
+                                for (org.jsoup.nodes.Element tagElement : tagElements) {
+                                    tagList.add(tagElement.text().substring(1));
                                 }
                             } catch (Exception e) {
                                 logger.error("Line tag crawling error !! " + e.getMessage());
@@ -170,7 +170,7 @@ public class LineDevPostCrawler implements Crawler {
                                 if ((double) cnt / titleTokensize >= 0.6 && (double) cnt1 / descTokenSize >= 0.6) {
                                     logger.info("Line dev blog crawling done !! total crawling count = " + totalCrawling);
                                     success = true;
-                                    message = "Line dev blog crawling done !!";
+                                    message.append("Line dev blog crawling done !!");
                                     break;
                                 }
                             }
@@ -191,6 +191,8 @@ public class LineDevPostCrawler implements Crawler {
                                     .updateAt(new Date())
                                     .build();
 
+                            map.clear();
+
                             devPostService.createDevPost(post);
                             logger.info("Line post crawling success !! URL = " + (LINE_BLOG_URL + page) + " post = " + post.toString());
                             totalCrawling++;
@@ -201,30 +203,30 @@ public class LineDevPostCrawler implements Crawler {
                         }
                     } else {
                         logger.error("Naver post size zero !!");
-                        message = "Naver post size zero !!";
+                        message.append("Naver post size zero !!");
                         success = false;
                         break;
                     }
                 } else {
                     logger.error("Naver dev blog page get error !! status code = " + webResponse.getStatusCode());
-                    message = "Naver dev blog page get error !! status code = " + webResponse.getStatusCode();
+                    message.append("Naver dev blog page get error !! status code = " + webResponse.getStatusCode());
                     success = false;
                     break;
                 }
 
                 if (page == DEFAULT_CRAWLING_MAX_PAGE) {
                     success = true;
-                    message = "Line dev blog crawling done !!";
+                    message.append("Line dev blog crawling done !!");
                 }
             }
         } catch (Exception e) {
             logger.error("Naver dev blog Webclient error !! " + e.getMessage());
-            message = "Naver dev blog Webclient error !! " + e.getMessage();
+            message.append("Naver dev blog Webclient error !! ").append(e.getMessage());
             success = false;
         }
 
         logger.info("Line dev blog crawling end ....");
-        long endAt = System.currentTimeMillis();
+        Long endAt = System.currentTimeMillis();
 
         CrawlingLog log = CrawlingLog.builder()
                 .jobName("Line dev blog crawling")
@@ -232,7 +234,7 @@ public class LineDevPostCrawler implements Crawler {
                 .jobEndAt(endAt)
                 .success(success)
                 .totalCrawling(totalCrawling)
-                .message(message)
+                .message(message.toString())
                 .createAt(new Date())
                 .updateAt(new Date())
                 .build();
