@@ -5,10 +5,27 @@
 				<h1 class="mt-4">Dashboard</h1>
 				<ol class="breadcrumb mb-4">
 					<li class="breadcrumb-item active">Dashboard</li>
+					<button type="button" class="btn btn-primary" id="test">Clwaling Test</button>
 				</ol>
 			</div>
 		</main>
 	{{/inline}}
 	{{#*inline "js"}}
+		<script>
+			$(function () {
+			    $('#test').on('click', function () {
+			        $.ajax({
+				        url: '/dfa/ttt',
+				        type: 'GET',
+				        success: function (data) {
+				            console.log('success !! ' + data);
+				        },
+				        error: function (e) {
+				            console.log('error !! ' + e);
+				        }
+			        })
+			    })
+			})
+		</script>
 	{{/inline}}
 {{/admin/layout/default}}
