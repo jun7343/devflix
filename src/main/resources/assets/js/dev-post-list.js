@@ -39,10 +39,12 @@ $(function () {
     devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, getParameterByName('page'));
 
     function getAllSiteParameter() {
-        const CATEGORY_PARAMETER = getParameterByName('c');
-
-        if (CATEGORY_PARAMETER !== '' && CATEGORY_PARAMETER !== undefined) {
-            return '?c=' + CATEGORY_PARAMETER + '&page=';
+        if (DEV_POST_LIST_TYPE !== '' && DEV_POST_LIST_PARAMETER !== '') {
+            if (DEV_POST_LIST_TYPE === 'category') {
+                return '?c=' + DEV_POST_LIST_PARAMETER + '&page=';
+            } else {
+                return '?t=' + DEV_POST_LIST_PARAMETER + '&page=';
+            }
         } else {
             return '?page=';
         }
