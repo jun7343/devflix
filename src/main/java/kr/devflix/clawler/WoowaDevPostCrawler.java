@@ -186,9 +186,10 @@ public class WoowaDevPostCrawler implements Crawler {
                                     .updateAt(new Date())
                                     .build();
 
+                            devPostService.createDevPost(post);
+
                             map.clear();
 
-                            devPostService.createDevPost(post);
                             logger.info("Woowa post crawling success !! URL = " + WOOWA_BLOG_URL + " post = " + post.toString());
                             totalCrawling++;
                         }
@@ -217,7 +218,7 @@ public class WoowaDevPostCrawler implements Crawler {
         }
 
         logger.info("Woowa dev blog crawling end ....");
-        long endAt = System.currentTimeMillis();
+        Long endAt = System.currentTimeMillis();
 
         CrawlingLog log = CrawlingLog.builder()
                 .jobName("Woowa dev blog crawling")

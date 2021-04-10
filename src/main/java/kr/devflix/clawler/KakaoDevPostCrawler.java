@@ -136,8 +136,8 @@ public class KakaoDevPostCrawler implements Crawler {
                         try {
                             Elements area_tag = element.getElementsByClass("area_tag").get(0).children();
 
-                            for (int j = 0; j < area_tag.size(); j++) {
-                                tagList.add(area_tag.get(j).text());
+                            for (Element value : area_tag) {
+                                tagList.add(value.text());
                             }
                         } catch (Exception e) {
                             logger.error("Kakao blog tags crawling error !! " + e.getMessage());
@@ -185,9 +185,11 @@ public class KakaoDevPostCrawler implements Crawler {
                                 .updateAt(new Date())
                                 .build();
 
-                        map.clear();
-
                         devPostService.createDevPost(post);
+
+                        map.clear();
+                        tagList.clear();
+
                         logger.info("Kakao post crawling success !! URL = " + (KAKAO_BLOG_URL + page) + " post = " + post.toString());
                         totalCrawling++;
                     }
@@ -207,6 +209,9 @@ public class KakaoDevPostCrawler implements Crawler {
                     success = true;
                     message.append("Kakao dev blog crawling done !!");
                 }
+
+                response.cleanUp();
+                webClient.close();
             }
         } catch (Exception e) {
             logger.error("webclient error = " + e.getMessage());

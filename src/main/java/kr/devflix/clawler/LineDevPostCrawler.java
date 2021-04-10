@@ -102,9 +102,9 @@ public class LineDevPostCrawler implements Crawler {
                                 Elements pTag = articleList.get(i).getElementsByClass("entry-content").get(0).children();
                                 StringBuilder builder = new StringBuilder();
 
-                                for (int j = 0; j < pTag.size(); j++) {
-                                    if (! pTag.get(j).hasClass("post-tags-list")) {
-                                        builder.append(pTag.get(j).text());
+                                for (org.jsoup.nodes.Element element : pTag) {
+                                    if (!element.hasClass("post-tags-list")) {
+                                        builder.append(element.text());
                                     }
                                 }
 
@@ -191,9 +191,11 @@ public class LineDevPostCrawler implements Crawler {
                                     .updateAt(new Date())
                                     .build();
 
-                            map.clear();
-
                             devPostService.createDevPost(post);
+
+                            map.clear();
+                            tagList.clear();
+
                             logger.info("Line post crawling success !! URL = " + (LINE_BLOG_URL + page) + " post = " + post.toString());
                             totalCrawling++;
                         }
@@ -207,9 +209,12 @@ public class LineDevPostCrawler implements Crawler {
                         success = false;
                         break;
                     }
+
+                    webResponse.cleanUp();
+                    webClient.close();
                 } else {
                     logger.error("Naver dev blog page get error !! status code = " + webResponse.getStatusCode());
-                    message.append("Naver dev blog page get error !! status code = " + webResponse.getStatusCode());
+                    message.append("Naver dev blog page get error !! status code = ").append(webResponse.getStatusCode());
                     success = false;
                     break;
                 }

@@ -178,10 +178,11 @@ public class NaverDevPostCrawler implements Crawler {
                                             .updateAt(new Date())
                                             .build();
 
+                                    devPostService.createDevPost(post);
+
                                     map.clear();
                                     writerAndTag.clear();
 
-                                    devPostService.createDevPost(post);
                                     logger.info("Naver post crawling success !! URL = " + NAVER_BLOG_URL + "/helloworld?page=" + page + " post = " + post.toString());
                                     totalCrawling++;
                                 }
@@ -213,6 +214,9 @@ public class NaverDevPostCrawler implements Crawler {
                     success = true;
                     message.append("Naver dev blog crawling done !!");
                 }
+
+                response.cleanUp();
+                webClient.close();
             }
         } catch (Exception e) {
             logger.error("Naver dev blog Webclient error !! " + e.getMessage());
