@@ -1,11 +1,8 @@
 package kr.devflix.repository;
 
-import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
