@@ -139,12 +139,10 @@ public class JavaMailUtil {
 
         String content = "<div style=\"max-width:100%;width:600px;margin:0 auto;box-sizing:border-box;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;font-size:16px;line-height:22px;color:#252525;word-wrap:break-word;word-break:break-word;text-align:left;\">" +
                 "<div id=\"email\" style=\"padding:24px 40px 24px 40px;margin:0\">" +
-                "<div title=\"title\" style=\"font-size:24px;line-height:1.17;color:#252525;margin:0 0 40px 0;padding:0\">Devflix 패스워드 찾기</div>" +
+                "<div title=\"title\" style=\"font-size:24px;line-height:1.17;color:#252525;margin:0 0 40px 0;padding:0\">Devflix 문의 메일 답변 입니다.</div>" +
                 "<div title=\"content\" style=\"font-size:16px;line-height:22px;color:#252525\">\n" +
-                "      <u></u> 안녕하세요 고객님 문의 메일 답변 드립니다.<br>\n" +
-                "      <br>\n" +
-                "      <u></u>" + contactMe.getTitle() +"<br><br>\n" +
-                "      <u></u>" + contactMe.getContent() +"<br><br>\n" +
+                "      <u></u> 제목: " + StringEscapeUtils.unescapeHtml4(contactMe.getTitle()) +"<br><br>\n" +
+                "      <u></u> 내용: " + StringEscapeUtils.unescapeHtml4(contactMe.getContent()) +"<br><br>\n" +
                 "      <p style=\"margin:40px 0 8px 0;padding:0;text-align:center;color:#8f8f8f;font-size:14px\"><u></u> 답변 내용</p>\n" +
                 "      <p style=\"margin:0 0 40px 0;padding:0;text-align:center;color:#252525;font-size:30px;letter-spacing:0.83;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word;line-height:33px\">" + Jsoup.parse(StringEscapeUtils.unescapeHtml4(answer)).text() + "</p>\n" +
                 "      <p style=\"margin:0 0 40px 0;padding:0;font-size:16px;color:#252525;font-family:Arial,Helvetica,'sans-serif';font-weight:normal;word-wrap:break-word;word-break:break-word\"><u></u> Devflix</p>\n" +
