@@ -183,8 +183,6 @@ public class APIController {
             pathBase = getPathBase();
         }
 
-        System.out.println("file upload.......");
-
         List<Object> list = new LinkedList<>();
 
         for (MultipartFile img : images) {
@@ -197,7 +195,6 @@ public class APIController {
                 try {
                     File file = new File(IMAGE_ROOT_DIR_PATH + pathBase + imageName.toString());
 
-                    System.out.println("gogo file upload");
                     img.transferTo(Paths.get(file.getPath()));
 
                     ImmutableMap<String, Object> map = ImmutableMap.<String, Object>builder()

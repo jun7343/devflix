@@ -55,10 +55,6 @@ public class AdminDevYoutubeController {
 
         String[] urlDepth = StringUtils.substringAfter(URL, YOUTUBE_WEB_URL).split("/");
 
-        for (String str : urlDepth) {
-            System.out.println("depth = " + str);
-        }
-
         if (urlDepth.length > 1) {
             if (StringUtils.equals(urlDepth[0], "user") || StringUtils.equals(urlDepth[0], "c")) {
                 youtubeCrawler.targetCrawling(

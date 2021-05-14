@@ -192,8 +192,6 @@ public class PostController {
                     .updateAt(new Date())
                     .build();
 
-            System.out.println(dto.toString());
-
             postService.updatePost(dto);
         }
 
