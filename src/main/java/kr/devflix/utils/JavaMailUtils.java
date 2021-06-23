@@ -18,11 +18,11 @@ import java.util.Properties;
 import java.util.UUID;
 
 @Component
-public class JavaMailUtil {
+public class JavaMailUtils {
     private final String SMTP_EMAIL = "jkl7343@gmail.com";
     private final String SMTP_PASSWORD = "cxbcvziegeotkxqj";
     private final String MESSAGE_TYPE = "text/html;charset=euc-kr";
-    private final Logger logger = LoggerFactory.getLogger(JavaMailUtil.class);
+    private final Logger logger = LoggerFactory.getLogger(JavaMailUtils.class);
 
     private void sendMail(final String title, final String content, final String to) {
         logger.info("Java Mail send to " + to + " .... ");

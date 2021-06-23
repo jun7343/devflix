@@ -3,7 +3,7 @@ package kr.devflix.admin.controller;
 import kr.devflix.constant.RoleType;
 import kr.devflix.entity.ContactMe;
 import kr.devflix.service.ContactMeService;
-import kr.devflix.utils.JavaMailUtil;
+import kr.devflix.utils.JavaMailUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,7 @@ import java.util.Optional;
 public class AdminContactMeController {
 
     private final ContactMeService contactMeService;
-    private final JavaMailUtil javaMailUtil;
+    private final JavaMailUtils javaMailUtils;
     private final int DEFAULT_PER_PAGE_SIZE = 20;
 
     @RequestMapping(path = "/dfa/contact-me", method = RequestMethod.GET)
@@ -98,7 +98,7 @@ public class AdminContactMeController {
         if (findOne.isPresent()) {
             final ContactMe item = findOne.get();
 
-            javaMailUtil.contactMeSendMail(item, answer, request);
+            javaMailUtils.contactMeSendMail(item, answer, request);
             contactMeService.updateContactMe(ContactMe.builder()
                     .id(item.getId())
                     .title(item.getTitle())

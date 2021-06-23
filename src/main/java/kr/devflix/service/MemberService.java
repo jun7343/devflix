@@ -7,10 +7,9 @@ import kr.devflix.entity.Member;
 import kr.devflix.entity.MemberConfirm;
 import kr.devflix.repository.MemberConfirmRepository;
 import kr.devflix.repository.MemberRepository;
-import kr.devflix.utils.JavaMailUtil;
+import kr.devflix.utils.JavaMailUtils;
 import com.google.common.collect.ImmutableList;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +33,7 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final MemberConfirmRepository memberConfirmRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JavaMailUtil javaMailUtil;
+    private final JavaMailUtils javaMailUtils;
 
     @Transactional
     public Member createMemberAndDeleteMemberConfirm(final String email, final String password, final String username) {
@@ -97,9 +96,9 @@ public class MemberService implements UserDetailsService {
 
         if (newConfirm.getConfirmCount() <= 5) {
             if (type == MemberConfirmType.EMAIL_AUTHENTICATION) {
-                javaMailUtil.emailConfirmSendMail(newConfirm, uuid, request);
+                javaMailUtils.emailConfirmSendMail(newConfirm, uuid, request);
             } else if (type == MemberConfirmType.PASSWORD) {
-                javaMailUtil.findPasswordSendMail(newConfirm, uuid, request);
+                javaMailUtils.findPasswordSendMail(newConfirm, uuid, request);
             }
 
             return memberConfirmRepository.save(newConfirm);
