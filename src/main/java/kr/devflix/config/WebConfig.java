@@ -21,7 +21,7 @@ import java.util.concurrent.Executor;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "kr.devflix")
-@EnableJpaRepositories(basePackages = "kr.devflix.repository")
+@EnableJpaRepositories(basePackages = "kr.devflix")
 @EnableScheduling
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
