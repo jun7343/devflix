@@ -1,10 +1,10 @@
 package kr.devflix.admin.controller;
 
-import kr.devflix.constant.PostType;
+import kr.devflix.posts.PostType;
 import kr.devflix.constant.RoleType;
-import kr.devflix.constant.Status;
-import kr.devflix.entity.DevPost;
-import kr.devflix.service.DevPostService;
+import kr.devflix.posts.Status;
+import kr.devflix.posts.DevPost;
+import kr.devflix.posts.DevPostService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;

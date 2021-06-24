@@ -1,7 +1,7 @@
 package kr.devflix.entity;
 
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
-import kr.devflix.constant.Status;
+import kr.devflix.posts.Status;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;

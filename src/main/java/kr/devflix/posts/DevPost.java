@@ -1,7 +1,5 @@
-package kr.devflix.entity;
+package kr.devflix.posts;
 
-import kr.devflix.constant.Status;
-import kr.devflix.constant.PostType;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -35,7 +33,7 @@ public class DevPost {
     private Status status;
 
     @Column
-    private int view;
+    private Integer view;
 
     @Column
     private String title;
@@ -69,7 +67,7 @@ public class DevPost {
     private Date updateAt;
 
     @Builder
-    public DevPost(final Long id, final String category, final PostType postType, final Status status, final int view, final String title,
+    public DevPost(final Long id, final String category, final PostType postType, final Status status, final Integer view, final String title,
                    final String description, final String writer, final String url, final Date uploadAt, final String thumbnail,
                    final List<String> tag, final Date createAt, final Date updateAt) {
         this.id = id;

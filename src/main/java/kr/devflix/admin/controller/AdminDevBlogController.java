@@ -1,7 +1,7 @@
 package kr.devflix.admin.controller;
 
 import kr.devflix.constant.RoleType;
-import kr.devflix.constant.Status;
+import kr.devflix.posts.Status;
 import kr.devflix.entity.DevBlog;
 import kr.devflix.service.DevBlogService;
 import lombok.RequiredArgsConstructor;

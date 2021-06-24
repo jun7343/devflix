@@ -1,8 +1,10 @@
 package kr.devflix.controller;
 
 import kr.devflix.constant.RoleType;
-import kr.devflix.constant.Status;
+import kr.devflix.posts.Status;
 import kr.devflix.entity.*;
+import kr.devflix.posts.DevPost;
+import kr.devflix.posts.DevPostService;
 import kr.devflix.service.*;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
@@ -13,9 +15,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

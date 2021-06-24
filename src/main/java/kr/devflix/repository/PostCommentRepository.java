@@ -1,6 +1,6 @@
 package kr.devflix.repository;
 
-import kr.devflix.constant.Status;
+import kr.devflix.posts.Status;
 import kr.devflix.entity.PostComment;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

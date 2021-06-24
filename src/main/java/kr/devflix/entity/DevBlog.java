@@ -1,6 +1,6 @@
 package kr.devflix.entity;
 
-import kr.devflix.constant.Status;
+import kr.devflix.posts.Status;
 import lombok.*;
 
 import javax.persistence.*;

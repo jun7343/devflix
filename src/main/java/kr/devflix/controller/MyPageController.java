@@ -2,7 +2,7 @@ package kr.devflix.controller;
 
 import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.RoleType;
-import kr.devflix.constant.Status;
+import kr.devflix.posts.Status;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
 import kr.devflix.entity.PostComment;
