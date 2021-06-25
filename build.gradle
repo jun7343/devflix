@@ -23,7 +23,6 @@ dependencies {
     implementation 'com.sun.mail:javax.mail:1.6.2'
     implementation 'org.postgresql:postgresql:42.2.18'
     implementation 'com.navercorp.lucy:lucy-xss-servlet:2.0.0'
-    implementation 'junit:junit:4.12'
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'net.sourceforge.htmlunit:htmlunit:2.47.1'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -35,6 +34,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test:5.4.5'
 }
 
 bootJar {
