@@ -10,17 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
-import java.util.*;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class DevPostService {
 
     private final DevPostRepository devPostRepository;
-    private final static Integer DEFAULT_PAGE = 1;
-    private final static Integer DEFAULT_PAGE_PER_SIZE = 50;
 
     @Transactional
     public DevPost createDevPost(final DevPost devPost) {
@@ -28,29 +27,19 @@ public class DevPostService {
     }
 
     @Transactional(readOnly = true)
-    public List<DevPost> findAllByCategoryOrTagOrSearchOrPage(final String category,
-                                                              final String tag,
-                                                              final String search,
-                                                              final Integer page,
-                                                              final Integer size) {
+    public List<DevPost> findAllByCategoryOrTagOrSearch(final String category,
+                                                final String tag,
+                                                final String search,
+                                                final Integer page,
+                                                final Integer resultMax) {
+        return devPostRepository.findAllByCategoryOrTagOrLikeTitleAndStatus(category, tag, search, Status.POST, page, resultMax);
+    }
 
-        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (StringUtils.isNoneBlank(category)) {
-                predicates.add(criteriaBuilder.equal(root.get("category"), category));
-            }
-
-            if (StringUtils.isNoneBlank(tag)) {
-                predicates.add(criteriaBuilder.in(root.get("tag")).value(tag));
-            }
-
-            if (StringUtils.isNoneBlank(search)) {
-                predicates.add(criteriaBuilder.like(root.get("title"), "%" + search + "%"));
-            }
-
-            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
-        });
+    @Transactional(readOnly = true)
+    public Long countByCategoryOrTagOrSearch(final String category,
+                                                final String tag,
+                                                final String search) {
+        return devPostRepository.countByCategoryOrTagOrListTitleAndStatus(category, tag, search, Status.POST);
     }
 
     @Transactional

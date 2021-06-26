@@ -1,11 +1,14 @@
 package kr.devflix.posts;
 
 import kr.devflix.errors.NotFoundException;
-import org.springframework.data.domain.Page;
+import kr.devflix.utils.Pagination;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static kr.devflix.utils.ApiUtils.ApiResult;
 import static kr.devflix.utils.ApiUtils.success;
@@ -21,18 +24,38 @@ public class DevPostRestController {
     }
 
     @GetMapping
-    public ApiResult<Page<DevPostDto>> devPostList(@RequestParam(required = false) String category,
-                                      @RequestParam(required = false) String tag,
-                                      @RequestParam(required = false) String search,
-                                      @RequestParam Integer page,
-                                      @RequestParam Integer size) {
-        Page<DevPostDto> findAll = devPostService.findAllByCategoryOrTagOrSearchOrPage(category, tag, search, page, size)
-                .map(DevPostDto::new);
+    public ApiResult<List<DevPostDto>> devPostList(@RequestParam(required = false)String c,
+                                      @RequestParam(required = false)String t,
+                                      @RequestParam(required = false)String s,
+                                      @RequestParam(required = false, defaultValue = "0")Integer page,
+                                      @RequestParam(required = false, defaultValue = "20")Integer resultMax) {
+        List<DevPostDto> findAll = devPostService.findAllByCategoryOrTagOrSearch(c, t, s, page, resultMax)
+                .stream()
+                .map(DevPostDto::new)
+                .collect(Collectors.toList());
 
         if (findAll.isEmpty()) {
-            throw new NotFoundException("could not found dev post");
+            throw new NotFoundException("could not found posts");
         }
 
         return success(findAll);
+    }
+
+    @GetMapping("/page")
+    public ApiResult<Pagination> devPostPagination(@RequestParam(required = false, defaultValue = "0")Integer page,
+                                                   @RequestParam(required = false, defaultValue = "20")Integer resultMax,
+                                                   @RequestParam(required = false, defaultValue = "5")Integer pageListSize,
+                                                   @RequestParam(required = false)String c,
+                                                   @RequestParam(required = false)String t,
+                                                   @RequestParam(required = false)String s) {
+        Long totalCount = devPostService.countByCategoryOrTagOrSearch(c, t, s);
+
+        if (totalCount == null) {
+            throw new NotFoundException("could not found posts");
+        }
+
+        Pagination pagination = new Pagination(page, resultMax, totalCount, pageListSize);
+
+        return success(pagination);
     }
 }

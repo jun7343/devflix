@@ -1,6 +1,7 @@
 $(function () {
     const API_VIEW_COUNT_URL = '/a/view-count';
-    const API_DEV_POST_DRAWING_URL = '/a/dev-post-list';
+    const API_DEV_POST_DRAWING_URL = '/a/dev-posts';
+    const API_DEV_POST_PAGINATION_DRAWING_URL = '/a/dev-posts/page';
     const POST_TYPE = 'POST';
     const $DEV_POST_LIST = $('#grid');
     const DEV_POST_LIST_TYPE = $DEV_POST_LIST.data('type');
@@ -29,14 +30,15 @@ $(function () {
         '</a><div class="box-info"><time datetime="{{uploadAt}}" class="date">{{uploadAt}}</time><a class="post-link view-anchor" href="{{url}}" target="_blank"><h2 class="post-title">{{title}}</h2></a>\<a class="post-link view-anchor" href="{{url}}" target="_blank">' +
         '<p class="description">{{description}}</p></a>{{tag}}</div></div></article>';
     const $PAGINATION = $('#pagination');
-    const PAGING_PREVIOUS_TEMPLATE = '<a class="page-item previous" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
-    const PAGING_NEXT_TEMPLATE = '<a class="page-item next" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
+    const PAGING_PREVIOUS_TEMPLATE = '<a class="page-item previous page-arrow" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
+    const PAGING_NEXT_TEMPLATE = '<a class="page-item next page-arrow" data-val="{{value}}"><svg><use xlink:href="#icon-arrow-right"></use></svg></a>';
     const PAGING_NUM_TEMPLATE = '<a class="page-item page-number" data-val="{{value}}"><span>{{num}}</span></a>';
     const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
     const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
     const SITE_PARAMETER = getAllSiteParameter();
 
     devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, getParameterByName('page'));
+    paginationDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, getParameterByName('page'));
 
     function getAllSiteParameter() {
         if (DEV_POST_LIST_TYPE !== '' && DEV_POST_LIST_PARAMETER !== '') {
@@ -73,6 +75,13 @@ $(function () {
             scrollTop: $DEV_POST_LIST.offset().top - $('.bar-header').eq(0).innerHeight()
         }, 800);
 
+				if ($(this).hasClass('page-arrow')) {
+					paginationDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, VALUE);
+				} else {
+					$('.page-item').removeClass('page-active');
+          $(this).addClass('page-active');
+				}
+
         devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, VALUE);
     });
 
@@ -80,83 +89,96 @@ $(function () {
         devPostDrawling(DEV_POST_LIST_TYPE, DEV_POST_LIST_PARAMETER, getParameterByName('page'));
     });
 
-    function getParameterByName (name) {
+    function getParameterByName(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
         const regex = new RegExp('[\\?&]' + name + '=([^&#]*)'), results = regex.exec(location.search);
         return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
-    function devPostDrawling(type, parameter, page) {
+    const formatOption = {year: 'numeric', month: 'short', day: 'numeric'};
+
+    function devPostDrawling(c, t, page) {
         $.ajax({
             url: API_DEV_POST_DRAWING_URL,
-            type: POST_TYPE,
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
-            },
-            data: {'type': type, 'parameter': parameter, 'page': page},
+            type: 'GET',
+            data: {'c': c, 't': t, 'page': page},
             success: function (data) {
                 $DEV_POST_LIST.empty();
 
-                for (const post of data.devPostList) {
-                    let template = DEV_POST_TEMPLATE.replaceAll(MATCH_TITLE, post.title)
-                        .replaceAll(MATCH_UPLOAD_AT, post.uploadAt)
-                        .replaceAll(MATCH_CATEGORY, post.category)
-                        .replaceAll(MATCH_THUMBNAIL, post.thumbnail)
-                        .replaceAll(MATCH_URL, post.url)
-                        .replaceAll(MATCH_POST_TYPE, post.postType)
-                        .replaceAll(MATCH_ICON, post.postType === 'BLOG'? DEV_POST_READ_ICON_TEMPLATE : DEV_POST_WATCH_ICON_TEMPLATE)
-                        .replaceAll(MATCH_IS_NEW, post.isNew? '<div class="new-post-tag">New Post</div>' : '')
-                        .replaceAll(MATCH_DESCRIPTION, post.description.length > 100? post.description.substring(0, 100) + "..." : post.description);
+                if (data.success) {
+                  const ct = new Date();
 
-                    let tagTemplate = '';
+                  ct.setHours(ct.getHours() - 24);
+                  for (const post of data.response) {
+                      let template = DEV_POST_TEMPLATE.replaceAll(MATCH_TITLE, post.title)
+                          .replaceAll(MATCH_UPLOAD_AT, new Intl.DateTimeFormat('en-US', formatOption).format(new Date(post.uploadAt)))
+                          .replaceAll(MATCH_CATEGORY, post.category)
+                          .replaceAll(MATCH_THUMBNAIL, post.thumbnail)
+                          .replaceAll(MATCH_URL, post.url)
+                          .replaceAll(MATCH_POST_TYPE, post.postType)
+                          .replaceAll(MATCH_ICON, post.postType === 'BLOG'? DEV_POST_READ_ICON_TEMPLATE : DEV_POST_WATCH_ICON_TEMPLATE)
+                          .replaceAll(MATCH_IS_NEW, post.uploadAt >= ct.getTime()? '<div class="new-post-tag">New Post</div>' : '')
+                          .replaceAll(MATCH_DESCRIPTION, post.description.length > 100? post.description.substring(0, 100) + "..." : post.description);
 
-                    if (post.tagList) {
-                        tagTemplate = '<div class="tags">';
+                      let tagTemplate = '';
 
-                        for (const tag of post.tagList) {
-                            tagTemplate += '<a href="/tag?t=' + tag + '">#' + tag + '</a>';
-                        }
-                        tagTemplate += '</div>';
-                    }
+                      if (post.tag) {
+                          tagTemplate = '<div class="tags">';
 
-                    template = template.replaceAll(MATCH_TAG, tagTemplate);
+                          for (const t of post.tag) {
+                              tagTemplate += '<a href="/tag?t=' + t + '">#' + t + '</a>';
+                          }
+                          tagTemplate += '</div>';
+                      }
 
-                    $DEV_POST_LIST.append($(template));
-                }
+                      template = template.replaceAll(MATCH_TAG, tagTemplate);
 
-                new AnimOnScroll( document.getElementById( 'grid' ), {
-                    minDuration : 0.4,
-                    maxDuration : 0.7,
-                    viewportFactor : 0.2
-                });
+                      $DEV_POST_LIST.append($(template));
+                  }
 
-                if (data.paging) {
-                    $PAGINATION.empty();
-
-                    if (data.paging.previousPage) {
-                        const PREVIOUS_TEMPATE = PAGING_PREVIOUS_TEMPLATE.replaceAll(MATCH_VALUE, data.paging.previousPageNum);
-
-                        $PAGINATION.append($(PREVIOUS_TEMPATE));
-                    }
-
-                    for (const idx in data.paging.pageNumList) {
-                        const NUM_TEMPLATE = PAGING_NUM_TEMPLATE.replaceAll(MATCH_VALUE, data.paging.pageNumList[idx] - 1)
-                            .replaceAll(MATCH_NUM, data.paging.pageNumList[idx]);
-
-                        $PAGINATION.append($(NUM_TEMPLATE));
-
-                        if (data.paging.pageNumList[idx] === data.paging.currentPageNum) {
-                            $PAGINATION.find('a').last().addClass('page-active');
-                        }
-                    }
-
-                    if (data.paging.nextPage) {
-                        const NEXT_TEMPLATE = PAGING_NEXT_TEMPLATE.replaceAll(MATCH_VALUE, data.paging.nextPageNum);
-
-                        $PAGINATION.append($(NEXT_TEMPLATE));
-                    }
+                  new AnimOnScroll( document.getElementById( 'grid' ), {
+                      minDuration : 0.4,
+                      maxDuration : 0.7,
+                      viewportFactor : 0.2
+                  });
                 }
             }
         })
+    }
+
+    function paginationDrawling(c, t, page) {
+      $.ajax({
+        url: API_DEV_POST_PAGINATION_DRAWING_URL,
+        type: 'GET',
+        data: {'c': c, 't': t, 'page': page},
+        success: function (data) {
+           if (data.success) {
+             $PAGINATION.empty();
+
+             if (! data.response.firstList) {
+                 const PREVIOUS_TEMPATE = PAGING_PREVIOUS_TEMPLATE.replaceAll(MATCH_VALUE, data.response.previousPageNum);
+
+                 $PAGINATION.append($(PREVIOUS_TEMPATE));
+             }
+
+             for (const idx in data.response.pageNumList) {
+                 const NUM_TEMPLATE = PAGING_NUM_TEMPLATE.replaceAll(MATCH_VALUE, data.response.pageNumList[idx])
+                     .replaceAll(MATCH_NUM, data.response.pageNumList[idx] + 1);
+
+                 $PAGINATION.append($(NUM_TEMPLATE));
+
+                 if (data.response.pageNumList[idx] === data.response.currentPage) {
+                     $PAGINATION.find('a').last().addClass('page-active');
+                 }
+             }
+
+             if (! data.response.lastList) {
+                 const NEXT_TEMPLATE = PAGING_NEXT_TEMPLATE.replaceAll(MATCH_VALUE, data.response.nextPageNum);
+
+                 $PAGINATION.append($(NEXT_TEMPLATE));
+             }
+           }
+        }
+      })
     }
 })
