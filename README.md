@@ -1,6 +1,6 @@
 # :seedling: [Devflix](https://devflix.kr/)    
 
-![devflix](./dev-flix.png)    
+![devflix](./devflix-home.png)    
 
 ## :pushpin: 개요    
 
@@ -43,7 +43,7 @@
 ## :pushpin: Devflix 구성도    
 
 
-![devflix architecture](./dev-flix-architecture.png)    
+![devflix architecture](./devflix-architecture.png)    
 
 
 ## :pushpin: 참고 사이트    
