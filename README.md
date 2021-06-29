@@ -4,9 +4,9 @@
 
 ## :pushpin: 개요
 
-&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: 카카오, 네이버, 라인, 우아한 형제들 등 개발 블로그 포스트 크롤링 하여 Devflix에서 확인.    
-&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: 코딩 관련 Youtube 영상 역시 Devflix에서 확인.
-&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: 개발 포스트에 관련하여 궁금한 사항있을 시, devflix 게시판에 공유.
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: 카카오, 네이버, 라인, 우아한 형제들 등 개발 블로그 포스트 크롤링 하여 Devflix에서 확인.       
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: 코딩 관련 Youtube 영상 역시 Devflix에서 확인.   
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: 개발 포스트에 관련하여 궁금한 사항있을 시, devflix 게시판에 공유.   
 
 
 
@@ -17,13 +17,25 @@
 
 ## :pushpin: 프로젝트 중점 사항
 
-&nbsp;&nbsp;&nbsp;&nbsp;:heav_check_mark: Scheduling을 통해 크롤링 작업을 자동화.
-&nbsp;&nbsp;&nbsp;&nbsp;:heav_check_mark: JUnit5을 통한 단위, 통합 테스트를 진행하여 생산성 및 코드 신뢰성 향상 노력.
-&nbsp;&nbsp;&nbsp;&nbsp;:heav_check_mark: docker를 사용함으로써 docker 환경 이해와 환경 구성 노력.
-&nbsp;&nbsp;&nbsp;&nbsp;:heav_check_mark: prometheus와 grafana를 통해 서버 모니터링을 진행하여 서버 메모리를 효율적으로 관리하기 위해 참고. // monitering 주소: http://54.180.99.109:82
-&nbsp;&nbsp;&nbsp;&nbsp;:heav_check_mark: REST 아키텍처 제약 조건을 최대한 준수하여 REST API 구성.
-&nbsp;&nbsp;&nbsp;&nbsp;:heav_check_mark: Spring Security를 통해 사용자 인증, 인가 기능 구현.
-&nbsp;&nbsp;&nbsp;&nbsp;:heav_check_mark: open souce인 Lucy XSS Filter Servlet을 통해 filter에서 parmater에 포함된 특수문자를 치환하여 XSS 공격 방지.
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: Scheduling을 통해 크롤링 작업을 자동화.    
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: JUnit5을 통한 단위, 통합 테스트를 진행하여 생산성 및 코드 신뢰성 향상 노력.    
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: docker를 사용함으로써 docker 환경 이해와 환경 구성 노력.    
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: prometheus와 grafana를 통해 서버 모니터링을 진행하여 서버 메모리를 효율적으로 관리하기 위해 참고. // monitering 주소: http://54.180.99.109:82    
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: REST 아키텍처 제약 조건을 최대한 준수하여 REST API 구성.    
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: Spring Security를 통해 사용자 인증, 인가 기능 구현.    
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: open souce인 Lucy XSS Filter Servlet을 통해 filter에서 parmater에 포함된 특수문자를 치환하여 XSS 공격 방지.    
+
+
+## :pushpin: 주요 기능
+
+&nbsp;&nbsp;&nbsp;&nbsp; 1.인증 및 인가 기능
+&nbsp;&nbsp;&nbsp;&nbsp; 2.게시글 작성
+&nbsp;&nbsp;&nbsp;&nbsp; 3.등록된 포스트 조회
+&nbsp;&nbsp;&nbsp;&nbsp; 4.댓글 기능
+&nbsp;&nbsp;&nbsp;&nbsp; 5.댓글 알람 기능
+
+
+## :pushpin: Devflix 구성도
 
 
 
