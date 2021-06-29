@@ -22,11 +22,11 @@
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: JUnit5을 통한 단위, 통합 테스트를 진행하여 생산성 및 코드 신뢰성 향상 노력.    
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: docker를 사용함으로써 docker 환경 이해와 환경 구성 노력.    
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: prometheus와 grafana를 통해 서버 모니터링을 진행하여 서버 메모리를 효율적으로 관리 및 메모리 사용률 체크.
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - monitering 주소: http://54.180.99.109:82    
-&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: REST 아키텍처 제약 조건을 최대한 준수하여 REST API 구성.    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - monitering 주소: http://54.180.99.109:82    
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: REST 아키텍처 제약 조건을 준수하여 RESTful API 설계 및 구현.    
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: Spring Security를 통해 사용자 인증, 인가 기능 구현.    
-&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: open souce인 Lucy XSS Filter Servlet을 통해 filter에서 parmater에 포함된 특수문자를 치환하여 XSS 공격 방지.   
-&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: ![Let's Encrypt](https://letsencrypt.org/)를 통해 SSL 무료 인증서를 받아 https 적용과 [certbot](https://github.com/certbot/certbot)을 통해 Let's Encrypt 인증서 자동 재 갱신     
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: open souce인 [Lucy XSS Filter Servlet](https://github.com/naver/lucy-xss-servlet-filter)을 통해 filter에서 parmater에 포함된 특수문자를 치환하여 XSS 공격 방지.   
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: [Let's Encrypt](https://letsencrypt.org/)를 통해 SSL 무료 인증서를 받아 https 적용과 [certbot](https://github.com/certbot/certbot)을 통해 Let's Encrypt 인증서 자동 재갱신     
 
 
 
@@ -43,6 +43,20 @@
 ## :pushpin: Devflix 구성도    
 
 
+![devflix architecture](./dev-flix-architecture.png)    
 
 
+## :pushpin: 참고 사이트    
 
+* Spring Framework Document
+  :bookmark_tabs: [Spring Framework Document](https://docs.spring.io/spring-framework/docs/current/reference/html/)
+* Youtube API Reference
+  :bookmark_tabs: [Youtube API Reference](https://developers.google.com/youtube/v3/docs?hl=ko)
+* QueryDSL 래퍼런스 문서 - 한글 번역
+  :bookmark_tabs: [QueryDSL Reference](http://www.querydsl.com/static/querydsl/4.0.1/reference/ko-KR/html_single/)
+* Spring Security 래퍼런스 문서 - 한글 번역
+  :bookmark_tabs: [리맘의 한글라이즈 프로젝트](https://godekdls.github.io/Spring%20Security/authentication/)
+* HtmlUnit Reference
+  :bookmark_tabs: [HtmlUnit Reference](https://htmlunit.sourceforge.io/frame-howto.html)
+  
+  
