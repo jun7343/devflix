@@ -1,7 +1,7 @@
 $(function () {
     const API_VIEW_COUNT_URL = '/a/view-count';
-    const API_DEV_POST_DRAWING_URL = '/a/dev-posts';
-    const API_DEV_POST_PAGINATION_DRAWING_URL = '/a/dev-posts/page';
+    const API_DEV_POST_URL = '/a/dev-posts';
+    const API_DEV_POST_PAGINATION_URL = '/a/dev-posts/page';
     const POST_TYPE = 'POST';
     const $DEV_POST_LIST = $('#grid');
     const DEV_POST_LIST_TYPE = $DEV_POST_LIST.data('type');
@@ -99,7 +99,7 @@ $(function () {
 
     function devPostDrawling(c, t, page) {
         $.ajax({
-            url: API_DEV_POST_DRAWING_URL,
+            url: API_DEV_POST_URL,
             type: 'GET',
             data: {'c': c, 't': t, 'page': page},
             success: function (data) {
