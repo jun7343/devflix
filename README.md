@@ -48,15 +48,15 @@
 
 ## :pushpin: 참고 사이트    
 
-* Spring Framework Document
+* Spring Framework Document    
   :bookmark_tabs: [Spring Framework Document](https://docs.spring.io/spring-framework/docs/current/reference/html/)
-* Youtube API Reference
+* Youtube API Reference    
   :bookmark_tabs: [Youtube API Reference](https://developers.google.com/youtube/v3/docs?hl=ko)
-* QueryDSL 래퍼런스 문서 - 한글 번역
+* QueryDSL 래퍼런스 문서 - 한글 번역    
   :bookmark_tabs: [QueryDSL Reference](http://www.querydsl.com/static/querydsl/4.0.1/reference/ko-KR/html_single/)
-* Spring Security 래퍼런스 문서 - 한글 번역
+* Spring Security 래퍼런스 문서 - 한글 번역    
   :bookmark_tabs: [리맘의 한글라이즈 프로젝트](https://godekdls.github.io/Spring%20Security/authentication/)
-* HtmlUnit Reference
+* HtmlUnit Reference    
   :bookmark_tabs: [HtmlUnit Reference](https://htmlunit.sourceforge.io/frame-howto.html)
   
   
