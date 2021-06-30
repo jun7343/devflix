@@ -2,13 +2,9 @@ package kr.devflix.posts;
 
 import kr.devflix.errors.NotFoundException;
 import kr.devflix.utils.Pagination;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kr.devflix.utils.ApiUtils.ApiResult;
 import static kr.devflix.utils.ApiUtils.success;
@@ -24,15 +20,12 @@ public class DevPostRestController {
     }
 
     @GetMapping
-    public ApiResult<List<DevPostDto>> devPostList(@RequestParam(required = false)String c,
+    public ApiResult<List<DevPostDto>> actionDevPostList(@RequestParam(required = false)String c,
                                       @RequestParam(required = false)String t,
                                       @RequestParam(required = false)String s,
-                                      @RequestParam(required = false, defaultValue = "0")Integer page,
-                                      @RequestParam(required = false, defaultValue = "20")Integer resultMax) {
-        List<DevPostDto> findAll = devPostService.findAllByCategoryOrTagOrSearch(c, t, s, page, resultMax)
-                .stream()
-                .map(DevPostDto::new)
-                .collect(Collectors.toList());
+                                      @RequestParam(required = false, defaultValue = "0")int page,
+                                      @RequestParam(required = false, defaultValue = "20", name = "per-page")int perPage) {
+        List<DevPostDto> findAll = devPostService.findAllByCategoryOrTagOrSearch(c, t, s, page, perPage);
 
         if (findAll.isEmpty()) {
             throw new NotFoundException("could not found posts");
@@ -42,9 +35,9 @@ public class DevPostRestController {
     }
 
     @GetMapping("/page")
-    public ApiResult<Pagination> devPostPagination(@RequestParam(required = false, defaultValue = "0")Integer page,
-                                                   @RequestParam(required = false, defaultValue = "20")Integer resultMax,
-                                                   @RequestParam(required = false, defaultValue = "5")Integer pageListSize,
+    public ApiResult<Pagination> actionDevPostPagination(@RequestParam(required = false, defaultValue = "0")int page,
+                                                   @RequestParam(required = false, defaultValue = "20", name = "per-page")int perPage,
+                                                   @RequestParam(required = false, defaultValue = "5", name = "page-list-size")int pageListSize,
                                                    @RequestParam(required = false)String c,
                                                    @RequestParam(required = false)String t,
                                                    @RequestParam(required = false)String s) {
@@ -54,8 +47,12 @@ public class DevPostRestController {
             throw new NotFoundException("could not found posts");
         }
 
-        Pagination pagination = new Pagination(page, resultMax, totalCount, pageListSize);
+        return success(new Pagination(page, perPage, totalCount, pageListSize));
+    }
 
-        return success(pagination);
+    @PatchMapping("/view/{id}")
+    public ApiResult<Long> actionDevPostViewCountUpdate(@PathVariable Long id,
+                                               @RequestParam(name = "id")Long postId) {
+        return success(devPostService.updateViewById(id));
     }
 }

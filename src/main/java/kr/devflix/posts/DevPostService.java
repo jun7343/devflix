@@ -14,6 +14,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +30,40 @@ public class DevPostService {
     }
 
     @Transactional(readOnly = true)
-    public List<DevPost> findAllByCategoryOrTagOrSearch(final String category,
+    public List<DevPostDto> findAllByCategoryOrTagOrSearch(final String category,
                                                 final String tag,
                                                 final String search,
-                                                final Integer page,
-                                                final Integer resultMax) {
-        return devPostRepository.findAllByCategoryOrTagOrLikeTitleAndStatus(category, tag, search, Status.POST, page, resultMax);
+                                                final int page,
+                                                final int perPage) {
+        if (StringUtils.isNoneBlank(tag)) {
+            return devPostRepository.findAllByTagAndStatusOrderByUploadAtLimitOffset(tag, Status.POST.name(), perPage, page * perPage)
+                    .stream()
+                    .map(DevPostDto::new)
+                    .collect(Collectors.toList());
+        }
+
+        return devPostRepository.findAllByCategoryOrLikeTitleAndStatusLimitOffset(category, search, Status.POST, perPage, page * perPage)
+                .stream()
+                .map(DevPostDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public Long countByCategoryOrTagOrSearch(final String category,
                                                 final String tag,
                                                 final String search) {
-        return devPostRepository.countByCategoryOrTagOrListTitleAndStatus(category, tag, search, Status.POST);
+        if (StringUtils.isNoneBlank(tag)) {
+            return devPostRepository.countByTagAndStatus(tag, Status.POST.name());
+        }
+
+        return devPostRepository.countByCategoryOrListTitleAndStatus(category, search, Status.POST);
+    }
+
+    @Transactional
+    public Long updateViewById(final Long id) {
+        checkNotNull(id, "post id must be provided");
+
+        return devPostRepository.updateViewById(id);
     }
 
     @Transactional

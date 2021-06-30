@@ -1,11 +1,10 @@
 package kr.devflix.posts;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static kr.devflix.posts.QDevPost.devPost;
@@ -16,55 +15,58 @@ public class DevPostRepositoryImpl implements DevPostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<DevPost> findAllByCategoryOrTagOrLikeTitleAndStatus(final String category,
-                                                                final String tag,
+    public List<DevPost> findAllByCategoryOrLikeTitleAndStatusLimitOffset(final String category,
                                                                 final String title,
                                                                 Status status,
-                                                                final Integer page,
-                                                                final Integer resultMax) {
-        List<BooleanExpression> list = new ArrayList<>();
+                                                                final int page,
+                                                                final int perPage) {
+        BooleanBuilder builder = new BooleanBuilder();
 
         if (StringUtils.isNoneBlank(category)) {
-            list.add(devPost.category.eq(category));
-        }
-
-        if (StringUtils.isNoneBlank(tag)) {
-            list.add(devPost.tag.any().eq(tag));
+            builder.or(devPost.category.eq(category));
         }
 
         if (StringUtils.isNoneBlank(title)) {
-            list.add(devPost.title.like("%" + title + "%"));
+            builder.or(devPost.title.like("%" + title + "%"));
         }
 
+        builder.and(devPost.status.eq(status));
+
         return queryFactory.selectFrom(devPost)
-                .where(list.toArray(new BooleanExpression[0]))
+                .from(devPost)
+                .where(builder)
                 .orderBy(devPost.uploadAt.desc())
-                .limit(resultMax)
-                .offset(page * resultMax)
+                .limit(perPage)
+                .offset(page * perPage)
                 .fetch();
     }
 
     @Override
-    public Long countByCategoryOrTagOrListTitleAndStatus(final String category,
-                                                            final String tag,
-                                                            final String title,
-                                                            Status status) {
-        List<BooleanExpression> list = new ArrayList<>();
+    public Long countByCategoryOrListTitleAndStatus(final String category,
+                                                    final String title,
+                                                    Status status) {
+        BooleanBuilder builder = new BooleanBuilder();
 
         if (StringUtils.isNoneBlank(category)) {
-            list.add(devPost.category.eq(category));
-        }
-
-        if (StringUtils.isNoneBlank(tag)) {
-            list.add(devPost.tag.any().eq(tag));
+            builder.or(devPost.category.eq(category));
         }
 
         if (StringUtils.isNoneBlank(title)) {
-            list.add(devPost.title.like("%" + title + "%"));
+            builder.or(devPost.title.like("%" + title + "%"));
         }
 
+        builder.and(devPost.status.eq(status));
+
         return queryFactory.selectFrom(devPost)
-                .where(list.toArray(new BooleanExpression[0]))
+                .where(builder)
                 .fetchCount();
+    }
+
+    @Override
+    public Long updateViewById(Long id) {
+        return queryFactory.update(devPost)
+                .set(devPost.view, devPost.view.add(1))
+                .where(devPost.id.eq(id))
+                .execute();
     }
 }

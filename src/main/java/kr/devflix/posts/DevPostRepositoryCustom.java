@@ -4,7 +4,9 @@ import java.util.List;
 
 public interface DevPostRepositoryCustom {
 
-    List<DevPost> findAllByCategoryOrTagOrLikeTitleAndStatus(String category, String tag, String title, Status status, Integer page, Integer resultMax);
+    List<DevPost> findAllByCategoryOrLikeTitleAndStatusLimitOffset(String category, String title, Status status, int page, int perPage);
 
-    Long countByCategoryOrTagOrListTitleAndStatus(String category, String tag, String title, Status status);
+    Long countByCategoryOrListTitleAndStatus(String category, String title, Status status);
+
+    Long updateViewById(Long id);
 }

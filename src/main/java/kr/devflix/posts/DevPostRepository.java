@@ -13,6 +13,12 @@ import java.util.List;
 @Repository
 public interface DevPostRepository extends JpaRepository<DevPost, Long>, DevPostRepositoryCustom, JpaSpecificationExecutor<DevPost> {
 
+    @Query(nativeQuery = true, value = "select * from dev_post dp where :tag = any(dp.tag) and dp.status = :status order by dp.upload_at desc limit :limit offset :offset")
+    List<DevPost> findAllByTagAndStatusOrderByUploadAtLimitOffset(String tag, String status, int limit, int offset);
+
+    @Query(nativeQuery = true, value = "select count(*) from dev_post dp where :tag = any(dp.tag) and dp.status = :status")
+    Long countByTagAndStatus(String tag, String status);
+
     DevPost findTopOneByUrl(final String url);
 
     @Query(nativeQuery = true, value = "select * from dev_post where :tag = any(tag) and status = :status order by upload_at desc", countQuery = "select count(*) from dev_post where :tag = any(tag) and status = :status")
