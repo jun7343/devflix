@@ -26,7 +26,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: REST 아키텍처 제약 조건을 준수하여 RESTful API 설계 및 구현.    
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: Spring Security를 통해 사용자 인증, 인가 기능 구현.    
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: open souce인 [Lucy XSS Filter Servlet](https://github.com/naver/lucy-xss-servlet-filter)을 통해 filter에서 parmater에 포함된 특수문자를 치환하여 XSS 공격 방지.   
-&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: [Let's Encrypt](https://letsencrypt.org/)를 통해 SSL 무료 인증서를 받아 https 적용과 [certbot](https://github.com/certbot/certbot)을 통해 Let's Encrypt 인증서 자동 재갱신     
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: [Let's Encrypt](https://letsencrypt.org/)를 통해 SSL 무료 인증서를 받아 https 적용과 [certbot](https://github.com/certbot/certbot)을 통해 Let's Encrypt 인증서 자동 재갱신.     
 
 
 
