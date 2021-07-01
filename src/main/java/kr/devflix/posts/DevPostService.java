@@ -35,14 +35,7 @@ public class DevPostService {
                                                 final String search,
                                                 final int page,
                                                 final int perPage) {
-        if (StringUtils.isNoneBlank(tag)) {
-            return devPostRepository.findAllByTagAndStatusOrderByUploadAtLimitOffset(tag, Status.POST.name(), perPage, page * perPage)
-                    .stream()
-                    .map(DevPostDto::new)
-                    .collect(Collectors.toList());
-        }
-
-        return devPostRepository.findAllByCategoryOrLikeTitleAndStatusLimitOffset(category, search, Status.POST, perPage, page * perPage)
+        return devPostRepository.findAllByCategoryOrTagOrLikeTitleAndStatusLimitOffset(category, tag, search, Status.POST, perPage, page * perPage)
                 .stream()
                 .map(DevPostDto::new)
                 .collect(Collectors.toList());
@@ -52,11 +45,7 @@ public class DevPostService {
     public Long countByCategoryOrTagOrSearch(final String category,
                                                 final String tag,
                                                 final String search) {
-        if (StringUtils.isNoneBlank(tag)) {
-            return devPostRepository.countByTagAndStatus(tag, Status.POST.name());
-        }
-
-        return devPostRepository.countByCategoryOrListTitleAndStatus(category, search, Status.POST);
+        return devPostRepository.countByCategoryOrTagOrListTitleAndStatus(category, tag, search, Status.POST);
     }
 
     @Transactional
@@ -101,7 +90,7 @@ public class DevPostService {
                     .view(findPost.getView() + 1)
                     .writer(findPost.getWriter())
                     .thumbnail(findPost.getThumbnail())
-                    .tag(findPost.getTag())
+                    .tags(findPost.getTags())
                     .status(findPost.getStatus())
                     .build();
 

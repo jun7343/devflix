@@ -15,7 +15,8 @@ public class DevPostRepositoryImpl implements DevPostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<DevPost> findAllByCategoryOrLikeTitleAndStatusLimitOffset(final String category,
+    public List<DevPost> findAllByCategoryOrTagOrLikeTitleAndStatusLimitOffset(final String category,
+                                                                final String tag,
                                                                 final String title,
                                                                 Status status,
                                                                 final int page,
@@ -24,6 +25,10 @@ public class DevPostRepositoryImpl implements DevPostRepositoryCustom {
 
         if (StringUtils.isNoneBlank(category)) {
             builder.or(devPost.category.eq(category));
+        }
+
+        if (StringUtils.isNoneBlank(tag)) {
+            builder.or(devPost.tags.any().tag.eq(tag));
         }
 
         if (StringUtils.isNoneBlank(title)) {
@@ -42,13 +47,18 @@ public class DevPostRepositoryImpl implements DevPostRepositoryCustom {
     }
 
     @Override
-    public Long countByCategoryOrListTitleAndStatus(final String category,
+    public Long countByCategoryOrTagOrListTitleAndStatus(final String category,
+                                                    final String tag,
                                                     final String title,
                                                     Status status) {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (StringUtils.isNoneBlank(category)) {
             builder.or(devPost.category.eq(category));
+        }
+
+        if (StringUtils.isNoneBlank(tag)) {
+            builder.or(devPost.tags.any().tag.eq(tag));
         }
 
         if (StringUtils.isNoneBlank(title)) {
