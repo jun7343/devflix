@@ -1,20 +1,17 @@
 package kr.devflix.posts;
 
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity(name = "dev_post")
 @Getter
-@ToString
+@ToString(exclude = "tags")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
-@TypeDef(name = "list-array", typeClass = ListArrayType.class)
 public class DevPost {
 
     @Id
@@ -54,9 +51,8 @@ public class DevPost {
     @Column
     private String thumbnail;
 
-    @Column(columnDefinition = "varchar[]")
-    @Type(type = "list-array")
-    private List<String> tag;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "devPost")
+    private List<DevPostTag> tags = new ArrayList<>();
 
     @Column(name = "create_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -69,7 +65,7 @@ public class DevPost {
     @Builder
     public DevPost(final Long id, final String category, final PostType postType, final Status status, final Integer view, final String title,
                    final String description, final String writer, final String url, final Date uploadAt, final String thumbnail,
-                   final List<String> tag, final Date createAt, final Date updateAt) {
+                   final List<DevPostTag> tags, final Date createAt, final Date updateAt) {
         this.id = id;
         this.category = category;
         this.postType = postType;
@@ -81,7 +77,7 @@ public class DevPost {
         this.url = url;
         this.uploadAt = uploadAt;
         this.thumbnail = thumbnail;
-        this.tag = tag;
+        this.tags = tags;
         this.createAt = createAt;
         this.updateAt = updateAt;
     }
