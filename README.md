@@ -18,7 +18,7 @@
 
 ## :pushpin: 프로젝트 중점 사항    
 
-&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: Scheduling을 통해 크롤링 작업을 자동화.    
+&nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: @Scheduled을 통해 크롤링 작업을 자동화.    
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: JUnit5을 통한 단위, 통합 테스트를 진행하여 생산성 및 코드 신뢰성 향상 노력.    
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: docker를 사용함으로써 docker 환경 이해와 환경 구성 노력.    
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: prometheus와 grafana를 통해 서버 모니터링을 진행하여 서버 메모리를 효율적으로 관리 및 메모리 사용률 체크.
