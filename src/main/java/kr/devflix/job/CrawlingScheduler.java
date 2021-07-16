@@ -31,7 +31,6 @@ public class CrawlingScheduler {
         } catch (Exception e) {
             logger.error("Kakao dev blog crawling error !! " + e.getMessage());
         }
-
         try {
             lineDevPostCrawler.crawling();
         } catch (Exception e) {

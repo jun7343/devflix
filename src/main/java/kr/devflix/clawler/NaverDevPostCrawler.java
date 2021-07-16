@@ -1,11 +1,11 @@
 package kr.devflix.clawler;
 
-import kr.devflix.posts.Status;
-import kr.devflix.posts.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.constant.PostType;
 import kr.devflix.entity.CrawlingLog;
-import kr.devflix.posts.DevPost;
+import kr.devflix.entity.DevPost;
 import kr.devflix.service.CrawlingLogService;
-import kr.devflix.posts.DevPostService;
+import kr.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -171,7 +171,7 @@ public class NaverDevPostCrawler implements Crawler {
                                             .url(map.get("url"))
                                             .thumbnail(map.get("thumbnail"))
                                             .writer(writerAndTag.get("writer") == null? "네이버" : String.valueOf(writerAndTag.get("writer")))
-                                            .tag(writerAndTag.get("tagList") == null? new ArrayList<>() : (List<String>) writerAndTag.get("tagList"))
+                                            .tags(null)
                                             .view(0)
                                             .uploadAt(date)
                                             .createAt(new Date())

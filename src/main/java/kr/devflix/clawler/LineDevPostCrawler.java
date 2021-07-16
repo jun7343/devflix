@@ -1,11 +1,11 @@
 package kr.devflix.clawler;
 
-import kr.devflix.posts.Status;
-import kr.devflix.posts.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.constant.PostType;
 import kr.devflix.entity.CrawlingLog;
-import kr.devflix.posts.DevPost;
+import kr.devflix.entity.DevPost;
 import kr.devflix.service.CrawlingLogService;
-import kr.devflix.posts.DevPostService;
+import kr.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -184,7 +184,7 @@ public class LineDevPostCrawler implements Crawler {
                                     .description(map.get("desc"))
                                     .writer(map.get("writer"))
                                     .thumbnail(DEFAULT_LINE_THUMBNAIL)
-                                    .tag(tagList)
+                                    .tags(null)
                                     .view(0)
                                     .uploadAt(date)
                                     .createAt(new Date())

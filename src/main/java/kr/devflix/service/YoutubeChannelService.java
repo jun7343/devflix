@@ -1,6 +1,6 @@
 package kr.devflix.service;
 
-import kr.devflix.posts.Status;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.YoutubeChannel;
 import kr.devflix.repository.YoutubeChennelRepository;
 import lombok.RequiredArgsConstructor;

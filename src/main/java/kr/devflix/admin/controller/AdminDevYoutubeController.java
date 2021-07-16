@@ -2,7 +2,7 @@ package kr.devflix.admin.controller;
 
 import kr.devflix.clawler.YoutubeCrawler;
 import kr.devflix.constant.RoleType;
-import kr.devflix.posts.Status;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.YoutubeChannel;
 import kr.devflix.service.YoutubeChannelService;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package kr.devflix.service;
 
-import kr.devflix.posts.Status;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.DevBlog;
 import kr.devflix.repository.DevBlogRepository;
 import lombok.RequiredArgsConstructor;

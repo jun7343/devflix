@@ -1,11 +1,11 @@
 package kr.devflix.clawler;
 
-import kr.devflix.posts.Status;
-import kr.devflix.posts.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.constant.PostType;
 import kr.devflix.entity.CrawlingLog;
-import kr.devflix.posts.DevPost;
+import kr.devflix.entity.DevPost;
 import kr.devflix.service.CrawlingLogService;
-import kr.devflix.posts.DevPostService;
+import kr.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -177,7 +177,7 @@ public class KakaoDevPostCrawler implements Crawler {
                                 .url(map.get("url"))
                                 .description(map.get("desc"))
                                 .thumbnail(map.get("thumbnail"))
-                                .tag(tagList)
+                                .tags(null)
                                 .writer(map.get("writer"))
                                 .view(0)
                                 .uploadAt(uploadAt)

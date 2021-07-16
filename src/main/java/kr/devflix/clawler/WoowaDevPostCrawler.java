@@ -1,11 +1,11 @@
 package kr.devflix.clawler;
 
-import kr.devflix.posts.Status;
-import kr.devflix.posts.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.constant.PostType;
 import kr.devflix.entity.CrawlingLog;
-import kr.devflix.posts.DevPost;
+import kr.devflix.entity.DevPost;
 import kr.devflix.service.CrawlingLogService;
-import kr.devflix.posts.DevPostService;
+import kr.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -181,7 +181,7 @@ public class WoowaDevPostCrawler implements Crawler {
                                     .uploadAt(date)
                                     .view(0)
                                     .writer(map.get("writer"))
-                                    .tag(new ArrayList<>())
+                                    .tags(new ArrayList<>())
                                     .createAt(new Date())
                                     .updateAt(new Date())
                                     .build();

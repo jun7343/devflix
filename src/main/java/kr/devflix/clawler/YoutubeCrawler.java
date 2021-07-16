@@ -3,13 +3,13 @@ package kr.devflix.clawler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
-import kr.devflix.posts.PostType;
-import kr.devflix.posts.Status;
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.CrawlingLog;
-import kr.devflix.posts.DevPost;
+import kr.devflix.entity.DevPost;
 import kr.devflix.entity.YoutubeChannel;
 import kr.devflix.service.CrawlingLogService;
-import kr.devflix.posts.DevPostService;
+import kr.devflix.service.DevPostService;
 import kr.devflix.service.YoutubeChannelService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -136,12 +136,11 @@ public class YoutubeCrawler implements Crawler {
                             .description(description.asText().replaceAll("\\R", ""))
                             .writer(channelTitle.asText())
                             .url(YOUTUBE_VIDEO_URL + videoId.asText())
-                            .tag(null)
                             .thumbnail(thumbnailshighUrl.asText())
                             .status(Status.POST)
                             .view(0)
                             .uploadAt(publishDate)
-                            .tag(new ArrayList<>())
+                            .tags(new ArrayList<>())
                             .createAt(new Date())
                             .updateAt(new Date())
                             .build();
@@ -219,12 +218,11 @@ public class YoutubeCrawler implements Crawler {
                                     .description(description.asText().replaceAll("\\R", ""))
                                     .writer(channelTitle.asText())
                                     .url(YOUTUBE_VIDEO_URL + videoId.asText())
-                                    .tag(null)
                                     .thumbnail(thumbnailshighUrl.asText())
                                     .status(Status.POST)
                                     .view(0)
                                     .uploadAt(publishDate)
-                                    .tag(new ArrayList<>())
+                                    .tags(new ArrayList<>())
                                     .createAt(new Date())
                                     .updateAt(new Date())
                                     .build();
@@ -363,12 +361,11 @@ public class YoutubeCrawler implements Crawler {
                         .description(description.asText().replaceAll("\\R", ""))
                         .writer(channelTitle.asText())
                         .url(YOUTUBE_VIDEO_URL + videoId.asText())
-                        .tag(null)
                         .thumbnail(thumbnailshighUrl.asText())
                         .status(Status.POST)
                         .view(0)
                         .uploadAt(publishDate)
-                        .tag(new ArrayList<>())
+                        .tags(new ArrayList<>())
                         .createAt(new Date())
                         .updateAt(new Date())
                         .build();
@@ -446,12 +443,11 @@ public class YoutubeCrawler implements Crawler {
                                 .description(description.asText().replaceAll("\\R", ""))
                                 .writer(channelTitle.asText())
                                 .url(YOUTUBE_VIDEO_URL + videoId.asText())
-                                .tag(null)
                                 .thumbnail(thumbnailshighUrl.asText())
                                 .status(Status.POST)
                                 .view(0)
                                 .uploadAt(publishDate)
-                                .tag(new ArrayList<>())
+                                .tags(new ArrayList<>())
                                 .createAt(new Date())
                                 .updateAt(new Date())
                                 .build();

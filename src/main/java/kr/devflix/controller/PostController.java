@@ -2,12 +2,12 @@ package kr.devflix.controller;
 
 import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.RoleType;
-import kr.devflix.posts.Status;
+import kr.devflix.constant.Status;
 import kr.devflix.dto.PostDto;
-import kr.devflix.posts.DevPost;
+import kr.devflix.entity.DevPost;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
-import kr.devflix.posts.DevPostService;
+import kr.devflix.service.DevPostService;
 import kr.devflix.service.PostCommentAlertService;
 import kr.devflix.service.PostCommentService;
 import kr.devflix.service.PostService;

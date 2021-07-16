@@ -1,4 +1,4 @@
-package kr.devflix.posts;
+package kr.devflix.constant;
 
 public enum PostType {
     BLOG, YOUTUBE

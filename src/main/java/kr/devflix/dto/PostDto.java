@@ -1,6 +1,6 @@
 package kr.devflix.dto;
 
-import kr.devflix.posts.Status;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.Member;
 import lombok.*;
 

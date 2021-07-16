@@ -1,7 +1,7 @@
 package kr.devflix.service;
 
 import kr.devflix.constant.MemberStatus;
-import kr.devflix.posts.Status;
+import kr.devflix.constant.Status;
 import kr.devflix.dto.PostDto;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
