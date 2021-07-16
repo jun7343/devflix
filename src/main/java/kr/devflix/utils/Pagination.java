@@ -9,27 +9,27 @@ import java.util.List;
 public class Pagination {
 
     private final int currentPage;
-    private final int resultMax;
+    private final int perPage;
     private final long totalCount;
     private final int pageListSize;
     private List<Integer> pageNumList = new ArrayList<>();
 
-    private static final int DEFAULT_RESULT_MAX = 20;
+    private static final int DEFAULT_PER_PAGE = 20;
     private static final int DEFAULT_CURRENT_PAGE = 0;
     private static final int DEFAULT_PAGE_LIST_SIZE = 5;
 
-    public Pagination(int currentPage, int resultMax, long totalCount, int pageListSize) {
+    public Pagination(int currentPage, int perPage, long totalCount, int pageListSize) {
         this.currentPage = currentPage;
-        this.resultMax = resultMax;
+        this.perPage = perPage;
         this.totalCount = totalCount;
         this.pageListSize = pageListSize;
 
         setPageNumList();
     }
 
-    public Pagination(int currentPage, int resultMax, long totalCount) {
+    public Pagination(int currentPage, int perPage, long totalCount) {
         this.currentPage = currentPage;
-        this.resultMax = resultMax;
+        this.perPage = perPage;
         this.totalCount = totalCount;
         this.pageListSize = DEFAULT_PAGE_LIST_SIZE;
 
@@ -38,7 +38,7 @@ public class Pagination {
 
     public Pagination(long totalCount) {
         this.currentPage = DEFAULT_CURRENT_PAGE;
-        this.resultMax = DEFAULT_RESULT_MAX;
+        this.perPage = DEFAULT_PER_PAGE;
         this.totalCount = totalCount;
         this.pageListSize = DEFAULT_PAGE_LIST_SIZE;
 
@@ -46,13 +46,11 @@ public class Pagination {
     }
 
     private void setPageNumList() {
-        // pageNumList 계산
-        if (pageListSize > 0 && hasNextPage()) {
-            int page = currentPage / pageListSize * pageListSize;
+        int page = pageListSize > 0? currentPage / pageListSize * pageListSize : 0;
+        int pageEnd = (int) (totalCount % perPage == 0? totalCount / perPage : totalCount / perPage + 1);
 
-            while (page * resultMax < totalCount && page < (currentPage / pageListSize + 1) * pageListSize) {
-                pageNumList.add(page++);
-            }
+        for (; page < pageEnd; page++) {
+            pageNumList.add(page);
         }
     }
 
@@ -64,18 +62,8 @@ public class Pagination {
         return totalCount;
     }
 
-    public boolean isFirstList() {
-        if (pageListSize == 0) return true;
-
-        return currentPage / pageListSize == 0;
-    }
-
-    public boolean isLastList() {
-        return pageNumList.size() < pageListSize || pageNumList.size() > pageListSize;
-    }
-
     public boolean hasNextPage() {
-        return pageListSize > 0 && (currentPage + 1) * resultMax < totalCount;
+        return pageListSize > 0 && perPage * pageListSize < totalCount;
     }
 
     public boolean hasPreviousPage() {
@@ -86,15 +74,7 @@ public class Pagination {
         return hasNextPage()? (currentPage / pageListSize + 1) * pageListSize : null;
     }
 
-    public Integer getPreviousPageNum() {
-        int ppn = currentPage / pageListSize * pageListSize - 1;
-
-        if (ppn * resultMax > totalCount) {
-            ppn = (int) (totalCount / resultMax) / pageListSize * pageListSize - 1;
-        }
-
-        return hasPreviousPage()? ppn : null;
-    }
+    public Integer getPreviousPageNum() { return hasPreviousPage()? currentPage / pageListSize * pageListSize - 1 : null;}
 
     public List<Integer> getPageNumList() {
         return pageNumList;
@@ -104,13 +84,11 @@ public class Pagination {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("currentPage", currentPage)
-                .append("resultMax", resultMax)
+                .append("perPage", perPage)
                 .append("totalCount", totalCount)
                 .append("pageListSize", pageNumList)
                 .append("hasNextPage", hasNextPage())
                 .append("hasPreviousPage", hasPreviousPage())
-                .append("isFirstList", isFirstList())
-                .append("isLastList", isLastList())
                 .append("nextPageNum", getNextPageNum())
                 .append("previousPageNum", getPreviousPageNum())
                 .append("pageNumList", pageNumList)

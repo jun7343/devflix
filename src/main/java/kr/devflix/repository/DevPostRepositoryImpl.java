@@ -1,26 +1,31 @@
-package kr.devflix.posts;
+package kr.devflix.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
+import kr.devflix.constant.Status;
+import kr.devflix.entity.DevPost;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-import static kr.devflix.posts.QDevPost.devPost;
+import static kr.devflix.entity.QDevPost.devPost;
+import static kr.devflix.entity.QDevPostTag.devPostTag;
 
-@RequiredArgsConstructor
 public class DevPostRepositoryImpl implements DevPostRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+    public DevPostRepositoryImpl(JPAQueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
+
     @Override
     public List<DevPost> findAllByCategoryOrTagOrLikeTitleAndStatusLimitOffset(final String category,
-                                                                final String tag,
-                                                                final String title,
-                                                                Status status,
-                                                                final int page,
-                                                                final int perPage) {
+                                                                               final String tag,
+                                                                               final String title,
+                                                                               Status status,
+                                                                               final int page,
+                                                                               final int perPage) {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (StringUtils.isNoneBlank(category)) {
@@ -32,13 +37,14 @@ public class DevPostRepositoryImpl implements DevPostRepositoryCustom {
         }
 
         if (StringUtils.isNoneBlank(title)) {
-            builder.or(devPost.title.like("%" + title + "%"));
+            builder.or(devPost.title.containsIgnoreCase(title));
         }
 
         builder.and(devPost.status.eq(status));
 
         return queryFactory.selectFrom(devPost)
-                .from(devPost)
+                .leftJoin(devPost.tags, devPostTag)
+                .fetchJoin()
                 .where(builder)
                 .orderBy(devPost.uploadAt.desc())
                 .limit(perPage)

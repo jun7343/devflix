@@ -1,4 +1,4 @@
-package kr.devflix.posts;
+package kr.devflix.entity;
 
 import lombok.*;
 
@@ -7,8 +7,8 @@ import java.util.Date;
 
 @Entity(name = "dev_post_tag")
 @Getter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = "devPost")
+@EqualsAndHashCode(exclude = "devPost")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DevPostTag {
 
@@ -16,7 +16,7 @@ public class DevPostTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = DevPost.class, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "dev_post_id")
     private DevPost devPost;
 

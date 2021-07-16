@@ -1,6 +1,10 @@
-package kr.devflix.posts;
+package kr.devflix.service;
 
-import lombok.RequiredArgsConstructor;
+import kr.devflix.dto.DevPostDto;
+import kr.devflix.entity.DevPost;
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.repository.DevPostRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,13 +20,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @Service
-@RequiredArgsConstructor
 public class DevPostService {
 
     private final DevPostRepository devPostRepository;
+
+    public DevPostService(DevPostRepository devPostRepository) {
+        this.devPostRepository = devPostRepository;
+    }
+
+    @Transactional
+    public Long updateViewCountById(Long id) {
+        return devPostRepository.updateViewById(id);
+    }
 
     @Transactional
     public DevPost createDevPost(final DevPost devPost) {
@@ -31,11 +41,11 @@ public class DevPostService {
 
     @Transactional(readOnly = true)
     public List<DevPostDto> findAllByCategoryOrTagOrSearch(final String category,
-                                                final String tag,
-                                                final String search,
-                                                final int page,
-                                                final int perPage) {
-        return devPostRepository.findAllByCategoryOrTagOrLikeTitleAndStatusLimitOffset(category, tag, search, Status.POST, perPage, page * perPage)
+                                                           final String tag,
+                                                           final String search,
+                                                           final int page,
+                                                           final int perPage) {
+        return devPostRepository.findAllByCategoryOrTagOrLikeTitleAndStatusLimitOffset(category, tag, search, Status.POST, page, perPage)
                 .stream()
                 .map(DevPostDto::new)
                 .collect(Collectors.toList());
@@ -46,13 +56,6 @@ public class DevPostService {
                                                 final String tag,
                                                 final String search) {
         return devPostRepository.countByCategoryOrTagOrListTitleAndStatus(category, tag, search, Status.POST);
-    }
-
-    @Transactional
-    public Long updateViewById(final Long id) {
-        checkNotNull(id, "post id must be provided");
-
-        return devPostRepository.updateViewById(id);
     }
 
     @Transactional

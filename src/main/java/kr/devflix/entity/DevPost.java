@@ -1,5 +1,7 @@
-package kr.devflix.posts;
+package kr.devflix.entity;
 
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,8 +12,8 @@ import java.util.List;
 @Entity(name = "dev_post")
 @Getter
 @ToString(exclude = "tags")
+@EqualsAndHashCode(exclude = "tags")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
 public class DevPost {
 
     @Id
@@ -51,7 +53,7 @@ public class DevPost {
     @Column
     private String thumbnail;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "devPost")
+    @OneToMany(mappedBy = "devPost")
     private List<DevPostTag> tags = new ArrayList<>();
 
     @Column(name = "create_at", updatable = false)
@@ -63,9 +65,9 @@ public class DevPost {
     private Date updateAt;
 
     @Builder
-    public DevPost(final Long id, final String category, final PostType postType, final Status status, final Integer view, final String title,
-                   final String description, final String writer, final String url, final Date uploadAt, final String thumbnail,
-                   final List<DevPostTag> tags, final Date createAt, final Date updateAt) {
+    public DevPost(Long id, String category, PostType postType, Status status, Integer view, String title,
+                    String description, String writer, String url, Date uploadAt, String thumbnail, List<DevPostTag> tags,
+                    Date createAt, Date updateAt) {
         this.id = id;
         this.category = category;
         this.postType = postType;

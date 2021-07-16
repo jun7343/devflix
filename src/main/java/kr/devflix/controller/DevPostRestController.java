@@ -1,6 +1,8 @@
-package kr.devflix.posts;
+package kr.devflix.controller;
 
+import kr.devflix.dto.DevPostDto;
 import kr.devflix.errors.NotFoundException;
+import kr.devflix.service.DevPostService;
 import kr.devflix.utils.Pagination;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,11 +22,11 @@ public class DevPostRestController {
     }
 
     @GetMapping
-    public ApiResult<List<DevPostDto>> actionDevPostList(@RequestParam(required = false)String c,
-                                      @RequestParam(required = false)String t,
-                                      @RequestParam(required = false)String s,
-                                      @RequestParam(required = false, defaultValue = "0")int page,
-                                      @RequestParam(required = false, defaultValue = "20", name = "per-page")int perPage) {
+    public ApiResult<List<DevPostDto>> getDevPostList(@RequestParam(required = false)String c,
+                                                         @RequestParam(required = false)String t,
+                                                         @RequestParam(required = false)String s,
+                                                         @RequestParam(required = false, defaultValue = "0")int page,
+                                                         @RequestParam(required = false, defaultValue = "20", name = "per-page")int perPage) {
         List<DevPostDto> findAll = devPostService.findAllByCategoryOrTagOrSearch(c, t, s, page, perPage);
 
         if (findAll.isEmpty()) {
@@ -34,8 +36,8 @@ public class DevPostRestController {
         return success(findAll);
     }
 
-    @GetMapping("/page")
-    public ApiResult<Pagination> actionDevPostPagination(@RequestParam(required = false, defaultValue = "0")int page,
+    @GetMapping("/pagination")
+    public ApiResult<Pagination> getDevPostPagination(@RequestParam(required = false, defaultValue = "0")int page,
                                                    @RequestParam(required = false, defaultValue = "20", name = "per-page")int perPage,
                                                    @RequestParam(required = false, defaultValue = "5", name = "page-list-size")int pageListSize,
                                                    @RequestParam(required = false)String c,
@@ -50,9 +52,14 @@ public class DevPostRestController {
         return success(new Pagination(page, perPage, totalCount, pageListSize));
     }
 
-    @PatchMapping("/view/{id}")
-    public ApiResult<Long> actionDevPostViewCountUpdate(@PathVariable Long id,
-                                               @RequestParam(name = "id")Long postId) {
-        return success(devPostService.updateViewById(id));
+    @PatchMapping("/{id}")
+    public ApiResult<Long> actionDevPostViewCountUpdate(@PathVariable Long id) throws IllegalAccessException {
+        Long result = devPostService.updateViewCountById(id);
+
+        if (result != 1) {
+            throw new IllegalAccessException("devPost update error !");
+        }
+
+        return success(result);
     }
 }

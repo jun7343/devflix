@@ -1,5 +1,8 @@
-package kr.devflix.posts;
+package kr.devflix.repository;
 
+import kr.devflix.entity.DevPost;
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

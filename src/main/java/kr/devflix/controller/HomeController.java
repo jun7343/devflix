@@ -1,8 +1,8 @@
 package kr.devflix.controller;
 
-import kr.devflix.posts.DevPost;
-import kr.devflix.posts.DevPostService;
-import kr.devflix.posts.Status;
+import kr.devflix.entity.DevPost;
+import kr.devflix.service.DevPostService;
+import kr.devflix.constant.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

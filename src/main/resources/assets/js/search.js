@@ -1,6 +1,5 @@
 $(function () {
-    const API_SEARCH_URL = '/a/search';
-    const POST_TYPE = 'POST';
+    const API_DEV_POST_URL = '/a/dev-posts';
     const MATCH_URL = '{{url}}';
     const MATCH_THUMBNAIL = '{{thumbnail}}';
     const MATCH_TITLE = '{{title}}';
@@ -12,11 +11,8 @@ $(function () {
     const SEARCH_TEMPLATE = '<li><div class="search-thumbnail"><a href="{{url}}" target="_blank"><img src="{{thumbnail}}"></a></div>' +
         '<div class="search-content"><a href="{{url}}" target="_blank"><span class="category">{{category}} - {{postType}}</span><br><p>{{title}}</p></a></div><div class="search-date">' +
         '<a href="{{url}}" target="_blank"><span class="entry-date"><time datetime="{{uploadAt}}"></time>{{uploadAt}}</time></span></a></div></li>';
-    const CSRF_TOKEN = $('meta[name="_csrf"]').attr('content');
-    const CSRF_HEADER = $('meta[name="_csrf_header"]').attr('content');
     let search = null;
     let lastSearchConent = '';
-
 
 
     $('#search-input').on('keyup', function () {
@@ -25,35 +21,37 @@ $(function () {
         }
 
         search = setTimeout(function () {
-            const CONTENT = $('#search-input').val();
+            const TITLE = $('#search-input').val();
 
-            if (! MATCH_FOR_PERFECT_SEARCH.test(CONTENT) && CONTENT.charAt(CONTENT.length - 1) !== ' ' && CONTENT.length > 0 && CONTENT !== lastSearchConent) {
+            if (! MATCH_FOR_PERFECT_SEARCH.test(TITLE) && TITLE.charAt(TITLE.length - 1) !== ' ' && TITLE.length > 0 && TITLE !== lastSearchConent) {
                 $.ajax({
-                    url: API_SEARCH_URL,
-                    type: POST_TYPE,
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
-                    },
-                    data: {'content': CONTENT},
+                    url: API_DEV_POST_URL,
+                    type: 'GET',
+                    data: {'s': TITLE},
                     success: function (data) {
                         $SEARCH_RESULT_FIELD.empty();
-                        lastSearchConent = CONTENT;
+                        lastSearchConent = TITLE;
 
-                        if (data.result) {
-                            for (const item of data.data) {
+                        if (data.success && data.response) {
+                            for (const item of data.response) {
+                                const pattern = new RegExp(TITLE, 'gi');
+
                                 const ITEM_TEMPLATE = SEARCH_TEMPLATE.replaceAll(MATCH_URL, item.url)
                                     .replaceAll(MATCH_CATEGORY, item.category)
                                     .replaceAll(MATCH_POST_TYPE, item.postType)
-                                    .replaceAll(MATCH_TITLE, item.title.replace(CONTENT, '<mark>' + CONTENT + '</mark>'))
+                                    .replaceAll(MATCH_TITLE, item.title.replace(pattern, '<mark>' + TITLE + '</mark>'))
                                     .replaceAll(MATCH_THUMBNAIL, item.thumbnail)
                                     .replaceAll(MATCH_UPLOAD_AT, item.uploadAt);
 
                                 $SEARCH_RESULT_FIELD.append($(ITEM_TEMPLATE));
                             }
                         }
+                    },
+                    error: function(e) {
+                      $SEARCH_RESULT_FIELD.empty();
                     }
                 });
-            } else if (CONTENT.length === 0) {
+            } else if (TITLE.length === 0) {
                 $SEARCH_RESULT_FIELD.empty();
             }
         }, 300);

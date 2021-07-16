@@ -1,19 +1,17 @@
-package kr.devflix.posts;
+package kr.devflix.dto;
 
-import lombok.EqualsAndHashCode;
+import kr.devflix.entity.DevPost;
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Date;
 import java.util.List;
-
-import static org.springframework.beans.BeanUtils.copyProperties;
+import java.util.stream.Collectors;
 
 @Getter
-@Setter
-@EqualsAndHashCode
 public class DevPostDto {
 
     private Long id;
@@ -27,12 +25,28 @@ public class DevPostDto {
     private String url;
     private Date uploadAt;
     private String thumbnail;
-    private List<String> tag;
+    private List<String> tags;
     private Date createAt;
     private Date updateAt;
 
-    public DevPostDto(final DevPost devPost) {
-        copyProperties(devPost, this);
+    public DevPostDto(DevPost devPost) {
+        id = devPost.getId();
+        category = devPost.getCategory();
+        postType = devPost.getPostType();
+        status = devPost.getStatus();
+        view = devPost.getView();
+        title = devPost.getTitle();
+        description = devPost.getDescription();
+        writer = devPost.getWriter();
+        url = devPost.getUrl();
+        uploadAt = devPost.getUploadAt();
+        thumbnail = devPost.getThumbnail();
+        tags = devPost.getTags()
+                .stream()
+                .map(devPostTag -> {return devPostTag.getTag();})
+                .collect(Collectors.toList());
+        createAt = devPost.getCreateAt();
+        updateAt = devPost.getUpdateAt();
     }
 
     @Override
@@ -49,9 +63,9 @@ public class DevPostDto {
                 .append("url", url)
                 .append("uploadAt", uploadAt)
                 .append("thumbnail", thumbnail)
-                .append("tag", tag)
+                .append("tags", tags)
                 .append("createAt", createAt)
-                .append("uploadAt", uploadAt)
+                .append("updateAt", updateAt)
                 .toString();
     }
 }

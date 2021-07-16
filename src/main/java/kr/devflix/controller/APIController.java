@@ -1,10 +1,10 @@
 package kr.devflix.controller;
 
 import kr.devflix.constant.RoleType;
-import kr.devflix.posts.Status;
+import kr.devflix.constant.Status;
 import kr.devflix.entity.*;
-import kr.devflix.posts.DevPost;
-import kr.devflix.posts.DevPostService;
+import kr.devflix.entity.DevPost;
+import kr.devflix.service.DevPostService;
 import kr.devflix.service.*;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
@@ -60,118 +60,6 @@ public class APIController {
         } else {
             IMAGE_ROOT_DIR_PATH = environment.getProperty("image.root-drectory");
         }
-    }
-
-    @RequestMapping(path = "/a/dev-post-list", method = RequestMethod.POST)
-    @ResponseBody
-    public ImmutableMap<String, Object> actionGetDevPostList(@RequestParam(name = "type", required = false)final String type,
-            @RequestParam(name = "parameter", required = false)final String parameter, @RequestParam(name = "page", required = false, defaultValue = "0")int page) {
-        Page<DevPost> findAll = null;
-        Map<String, Object> paging = new HashMap<>();
-
-        if (StringUtils.isBlank(type) && StringUtils.isBlank(parameter)) {
-            findAll = devPostService.findAllByStatusAndPageRequest(Status.POST, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
-        } else if (! StringUtils.isBlank(type) && StringUtils.equals(type, "category")) {
-            findAll = devPostService.findAllByCategoryAndStatusOrderByUploadAt(parameter, Status.POST, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
-        } else if (! StringUtils.isBlank(type) && StringUtils.equals(type, "tag")) {
-            findAll = devPostService.findAllByTagAndStatusOrderByUploadAt(parameter, Status.POST, page, DEFAULT_DEV_POST_PAGE_PER_SIZE);
-        }
-
-        List<Map<String, Object>> resultAll = new ArrayList<>();
-
-        if (findAll != null) {
-            Calendar twoDaysAgo = Calendar.getInstance();
-            twoDaysAgo.setTime(new Date());
-            twoDaysAgo.add(Calendar.DATE, -2);
-
-            for (DevPost post : findAll.getContent()) {
-                resultAll.add(ImmutableMap.<String, Object>builder()
-                        .put("title", StringEscapeUtils.unescapeHtml4(post.getTitle()))
-                        .put("url", post.getUrl())
-                        .put("thumbnail", post.getThumbnail())
-                        .put("category", post.getCategory())
-                        .put("postType", post.getPostType())
-                        .put("uploadAt", devPostDateFormat.format(post.getUploadAt()))
-                        .put("isNew", post.getUploadAt().compareTo(twoDaysAgo.getTime()) > 0)
-                        .put("description", StringEscapeUtils.unescapeHtml4(post.getDescription()))
-                        .put("tagList", post.getTag())
-                        .build());
-            }
-        }
-
-        if (findAll != null && findAll.getTotalPages() > 1) {
-            List<Integer> pageNumList = new ArrayList<>();
-
-            paging.put("previousPage", findAll.getNumber() / 5 != 0);
-
-            if (findAll.getNumber() / 5 != 0 && ((findAll.getNumber() / 5) * 5 - 1) > 0) {
-                paging.put("previousPageNum", (findAll.getNumber() / 5) * 5 - 1);
-            }
-
-            paging.put("nextPage", (findAll.getNumber() / 5) * 5 + 6 <= findAll.getTotalPages());
-
-            if ((findAll.getNumber() / 5) * 5 + 6 <= findAll.getTotalPages()) {
-                paging.put("nextPageNum", (findAll.getNumber() / 5 + 1) * 5);
-            }
-
-            int start = (findAll.getNumber() / 5) * 5 + 1;
-            int end = Math.min((findAll.getNumber() / 5 + 1) * 5, findAll.getTotalPages());
-
-            for (int i = start; i <= end; i++) {
-                pageNumList.add(i);
-            }
-
-            paging.put("pageNumList", pageNumList);
-            paging.put("currentPageNum", findAll.getNumber() + 1);
-        }
-
-        return ImmutableMap.of("devPostList", resultAll, "paging", paging);
-    }
-
-    @RequestMapping(path = "/a/view-count", method = RequestMethod.POST)
-    @ResponseBody
-    public ImmutableMap<String, Object> actionViewCountUpdate(@RequestParam(name = "url", required = false)final String url) {
-        if (StringUtils.isBlank(url)) {
-            return ImmutableMap.of("result", false);
-        }
-
-        final DevPost post = devPostService.updateViewCount(url);
-
-        if (post != null) {
-            return ImmutableMap.of("result", true);
-        } else {
-            return ImmutableMap.of("result", false);
-        }
-    }
-
-    @RequestMapping(path = "/a/search", method = RequestMethod.POST)
-    @ResponseBody
-    public ImmutableMap<String, Object> actionSearchDevPost(@RequestParam(name = "content", required = false)final String content) {
-        final String RESULT = "result";
-        final String RESULT_DATA = "data";
-
-        if (StringUtils.isBlank(content)) {
-            return ImmutableMap.of(RESULT, false);
-        }
-
-        List<DevPost> findAll = devPostService.findAllBySearchContentAndStatus(content, Status.POST);
-        List<Map<String, String>> dataList = new LinkedList<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-
-        for (DevPost post : findAll) {
-            Map<String, String> map = new HashMap<>();
-
-            map.put("title", post.getTitle());
-            map.put("thumbnail", post.getThumbnail());
-            map.put("uploadAt", dateFormat.format(post.getUploadAt()));
-            map.put("url", post.getUrl());
-            map.put("category", post.getCategory());
-            map.put("postType", post.getPostType().name());
-
-            dataList.add(map);
-        }
-
-        return ImmutableMap.of(RESULT, true, RESULT_DATA, dataList);
     }
 
     @Secured(RoleType.USER)

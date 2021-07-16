@@ -1,4 +1,7 @@
-package kr.devflix.posts;
+package kr.devflix.repository;
+
+import kr.devflix.entity.DevPost;
+import kr.devflix.constant.Status;
 
 import java.util.List;
 
