@@ -9,7 +9,6 @@ create table post (
   dev_post_url varchar(800),
   path_base varchar(500),
   image_path varchar[],
-  comment_count int default 0,
   create_at timestamp with time zone not null default now(),
   update_at timestamp with time zone not null default now(),
   constraint pk_post_id primary key(id),
