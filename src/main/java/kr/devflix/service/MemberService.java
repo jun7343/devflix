@@ -1,5 +1,6 @@
 package kr.devflix.service;
 
+import com.google.common.collect.ImmutableList;
 import kr.devflix.constant.MemberConfirmType;
 import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.RoleType;
@@ -8,8 +9,6 @@ import kr.devflix.entity.MemberConfirm;
 import kr.devflix.repository.MemberConfirmRepository;
 import kr.devflix.repository.MemberRepository;
 import kr.devflix.utils.JavaMailUtils;
-import com.google.common.collect.ImmutableList;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,17 +22,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final MemberConfirmRepository memberConfirmRepository;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailUtils javaMailUtils;
+
+    public MemberService(MemberRepository memberRepository, MemberConfirmRepository memberConfirmRepository,
+                         PasswordEncoder passwordEncoder, JavaMailUtils javaMailUtils) {
+        this.memberRepository = memberRepository;
+        this.memberConfirmRepository = memberConfirmRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.javaMailUtils = javaMailUtils;
+    }
 
     @Transactional
     public Member createMemberAndDeleteMemberConfirm(final String email, final String password, final String username) {

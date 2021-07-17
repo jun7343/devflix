@@ -2,21 +2,21 @@ package kr.devflix.service;
 
 import kr.devflix.entity.CrawlingLog;
 import kr.devflix.repository.CrawlingLogRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.Order;
-
 
 @Service
-@RequiredArgsConstructor
 public class CrawlingLogService {
 
     private final CrawlingLogRepository crawlingLogRepository;
+
+    public CrawlingLogService(CrawlingLogRepository crawlingLogRepository) {
+        this.crawlingLogRepository = crawlingLogRepository;
+    }
 
     @Transactional
     public void createCrawlingSchedulerLog(final CrawlingLog crawlingSchedulerLog) {

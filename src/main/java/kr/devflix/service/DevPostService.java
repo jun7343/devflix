@@ -1,9 +1,9 @@
 package kr.devflix.service;
 
-import kr.devflix.dto.DevPostDto;
-import kr.devflix.entity.DevPost;
 import kr.devflix.constant.PostType;
 import kr.devflix.constant.Status;
+import kr.devflix.dto.DevPostDto;
+import kr.devflix.entity.DevPost;
 import kr.devflix.repository.DevPostRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -12,12 +12,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,9 +41,30 @@ public class DevPostService {
     public List<DevPostDto> findAllByCategoryOrTagOrSearch(final String category,
                                                            final String tag,
                                                            final String search,
+                                                           Status status,
                                                            final int page,
                                                            final int perPage) {
-        return devPostRepository.findAllByCategoryOrTagOrLikeTitleAndStatusLimitOffset(category, tag, search, Status.POST, page, perPage)
+        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
+            ArrayList<Predicate> predicates = new ArrayList<>();
+            root.fetch("tags", JoinType.LEFT);
+            query.distinct(true);
+
+            if (StringUtils.isNoneBlank(category)) {
+                predicates.add(criteriaBuilder.equal(root.get("category"), category));
+            }
+
+            if (StringUtils.isNoneBlank(tag)) {
+                predicates.add(criteriaBuilder.equal(root.get("tags").get("tag"), tag));
+            }
+
+            if (StringUtils.isNoneBlank(search)) {
+                predicates.add(criteriaBuilder.like(root.get("title"), "%" + search + "%"));
+            }
+
+            predicates.add(criteriaBuilder.equal(root.get("status"), status));
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        }, PageRequest.of(page, perPage, Sort.by(Sort.Order.desc("uploadAt"))))
                 .stream()
                 .map(DevPostDto::new)
                 .collect(Collectors.toList());

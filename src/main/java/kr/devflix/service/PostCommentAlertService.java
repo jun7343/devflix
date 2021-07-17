@@ -4,7 +4,6 @@ import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
 import kr.devflix.entity.PostCommentAlert;
 import kr.devflix.repository.PostCommentAlertRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -12,14 +11,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PostCommentAlertService {
 
     private final PostCommentAlertRepository postCommentAlertRepository;
+
+    public PostCommentAlertService(PostCommentAlertRepository postCommentAlertRepository) {
+        this.postCommentAlertRepository = postCommentAlertRepository;
+    }
 
     @Transactional
     public List<PostCommentAlert> findAllByConfirmAndUser(final Member user) {

@@ -7,7 +7,6 @@ import kr.devflix.entity.PostComment;
 import kr.devflix.entity.PostCommentAlert;
 import kr.devflix.repository.PostCommentAlertRepository;
 import kr.devflix.repository.PostCommentRepository;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,15 +16,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class PostCommentService {
 
     private final PostCommentRepository postCommentRepository;
     private final PostCommentAlertRepository postCommentAlertRepository;
     private final PostService postService;
+
+    public PostCommentService(PostCommentRepository postCommentRepository, PostCommentAlertRepository postCommentAlertRepository, PostService postService) {
+        this.postCommentRepository = postCommentRepository;
+        this.postCommentAlertRepository = postCommentAlertRepository;
+        this.postService = postService;
+    }
 
     @Transactional
     public PostComment createComment(final long postId, final String comment, final Member writer) {

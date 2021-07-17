@@ -3,20 +3,21 @@ package kr.devflix.service;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.YoutubeChannel;
 import kr.devflix.repository.YoutubeChennelRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class YoutubeChannelService {
 
     private final YoutubeChennelRepository youtubeChennelRepository;
+
+    public YoutubeChannelService(YoutubeChennelRepository youtubeChennelRepository) {
+        this.youtubeChennelRepository = youtubeChennelRepository;
+    }
 
     @Transactional
     public YoutubeChannel createYoutubeChannel(final YoutubeChannel youtubeChannel) {

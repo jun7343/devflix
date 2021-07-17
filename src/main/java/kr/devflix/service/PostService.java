@@ -6,7 +6,6 @@ import kr.devflix.dto.PostDto;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
 import kr.devflix.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,10 +21,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
+
+    public PostService(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
 
     @Transactional
     public Post write(final Post post) {
