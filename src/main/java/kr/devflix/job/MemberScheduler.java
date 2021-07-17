@@ -2,7 +2,6 @@ package kr.devflix.job;
 
 import kr.devflix.entity.MemberConfirm;
 import kr.devflix.service.MemberConfirmService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,11 +12,14 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class MemberScheduler {
 
     private final MemberConfirmService memberConfirmService;
     private final Logger logger = LoggerFactory.getLogger(MemberScheduler.class);
+
+    public MemberScheduler(MemberConfirmService memberConfirmService) {
+        this.memberConfirmService = memberConfirmService;
+    }
 
     @Scheduled(cron = "0 0 */3 * * *", zone = "Asia/Seoul")
     public void deleteMemberConfirm() {

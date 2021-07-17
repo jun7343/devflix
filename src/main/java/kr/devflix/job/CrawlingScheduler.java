@@ -1,14 +1,12 @@
 package kr.devflix.job;
 
 import kr.devflix.clawler.*;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class CrawlingScheduler {
 
     private final KakaoDevPostCrawler kakaoDevPostCrawler;
@@ -17,6 +15,16 @@ public class CrawlingScheduler {
     private final WoowaDevPostCrawler woowaDevPostCrawler;
     private final YoutubeCrawler youtubeCrawler;
     private final Logger logger = LoggerFactory.getLogger(CrawlingScheduler.class);
+
+    public CrawlingScheduler(KakaoDevPostCrawler kakaoDevPostCrawler, LineDevPostCrawler lineDevPostCrawler,
+                             NaverDevPostCrawler naverDevPostCrawler, WoowaDevPostCrawler woowaDevPostCrawler,
+                             YoutubeCrawler youtubeCrawler) {
+        this.kakaoDevPostCrawler = kakaoDevPostCrawler;
+        this.lineDevPostCrawler = lineDevPostCrawler;
+        this.naverDevPostCrawler = naverDevPostCrawler;
+        this.woowaDevPostCrawler = woowaDevPostCrawler;
+        this.youtubeCrawler = youtubeCrawler;
+    }
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void crawlingAll() {
