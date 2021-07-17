@@ -2,9 +2,7 @@ package kr.devflix.security.interceptor;
 
 import kr.devflix.constant.RoleType;
 import kr.devflix.entity.Member;
-import kr.devflix.entity.PostCommentAlert;
 import kr.devflix.service.PostCommentAlertService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
@@ -14,14 +12,16 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
-@RequiredArgsConstructor
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     private final PostCommentAlertService postCommentAlertService;
+
+    public LoginInterceptor(PostCommentAlertService postCommentAlertService) {
+        this.postCommentAlertService = postCommentAlertService;
+    }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
