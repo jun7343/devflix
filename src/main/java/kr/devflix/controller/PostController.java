@@ -11,7 +11,6 @@ import kr.devflix.service.DevPostService;
 import kr.devflix.service.PostCommentAlertService;
 import kr.devflix.service.PostCommentService;
 import kr.devflix.service.PostService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequiredArgsConstructor
 public class PostController {
 
     private final int DEFAULT_SIZE_VALUE = 20;
@@ -39,6 +37,13 @@ public class PostController {
     private final DevPostService devPostService;
     private final PostCommentService postCommentService;
     private final PostCommentAlertService postCommentAlertService;
+
+    public PostController(PostService postService, DevPostService devPostService, PostCommentService postCommentService, PostCommentAlertService postCommentAlertService) {
+        this.postService = postService;
+        this.devPostService = devPostService;
+        this.postCommentService = postCommentService;
+        this.postCommentAlertService = postCommentAlertService;
+    }
 
     @RequestMapping(path = "/post", method = RequestMethod.GET)
     public String list(@RequestParam(name = "page", required = false, defaultValue = "0")int page,

@@ -9,7 +9,6 @@ import kr.devflix.entity.PostComment;
 import kr.devflix.service.MemberService;
 import kr.devflix.service.PostCommentService;
 import kr.devflix.service.PostService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -30,7 +29,6 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@RequiredArgsConstructor
 public class MyPageController {
 
     private final MemberService memberService;
@@ -38,6 +36,13 @@ public class MyPageController {
     private final PostCommentService postCommentService;
     private final PasswordEncoder passwordEncoder;
     private final int DEFAULT_SIZE_VALUE = 20;
+
+    public MyPageController(MemberService memberService, PostService postService, PostCommentService postCommentService, PasswordEncoder passwordEncoder) {
+        this.memberService = memberService;
+        this.postService = postService;
+        this.postCommentService = postCommentService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Secured(RoleType.USER)
     @RequestMapping(path = "/my-page", method = RequestMethod.GET)

@@ -1,5 +1,6 @@
 package kr.devflix.controller;
 
+import kr.devflix.constant.Status;
 import kr.devflix.dto.DevPostDto;
 import kr.devflix.errors.NotFoundException;
 import kr.devflix.service.DevPostService;
@@ -27,7 +28,7 @@ public class DevPostRestController {
                                                          @RequestParam(required = false)String s,
                                                          @RequestParam(required = false, defaultValue = "0")int page,
                                                          @RequestParam(required = false, defaultValue = "20", name = "per-page")int perPage) {
-        List<DevPostDto> findAll = devPostService.findAllByCategoryOrTagOrSearch(c, t, s, page, perPage);
+        List<DevPostDto> findAll = devPostService.findAllByCategoryOrTagOrSearch(c, t, s, Status.POST, page, perPage);
 
         if (findAll.isEmpty()) {
             throw new NotFoundException("could not found posts");

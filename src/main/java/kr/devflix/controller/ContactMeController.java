@@ -3,7 +3,6 @@ package kr.devflix.controller;
 import kr.devflix.entity.ContactMe;
 import kr.devflix.entity.Member;
 import kr.devflix.service.ContactMeService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,10 +15,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Date;
 
 @Controller
-@RequiredArgsConstructor
 public class ContactMeController {
 
     private final ContactMeService contactMeService;
+
+    public ContactMeController(ContactMeService contactMeService) {
+        this.contactMeService = contactMeService;
+    }
 
     @RequestMapping(path = "/contact-me", method = RequestMethod.GET)
     public String contactMeForm(@AuthenticationPrincipal Member user, Model model) {

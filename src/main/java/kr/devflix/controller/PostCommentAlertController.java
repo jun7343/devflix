@@ -4,7 +4,6 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.PostCommentAlert;
 import kr.devflix.service.PostCommentAlertService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,11 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequiredArgsConstructor
 public class PostCommentAlertController {
 
     private final PostCommentAlertService postCommentAlertService;
     private final int DEFAULT_SIZE_VALUE = 20;
+
+    public PostCommentAlertController(PostCommentAlertService postCommentAlertService) {
+        this.postCommentAlertService = postCommentAlertService;
+    }
 
     @Secured(RoleType.USER)
     @RequestMapping(path = "/comment-alert", method = RequestMethod.GET)

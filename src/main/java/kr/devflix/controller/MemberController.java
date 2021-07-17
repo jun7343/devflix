@@ -6,7 +6,6 @@ import kr.devflix.constant.MemberStatus;
 import kr.devflix.entity.Member;
 import kr.devflix.entity.MemberConfirm;
 import kr.devflix.service.MemberService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
@@ -20,13 +19,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.regex.Pattern;
 
 @Controller
-@RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
     private final String RESULT = "result";
     private final String MESSAGE = "msg";
     private final Pattern emailPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String loginForm() {
