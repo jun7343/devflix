@@ -234,7 +234,7 @@ public class Member implements UserDetails {
             return this;
         }
 
-        public MemberBuilder update(Date updateAt) {
+        public MemberBuilder updateAt(Date updateAt) {
             this.updateAt = updateAt;
             return this;
         }
