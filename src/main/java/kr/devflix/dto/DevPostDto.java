@@ -1,9 +1,8 @@
 package kr.devflix.dto;
 
-import kr.devflix.entity.DevPost;
 import kr.devflix.constant.PostType;
 import kr.devflix.constant.Status;
-import lombok.Getter;
+import kr.devflix.entity.DevPost;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -11,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
 public class DevPostDto {
 
     private Long id;
@@ -67,5 +65,61 @@ public class DevPostDto {
                 .append("createAt", createAt)
                 .append("updateAt", updateAt)
                 .toString();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public PostType getPostType() {
+        return postType;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Integer getView() {
+        return view;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getWriter() {
+        return writer;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public Date getUploadAt() {
+        return uploadAt;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
     }
 }
