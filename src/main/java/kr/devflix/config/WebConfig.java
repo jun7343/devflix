@@ -1,8 +1,7 @@
 package kr.devflix.config;
 
-import kr.devflix.security.interceptor.LoginInterceptor;
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
-import lombok.RequiredArgsConstructor;
+import kr.devflix.security.interceptor.LoginInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -23,11 +22,15 @@ import java.util.concurrent.Executor;
 @ComponentScan(basePackages = "kr.devflix")
 @EnableJpaRepositories(basePackages = "kr.devflix")
 @EnableScheduling
-@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
     private final Environment environment;
     private final LoginInterceptor loginInterceptor;
+
+    public WebConfig(Environment environment, LoginInterceptor loginInterceptor) {
+        this.environment = environment;
+        this.loginInterceptor = loginInterceptor;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
