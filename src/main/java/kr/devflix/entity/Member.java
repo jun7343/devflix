@@ -2,7 +2,6 @@ package kr.devflix.entity;
 
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import kr.devflix.constant.MemberStatus;
-import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,15 +14,12 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Getter
-@ToString
-@EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
 public class Member implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_member_id")
+    @SequenceGenerator(name = "seq_member_id", sequenceName = "member_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
 
     @Column
@@ -114,11 +110,12 @@ public class Member implements UserDetails {
         return this.status != MemberStatus.WITHDRAWAL;
     }
 
-    @Builder
-    public Member(final Long id, final MemberStatus status, final String email, final String password, final String username,
-                  final List<String> authority, final String pathBase, final String imagePath, final String description,
-                  final String github, final String facebook, final String twiter, final String instagram,
-                  final String linkedIn, final Date createAt, final Date updateAt) {
+    protected Member() {
+    }
+
+    private Member(Long id, MemberStatus status, String email, String password, String username, List<String> authority,
+                   String pathBase, String imagePath, String description, String github, String facebook, String twiter,
+                   String instagram, String linkedIn, Date createAt, Date updateAt) {
         this.id = id;
         this.status = status;
         this.email = email;
@@ -135,5 +132,194 @@ public class Member implements UserDetails {
         this.linkedIn = linkedIn;
         this.createAt = createAt;
         this.updateAt = updateAt;
+    }
+
+    public static MemberBuilder builder() {
+        return new MemberBuilder();
+    }
+
+    public static class MemberBuilder {
+        private Long id;
+        private MemberStatus status;
+        private String email;
+        private String password;
+        private String username;
+        private List<String> authority;
+        private String pathBase;
+        private String imagePath;
+        private String description;
+        private String github;
+        private String facebook;
+        private String twiter;
+        private String instagram;
+        private String linkedIn;
+        private Date createAt;
+        private Date updateAt;
+
+        MemberBuilder() {
+        }
+
+        public MemberBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public MemberBuilder status(MemberStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public MemberBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public MemberBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public MemberBuilder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public MemberBuilder authority(List<String> authority) {
+            this.authority = authority;
+            return this;
+        }
+
+        public MemberBuilder pathBase(String pathBase) {
+            this.pathBase = pathBase;
+            return this;
+        }
+
+        public MemberBuilder imagePath(String imagePath) {
+            this.imagePath = imagePath;
+            return this;
+        }
+
+        public MemberBuilder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public MemberBuilder github(String github) {
+            this.github = github;
+            return this;
+        }
+
+        public MemberBuilder facebook(String facebook) {
+            this.facebook = facebook;
+            return this;
+        }
+
+        public MemberBuilder twiter(String twiter) {
+            this.twiter = twiter;
+            return this;
+        }
+
+        public MemberBuilder instagram(String instagram) {
+            this.instagram = instagram;
+            return this;
+        }
+
+        public MemberBuilder linkedIn(String linkedIn) {
+            this.linkedIn = linkedIn;
+            return this;
+        }
+
+        public MemberBuilder createAt(Date createAt) {
+            this.createAt = createAt;
+            return this;
+        }
+
+        public MemberBuilder update(Date updateAt) {
+            this.updateAt = updateAt;
+            return this;
+        }
+
+        public Member build() {
+            return new Member(id, status, email, password, username, authority, pathBase, imagePath, description, github, facebook,
+                    twiter, instagram, linkedIn, createAt, updateAt);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", status=" + status +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", authority=" + authority +
+                ", pathBase='" + pathBase + '\'' +
+                ", imagePath='" + imagePath + '\'' +
+                ", description='" + description + '\'' +
+                ", github='" + github + '\'' +
+                ", facebook='" + facebook + '\'' +
+                ", twiter='" + twiter + '\'' +
+                ", instagram='" + instagram + '\'' +
+                ", linkedIn='" + linkedIn + '\'' +
+                ", createAt=" + createAt +
+                ", updateAt=" + updateAt +
+                '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public MemberStatus getStatus() {
+        return status;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public List<String> getAuthority() {
+        return authority;
+    }
+
+    public String getPathBase() {
+        return pathBase;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getGithub() {
+        return github;
+    }
+
+    public String getFacebook() {
+        return facebook;
+    }
+
+    public String getTwiter() {
+        return twiter;
+    }
+
+    public String getInstagram() {
+        return instagram;
+    }
+
+    public String getLinkedIn() {
+        return linkedIn;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
     }
 }

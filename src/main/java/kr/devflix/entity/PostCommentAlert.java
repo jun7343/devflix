@@ -1,35 +1,30 @@
 package kr.devflix.entity;
 
-import lombok.*;
-
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity(name = "post_comment_alert")
-@Getter
-@ToString
-@EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostCommentAlert {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_post_comment_alert_id")
+    @SequenceGenerator(name = "seq_post_comment_alert_id", sequenceName = "post_comment_alert_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
 
-    @ManyToOne(targetEntity = Post.class, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne(targetEntity = PostComment.class, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "comment_id")
     private PostComment comment;
 
-    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private Member user;
 
     @Column
-    private boolean confirm;
+    private Boolean confirm;
 
     @Column(name = "create_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -39,9 +34,15 @@ public class PostCommentAlert {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateAt;
 
-    @Builder
-    public PostCommentAlert(final Long id, final Post post, final PostComment comment, final Member user,
-                            final boolean confirm, final Date createAt, final Date updateAt) {
+    protected PostCommentAlert() {
+    }
+
+    public static PostCommentAlertBuilder builder() {
+        return new PostCommentAlertBuilder();
+    }
+
+    private PostCommentAlert(Long id, Post post, PostComment comment, Member user, Boolean confirm,
+                             Date createAt, Date updateAt) {
         this.id = id;
         this.post = post;
         this.comment = comment;
@@ -49,5 +50,95 @@ public class PostCommentAlert {
         this.confirm = confirm;
         this.createAt = createAt;
         this.updateAt = updateAt;
+    }
+
+    public static class PostCommentAlertBuilder {
+        private Long id;
+        private Post post;
+        private PostComment comment;
+        private Member user;
+        private Boolean confirm;
+        private Date createAt;
+        private Date updateAt;
+
+        PostCommentAlertBuilder() {
+        }
+
+        public PostCommentAlertBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public PostCommentAlertBuilder post(Post post) {
+            this.post = post;
+            return this;
+        }
+
+        public PostCommentAlertBuilder comment(PostComment comment) {
+            this.comment = comment;
+            return this;
+        }
+
+        public PostCommentAlertBuilder user(Member user) {
+            this.user = user;
+            return this;
+        }
+
+        public PostCommentAlertBuilder confirm(Boolean confirm) {
+            this.confirm = confirm;
+            return this;
+        }
+
+        public PostCommentAlertBuilder createAt(Date createAt) {
+            this.createAt = createAt;
+            return this;
+        }
+
+        public PostCommentAlertBuilder updateAt(Date updateAt) {
+            this.updateAt = updateAt;
+            return this;
+        }
+
+        public PostCommentAlert build() {
+            return new PostCommentAlert(id, post, comment, user, confirm, createAt, updateAt);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "PostCommentAlert{" +
+                "id=" + id +
+                ", confirm=" + confirm +
+                ", createAt=" + createAt +
+                ", updateAt=" + updateAt +
+                '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public PostComment getComment() {
+        return comment;
+    }
+
+    public Member getUser() {
+        return user;
+    }
+
+    public Boolean getConfirm() {
+        return confirm;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
     }
 }
