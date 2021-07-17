@@ -4,7 +4,6 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.entity.ContactMe;
 import kr.devflix.service.ContactMeService;
 import kr.devflix.utils.JavaMailUtils;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -24,12 +23,16 @@ import java.util.Optional;
 
 @Controller
 @Secured(RoleType.MANAGER)
-@RequiredArgsConstructor
 public class AdminContactMeController {
 
     private final ContactMeService contactMeService;
     private final JavaMailUtils javaMailUtils;
     private final int DEFAULT_PER_PAGE_SIZE = 20;
+
+    public AdminContactMeController(ContactMeService contactMeService, JavaMailUtils javaMailUtils) {
+        this.contactMeService = contactMeService;
+        this.javaMailUtils = javaMailUtils;
+    }
 
     @RequestMapping(path = "/dfa/contact-me", method = RequestMethod.GET)
     public String contactMeList(@RequestParam(name = "page", required = false, defaultValue = "0")final int page,

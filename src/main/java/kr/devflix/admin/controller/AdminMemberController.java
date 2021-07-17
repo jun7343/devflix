@@ -4,7 +4,6 @@ import kr.devflix.constant.MemberStatus;
 import kr.devflix.constant.RoleType;
 import kr.devflix.entity.Member;
 import kr.devflix.service.MemberService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -23,11 +22,14 @@ import java.util.Optional;
 
 @Controller
 @Secured(RoleType.ADMIN)
-@RequiredArgsConstructor
 public class AdminMemberController {
 
     private final MemberService memberService;
     private final int DEFAULT_PER_PAGE_SIZE = 20;
+
+    public AdminMemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     @RequestMapping(path = "/dfa/member", method = RequestMethod.GET)
     public String memberList(@RequestParam(name = "page", required = false, defaultValue = "0")final int page,

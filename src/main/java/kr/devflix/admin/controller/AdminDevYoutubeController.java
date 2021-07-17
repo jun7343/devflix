@@ -5,7 +5,6 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.YoutubeChannel;
 import kr.devflix.service.YoutubeChannelService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -23,12 +22,16 @@ import java.util.Optional;
 
 @Controller
 @Secured(RoleType.MANAGER)
-@RequiredArgsConstructor
 public class AdminDevYoutubeController {
 
     private final YoutubeChannelService youtubeChannelService;
     private final YoutubeCrawler youtubeCrawler;
     private final String YOUTUBE_WEB_URL = "https://www.youtube.com/";
+
+    public AdminDevYoutubeController(YoutubeChannelService youtubeChannelService, YoutubeCrawler youtubeCrawler) {
+        this.youtubeChannelService = youtubeChannelService;
+        this.youtubeCrawler = youtubeCrawler;
+    }
 
     @RequestMapping(path = "/dfa/dev-post/youtube-list", method = RequestMethod.GET)
     public String devYotubeList(Model model) {

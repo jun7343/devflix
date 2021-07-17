@@ -4,7 +4,6 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.Post;
 import kr.devflix.service.PostService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -19,11 +18,14 @@ import java.util.List;
 
 @Controller
 @Secured(RoleType.MANAGER)
-@RequiredArgsConstructor
 public class AdminPostController {
 
     private final PostService postService;
     private final int DEFAULT_PER_PAGE_SIZE = 20;
+
+    public AdminPostController(PostService postService) {
+        this.postService = postService;
+    }
 
     @RequestMapping(path = "/dfa/post/post-list", method = RequestMethod.GET)
     public String postList(@RequestParam(name = "page", required = false, defaultValue = "0")final int page,

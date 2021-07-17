@@ -4,7 +4,6 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.DevBlog;
 import kr.devflix.service.DevBlogService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -21,10 +20,13 @@ import java.util.Optional;
 
 @Controller
 @Secured(RoleType.MANAGER)
-@RequiredArgsConstructor
 public class AdminDevBlogController {
 
     private final DevBlogService devBlogService;
+
+    public AdminDevBlogController(DevBlogService devBlogService) {
+        this.devBlogService = devBlogService;
+    }
 
     @RequestMapping(path = "/dfa/dev-post/blog-list", method = RequestMethod.GET)
     public String devBlogList(Model model) {

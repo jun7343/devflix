@@ -4,7 +4,6 @@ import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.PostComment;
 import kr.devflix.service.PostCommentService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -19,11 +18,14 @@ import java.util.List;
 
 @Controller
 @Secured(RoleType.MANAGER)
-@RequiredArgsConstructor
 public class AdminPostCommentController {
 
     private final PostCommentService postCommentService;
     private final int DEFAULT_PER_PAGE_SIZE = 20;
+
+    public AdminPostCommentController(PostCommentService postCommentService) {
+        this.postCommentService = postCommentService;
+    }
 
     @RequestMapping(path = "/dfa/post/post-comment", method = RequestMethod.GET)
     public String postCommentList(@RequestParam(name = "page", required = false, defaultValue = "0")final int page,

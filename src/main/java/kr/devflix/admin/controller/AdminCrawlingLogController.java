@@ -3,7 +3,6 @@ package kr.devflix.admin.controller;
 import kr.devflix.constant.RoleType;
 import kr.devflix.entity.CrawlingLog;
 import kr.devflix.service.CrawlingLogService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -18,11 +17,14 @@ import java.util.List;
 
 @Controller
 @Secured(RoleType.MANAGER)
-@RequiredArgsConstructor
 public class AdminCrawlingLogController {
 
     private final CrawlingLogService crawlingLogService;
     private final int DEFAULT_PER_PAGE_SIZE = 20;
+
+    public AdminCrawlingLogController(CrawlingLogService crawlingLogService) {
+        this.crawlingLogService = crawlingLogService;
+    }
 
     @RequestMapping(path = "/dfa/crawling-log", method = RequestMethod.GET)
     public String crawlingLogList(@RequestParam(name = "page", required = false, defaultValue = "0")final int page,
