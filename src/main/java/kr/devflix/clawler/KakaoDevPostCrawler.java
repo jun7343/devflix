@@ -1,17 +1,16 @@
 package kr.devflix.clawler;
 
-import kr.devflix.constant.Status;
-import kr.devflix.constant.PostType;
-import kr.devflix.entity.CrawlingLog;
-import kr.devflix.entity.DevPost;
-import kr.devflix.service.CrawlingLogService;
-import kr.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.javascript.DefaultJavaScriptErrorListener;
-import lombok.RequiredArgsConstructor;
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.entity.CrawlingLog;
+import kr.devflix.entity.DevPost;
+import kr.devflix.service.CrawlingLogService;
+import kr.devflix.service.DevPostService;
 import org.apache.http.HttpStatus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -27,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
-@RequiredArgsConstructor
 public class KakaoDevPostCrawler implements Crawler {
 
     private final DevPostService devPostService;
@@ -37,6 +35,11 @@ public class KakaoDevPostCrawler implements Crawler {
     private static final SimpleDateFormat kakaoDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     private static final Logger logger = LoggerFactory.getLogger(KakaoDevPostCrawler.class);
     private static final Integer DEFAULT_CRAWLING_MAX_PAGE = 3;
+
+    public KakaoDevPostCrawler(DevPostService devPostService, CrawlingLogService crawlingLogService) {
+        this.devPostService = devPostService;
+        this.crawlingLogService = crawlingLogService;
+    }
 
     @Override
     public void crawling() {

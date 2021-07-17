@@ -574,7 +574,7 @@ public class YoutubeCrawler implements Crawler {
                             .description(description.asText().replaceAll("\\R", ""))
                             .thumbnail(thumbnailsHighUrl.asText())
                             .publishAt(publishDate)
-                            .crawlingAt(0)
+                            .crawlingAt(0L)
                             .createAt(new Date())
                             .updateAt(new Date())
                             .build();

@@ -1,18 +1,17 @@
 package kr.devflix.clawler;
 
-import kr.devflix.constant.Status;
-import kr.devflix.constant.PostType;
-import kr.devflix.entity.CrawlingLog;
-import kr.devflix.entity.DevPost;
-import kr.devflix.service.CrawlingLogService;
-import kr.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.DefaultJavaScriptErrorListener;
-import lombok.RequiredArgsConstructor;
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.entity.CrawlingLog;
+import kr.devflix.entity.DevPost;
+import kr.devflix.service.CrawlingLogService;
+import kr.devflix.service.DevPostService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.jsoup.Jsoup;
@@ -28,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
-@RequiredArgsConstructor
 public class WoowaDevPostCrawler implements Crawler {
 
     private final DevPostService devPostService;
@@ -37,6 +35,11 @@ public class WoowaDevPostCrawler implements Crawler {
     private static final String WOOWA_BLOG_URL = "https://woowabros.github.io";
     private static final Logger logger = LoggerFactory.getLogger(WoowaDevPostCrawler.class);
     private static final String DEFAULT_WOOWA_THUMBNAIL = "http://www.woowahan.com/img/mobile/woowabros.jpg";
+
+    public WoowaDevPostCrawler(DevPostService devPostService, CrawlingLogService crawlingLogService) {
+        this.devPostService = devPostService;
+        this.crawlingLogService = crawlingLogService;
+    }
 
     @Override
     public void crawling() {

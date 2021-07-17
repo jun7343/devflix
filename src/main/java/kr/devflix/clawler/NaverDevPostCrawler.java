@@ -1,18 +1,17 @@
 package kr.devflix.clawler;
 
-import kr.devflix.constant.Status;
-import kr.devflix.constant.PostType;
-import kr.devflix.entity.CrawlingLog;
-import kr.devflix.entity.DevPost;
-import kr.devflix.service.CrawlingLogService;
-import kr.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.DefaultJavaScriptErrorListener;
-import lombok.RequiredArgsConstructor;
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.entity.CrawlingLog;
+import kr.devflix.entity.DevPost;
+import kr.devflix.service.CrawlingLogService;
+import kr.devflix.service.DevPostService;
 import org.apache.http.HttpStatus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
-@RequiredArgsConstructor
 public class NaverDevPostCrawler implements Crawler {
 
     private final DevPostService devPostService;
@@ -38,6 +36,11 @@ public class NaverDevPostCrawler implements Crawler {
     private static final String DEFAULT_NAVER_THUMBNAIL = "https://d2.naver.com/static/img/app/common/sns_share_big_img1.png";
     private static final Logger logger = LoggerFactory.getLogger(NaverDevPostCrawler.class);
     private static final Integer DEFAULT_CRAWLING_MAX_PAGE = 3;
+
+    public NaverDevPostCrawler(DevPostService devPostService, CrawlingLogService crawlingLogService) {
+        this.devPostService = devPostService;
+        this.crawlingLogService = crawlingLogService;
+    }
 
     @Override
     public void crawling() {

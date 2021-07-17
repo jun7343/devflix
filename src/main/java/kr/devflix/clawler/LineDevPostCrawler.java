@@ -1,18 +1,17 @@
 package kr.devflix.clawler;
 
-import kr.devflix.constant.Status;
-import kr.devflix.constant.PostType;
-import kr.devflix.entity.CrawlingLog;
-import kr.devflix.entity.DevPost;
-import kr.devflix.service.CrawlingLogService;
-import kr.devflix.service.DevPostService;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.DefaultJavaScriptErrorListener;
-import lombok.RequiredArgsConstructor;
+import kr.devflix.constant.PostType;
+import kr.devflix.constant.Status;
+import kr.devflix.entity.CrawlingLog;
+import kr.devflix.entity.DevPost;
+import kr.devflix.service.CrawlingLogService;
+import kr.devflix.service.DevPostService;
 import org.apache.http.HttpStatus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
-@RequiredArgsConstructor
 public class LineDevPostCrawler implements Crawler {
 
     private final DevPostService devPostService;
@@ -37,6 +35,11 @@ public class LineDevPostCrawler implements Crawler {
     private static final String DEFAULT_LINE_THUMBNAIL = "https://engineering.linecorp.com/wp-content/uploads/2018/11/linedev_logo.jpg";
     private static final Logger logger = LoggerFactory.getLogger(LineDevPostCrawler.class);
     private static final Integer DEFAULT_CRAWLING_MAX_PAGE = 3;
+
+    public LineDevPostCrawler(DevPostService devPostService, CrawlingLogService crawlingLogService) {
+        this.devPostService = devPostService;
+        this.crawlingLogService = crawlingLogService;
+    }
 
     @Override
     public void crawling() {
