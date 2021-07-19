@@ -10,7 +10,7 @@
 					{{errorMessage}}
 				</div>
 				{{/if}}
-				<form id="postForm" action="/post/write" method="post">
+				<form id="postForm" action="/posts/write" method="post">
 					<div class="form-row devflix-post">
 						<div class="form-group col-md-12">
 							<label for="title">Title</label>
@@ -43,7 +43,7 @@
 					<input type="hidden" name="{{csrf_parameter}}" value="{{csrf_token}}">
 					<div class="d-flex justify-content-end button-box">
 						<button type="submit" class="btn btn-primary">저장</button>
-						<a href="/post" class="btn btn-secondary">목록</a>
+						<a href="/posts" class="btn btn-secondary">목록</a>
 					</div>
 				</form>
 			</div>
