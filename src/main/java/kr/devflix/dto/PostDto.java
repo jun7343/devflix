@@ -32,7 +32,7 @@ public class PostDto {
         content = post.getContent();
         view = post.getView();
         pathBase = post.getPathBase();
-        images = post.getPostImages()
+        images = post.getImages()
                 .stream()
                 .map(postImage -> {return postImage.getImageName();})
                 .collect(Collectors.toList());

@@ -38,7 +38,7 @@ public class Post {
     private String pathBase;
 
     @OneToMany(mappedBy = "post")
-    private List<PostImage> postImages;
+    private List<PostImage> images;
 
     @Column(name = "create_at")
     private LocalDateTime createAt;
@@ -50,7 +50,7 @@ public class Post {
     }
 
     private Post(Long id, Status status, Member writer, String devPostUrl, String title, String content, Integer view,
-                 String pathBase, List<PostImage> postImages, LocalDateTime createAt, LocalDateTime updateAt) {
+                 String pathBase, List<PostImage> images, LocalDateTime createAt, LocalDateTime updateAt) {
         this.id = id;
         this.status = status;
         this.writer = writer;
@@ -59,7 +59,7 @@ public class Post {
         this.content = content;
         this.view = view;
         this.pathBase = pathBase;
-        this.postImages = postImages;
+        this.images = images;
         this.createAt = createAt;
         this.updateAt = updateAt;
     }
@@ -77,7 +77,7 @@ public class Post {
         private String content;
         private Integer view;
         private String pathBase;
-        private List<PostImage> postImages;
+        private List<PostImage> images;
         private LocalDateTime createAt;
         private LocalDateTime updateAt;
 
@@ -124,8 +124,8 @@ public class Post {
             return this;
         }
 
-        public PostBuilder postimages(List<PostImage> postImages) {
-            this.postImages = postImages;
+        public PostBuilder images(List<PostImage> images) {
+            this.images = images;
             return this;
         }
 
@@ -140,7 +140,7 @@ public class Post {
         }
 
         public Post build() {
-            return new Post(id, status, writer, devPostUrl, title, content, view, pathBase, postImages, createAt, updateAt);
+            return new Post(id, status, writer, devPostUrl, title, content, view, pathBase, images, createAt, updateAt);
         }
     }
 
@@ -155,7 +155,6 @@ public class Post {
                 ", content='" + content + '\'' +
                 ", view=" + view +
                 ", pathBase='" + pathBase + '\'' +
-                ", postImages=" + postImages +
                 ", createAt=" + createAt +
                 ", updateAt=" + updateAt +
                 '}';
@@ -193,8 +192,8 @@ public class Post {
         return pathBase;
     }
 
-    public List<PostImage> getPostImages() {
-        return postImages;
+    public List<PostImage> getImages() {
+        return images;
     }
 
     public LocalDateTime getCreateAt() {
