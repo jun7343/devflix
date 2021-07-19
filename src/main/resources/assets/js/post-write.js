@@ -1,8 +1,6 @@
 $(function () {
-    const API_SEARCH_URL = '/a/search';
-    const API_IMAGE_UPLOAD_URL = '/a/image-upload';
-    const API_IMAGE_DELETE_URL = '/a/image-delete';
-    const POST_TYPE = 'POST';
+    const API_DEV_POST_URL = '/a/dev-posts';
+    const API_IMAGE_URL = '/a/images';
     const MATCH_URL = '{{url}}';
     const MATCH_THUMBNAIL = '{{thumbnail}}';
     const MATCH_TITLE = '{{title}}';
@@ -56,8 +54,8 @@ $(function () {
         data.append('path-base', pathBase);
 
         $.ajax({
-            url: API_IMAGE_UPLOAD_URL,
-            type: POST_TYPE,
+            url: API_IMAGE_URL,
+            type: 'POST',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
             },
@@ -66,33 +64,31 @@ $(function () {
             cache: false,
             processData: false,
             success: function (data) {
-                if (data.result) {
-                    if ($PATH_BASE.val() === '' || $PATH_BASE.val() === undefined) {
-                        $PATH_BASE.val(data.result[0].pathBase);
-                    }
+              if ($PATH_BASE.val() === '' || $PATH_BASE.val() === undefined) {
+                  $PATH_BASE.val(data.response[0].pathBase);
+              }
 
-                    for (const item of data.result) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'images';
-                        input.value = item.imageName;
-                        $EDITOR_CONTAINER.append(input);
+              for (const item of data.response) {
+                  const input = document.createElement('input');
+                  input.type = 'hidden';
+                  input.name = 'images';
+                  input.value = item.imageName;
+                  $EDITOR_CONTAINER.append(input);
 
-                        $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', item.imageURL).attr('id', item.imageName)[0]);
-                    }
-                }
+                  $EDITOR_CONTAINER.summernote('insertNode', $('<img>').attr('src', item.imageURL).attr('id', item.imageName)[0]);
+              }
             }
         })
     }
 
     function deleteImage(pathBase, imageName) {
+        console.log('path base = ' + pathBase + ' image name = ' + imageName);
         $.ajax({
-            url: API_IMAGE_DELETE_URL,
-            type: POST_TYPE,
+            url: API_IMAGE_URL + '?path-base=' + pathBase + '&image-name=' + imageName,
+            type: 'DELETE',
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
             },
-            data: { 'pathBase': pathBase, 'imageName': imageName },
             success: function (data) {
             }
         })
@@ -161,40 +157,36 @@ $(function () {
 
                 if (!MATCH_FOR_PERFECT_SEARCH.test(CONTENT) && CONTENT.charAt(CONTENT.length - 1) !== ' ' && CONTENT.length > 0 && CONTENT !== lastSearchContent) {
                     $.ajax({
-                        url: API_SEARCH_URL,
-                        type: POST_TYPE,
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader(CSRF_HEADER, CSRF_TOKEN);
-                        },
-                        data: { 'content': CONTENT },
+                        url: API_DEV_POST_URL,
+                        type: 'GET',
+                        data: { 's': CONTENT },
                         success: function (data) {
                             $SEARCH_LIST.empty();
                             lastSearchContent = CONTENT;
 
-                            if (data.result) {
-                                if (data.data.length > 0) {
-                                    for (const item of data.data) {
-                                        const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, item.url)
-                                            .replaceAll(MATCH_CATEGORY, item.category)
-                                            .replaceAll(MATCH_POST_TYPE, item.postType)
-                                            .replace(MATCH_TITLE, item.title)
-                                            .replace(MATCH_TITLE, item.title.replaceAll(CONTENT, '<mark>' + CONTENT + '</mark>'))
-                                            .replaceAll(MATCH_THUMBNAIL, item.thumbnail)
-                                            .replaceAll(MATCH_UPLOAD_AT, item.uploadAt.replaceAll('/', '.'));
+                            for (const item of data.response) {
+                              const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, item.url)
+                                                          .replaceAll(MATCH_CATEGORY, item.category)
+                                                          .replaceAll(MATCH_POST_TYPE, item.postType)
+                                                          .replace(MATCH_TITLE, item.title)
+                                                          .replace(MATCH_TITLE, item.title.replaceAll(CONTENT, '<mark>' + CONTENT + '</mark>'))
+                                                          .replaceAll(MATCH_THUMBNAIL, item.thumbnail)
+                                                          .replaceAll(MATCH_UPLOAD_AT, item.uploadAt);
 
-                                        $SEARCH_LIST.append($(ITEM_TEMPLATE));
-                                    }
-                                } else {
-                                    const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, '')
-                                        .replaceAll(MATCH_CATEGORY, '')
-                                        .replaceAll(MATCH_POST_TYPE, '')
-                                        .replaceAll(MATCH_TITLE, 'No search results ...')
-                                        .replaceAll(MATCH_THUMBNAIL, '')
-                                        .replaceAll(MATCH_UPLOAD_AT, '');
-
-                                    $SEARCH_LIST.append($(ITEM_TEMPLATE));
-                                }
+                              $SEARCH_LIST.append($(ITEM_TEMPLATE));
                             }
+                        },
+                        error: function(e) {
+                          $SEARCH_LIST.empty();
+
+                          const ITEM_TEMPLATE = SEARCH_LIST_TEMPLATE.replaceAll(MATCH_URL, '')
+                                                    .replaceAll(MATCH_CATEGORY, '')
+                                                    .replaceAll(MATCH_POST_TYPE, '')
+                                                    .replaceAll(MATCH_TITLE, 'No search results ...')
+                                                    .replaceAll(MATCH_THUMBNAIL, '')
+                                                    .replaceAll(MATCH_UPLOAD_AT, '');
+
+                          $SEARCH_LIST.append($(ITEM_TEMPLATE));
                         }
                     });
                 }

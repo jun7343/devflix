@@ -1,19 +1,15 @@
 package kr.devflix.controller;
 
+import com.google.common.collect.ImmutableMap;
 import kr.devflix.constant.RoleType;
 import kr.devflix.constant.Status;
 import kr.devflix.entity.*;
-import kr.devflix.entity.DevPost;
-import kr.devflix.service.DevPostService;
 import kr.devflix.service.*;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -22,12 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -39,108 +31,23 @@ public class APIController {
     private final PostService postService;
     private final DevBlogService devBlogService;
     private final YoutubeChannelService youtubeChannelService;
-    private final String IMAGE_ROOT_DIR_PATH;
+
     private final int DEFAULT_COMMENT_PAGE_PER_SIZE = 10;
-    private final int DEFAULT_DEV_POST_PAGE_PER_SIZE = 20;
     private final SimpleDateFormat commentDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     private final String DEFAULT_USER_PROFILE_IMG_PATH = "/assets/img/user.jpg";
-    private final SimpleDateFormat devPostDateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
-    private final Logger logger = LoggerFactory.getLogger(APIController.class);
 
     public APIController(final DevPostService devPostService, final PostCommentService postCommentService, final PostService postService,
-                         final DevBlogService devBlogService, final YoutubeChannelService youtubeChannelService, final Environment environment) {
+                         final DevBlogService devBlogService, final YoutubeChannelService youtubeChannelService) {
         this.devPostService = devPostService;
         this.postCommentService = postCommentService;
         this.postService = postService;
         this.devBlogService = devBlogService;
         this.youtubeChannelService = youtubeChannelService;
-
-        if (StringUtils.isBlank(environment.getProperty("image.root-drectory"))) {
-            IMAGE_ROOT_DIR_PATH = "images/";
-        } else {
-            IMAGE_ROOT_DIR_PATH = environment.getProperty("image.root-drectory");
-        }
     }
 
-    @Secured(RoleType.USER)
-    @RequestMapping(path = "/a/image-upload", method = RequestMethod.POST)
-    @ResponseBody
-    public ImmutableMap<String, Object> actionImageUpload(@RequestParam(name = "images")MultipartFile[] images,
-                                                          @RequestParam(name = "path-base", required = false)String pathBase) {
-        if (StringUtils.isBlank(pathBase)) {
-            pathBase = getPathBase();
-        }
 
-        List<Object> list = new LinkedList<>();
 
-        for (MultipartFile img : images) {
-            if (StringUtils.equals(img.getContentType(), MediaType.IMAGE_GIF_VALUE) || StringUtils.equals(img.getContentType(), MediaType.IMAGE_JPEG_VALUE) ||
-                    StringUtils.equals(img.getContentType(), MediaType.IMAGE_PNG_VALUE)) {
-                StringBuilder imageName = new StringBuilder();
 
-                imageName.append(System.currentTimeMillis()).append(".").append(Objects.requireNonNull(img.getContentType()).split("/")[1]);
-
-                try {
-                    File file = new File(IMAGE_ROOT_DIR_PATH + pathBase + imageName.toString());
-
-                    img.transferTo(Paths.get(file.getPath()));
-
-                    ImmutableMap<String, Object> map = ImmutableMap.<String, Object>builder()
-                            .put("pathBase", pathBase)
-                            .put("imageName", imageName.toString())
-                            .put("imageOriginName", img.getOriginalFilename())
-                            .put("imageURL", "/images/" + pathBase + imageName.toString())
-                            .build();
-
-                    list.add(map);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return ImmutableMap.of("result", list);
-    }
-
-    @Secured(RoleType.USER)
-    @RequestMapping(path = "/a/image-delete", method = RequestMethod.POST)
-    @ResponseBody
-    public ImmutableMap<String, Object> actionImageDelete(@RequestParam(name = "pathBase", required = false)final String pathBase,
-                                                          @RequestParam(name = "imageName", required = false)final String imageName) {
-        if (StringUtils.isBlank(pathBase) || StringUtils.isBlank(imageName)) {
-            return ImmutableMap.of("result", false);
-        }
-
-        File deleteFile = new File(IMAGE_ROOT_DIR_PATH + pathBase + imageName);
-
-        if (deleteFile.exists()) {
-            if (deleteFile.delete()) {
-                return ImmutableMap.of("result", true);
-            } else {
-                return ImmutableMap.of("result", false);
-            }
-        } else {
-            return ImmutableMap.of("result", false);
-        }
-    }
-
-    private String getPathBase() {
-        Calendar calendar = Calendar.getInstance();
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(calendar.get(Calendar.YEAR)).append("/").append(calendar.get(Calendar.MONTH) + 1).append("/")
-                .append(calendar.get(Calendar.DATE)).append("/").append(calendar.getTimeInMillis()).append("/");
-
-        File file = new File(IMAGE_ROOT_DIR_PATH + builder.toString());
-
-        if (file.mkdirs()) {
-            logger.debug("path base directory create done!!");
-        } else{
-            logger.error("path base directory create error!!");
-        }
-
-        return builder.toString();
-    }
 
     @Secured(RoleType.USER)
     @RequestMapping(path = "/a/post-comment-save", method = RequestMethod.POST)
