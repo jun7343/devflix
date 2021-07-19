@@ -1,36 +1,41 @@
 package kr.devflix.dto;
 
 import kr.devflix.constant.Status;
-import kr.devflix.entity.Member;
 import kr.devflix.entity.Post;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostDto {
     private Long id;
     private Status status;
-    private Member writer;
+    private MemberDto writer;
     private String title;
     private String content;
     private Integer view;
     private String pathBase;
     private List<String> images;
     private String devPostUrl;
-    private Date createAt;
-    private Date updateAt;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
+
+    public PostDto() {}
 
     public PostDto(Post post) {
         id = post.getId();
         status = post.getStatus();
-        writer = post.getWriter();
+        writer = new MemberDto(post.getWriter());
         title = post.getTitle();
         content = post.getContent();
         view = post.getView();
         pathBase = post.getPathBase();
-        images = post.getImages();
+        images = post.getPostImages()
+                .stream()
+                .map(postImage -> {return postImage.getImageName();})
+                .collect(Collectors.toList());
         devPostUrl = post.getDevPostUrl();
         createAt = post.getCreateAt();
         updateAt = post.getUpdateAt();
@@ -61,7 +66,7 @@ public class PostDto {
         return status;
     }
 
-    public Member getWriter() {
+    public MemberDto getWriter() {
         return writer;
     }
 
@@ -89,11 +94,55 @@ public class PostDto {
         return devPostUrl;
     }
 
-    public Date getCreateAt() {
+    public LocalDateTime getCreateAt() {
         return createAt;
     }
 
-    public Date getUpdateAt() {
+    public LocalDateTime getUpdateAt() {
         return updateAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setWriter(MemberDto writer) {
+        this.writer = writer;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setView(Integer view) {
+        this.view = view;
+    }
+
+    public void setPathBase(String pathBase) {
+        this.pathBase = pathBase;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
+
+    public void setDevPostUrl(String devPostUrl) {
+        this.devPostUrl = devPostUrl;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 }

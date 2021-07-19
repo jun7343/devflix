@@ -1,16 +1,12 @@
 package kr.devflix.entity;
 
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import kr.devflix.constant.Status;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@TypeDef(name = "list-array", typeClass = ListArrayType.class)
 public class Post {
 
     @Id
@@ -38,29 +34,23 @@ public class Post {
     @Column
     private Integer view;
 
-    @Column
-    private Long commentCount;
-
     @Column(name = "path_base")
     private String pathBase;
 
-    @Column(name = "image_path")
-    @Type(type = "list-array")
-    private List<String> images;
+    @OneToMany(mappedBy = "post")
+    private List<PostImage> postImages;
 
     @Column(name = "create_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createAt;
+    private LocalDateTime createAt;
 
     @Column(name = "update_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateAt;
+    private LocalDateTime updateAt;
 
     protected Post() {
     }
 
     private Post(Long id, Status status, Member writer, String devPostUrl, String title, String content, Integer view,
-                 Long commentCount, String pathBase, List<String> images, Date createAt, Date updateAt) {
+                 String pathBase, List<PostImage> postImages, LocalDateTime createAt, LocalDateTime updateAt) {
         this.id = id;
         this.status = status;
         this.writer = writer;
@@ -68,9 +58,8 @@ public class Post {
         this.title = title;
         this.content = content;
         this.view = view;
-        this.commentCount = commentCount;
         this.pathBase = pathBase;
-        this.images = images;
+        this.postImages = postImages;
         this.createAt = createAt;
         this.updateAt = updateAt;
     }
@@ -87,11 +76,10 @@ public class Post {
         private String title;
         private String content;
         private Integer view;
-        private Long commentCount;
         private String pathBase;
-        private List<String> images;
-        private Date createAt;
-        private Date updateAt;
+        private List<PostImage> postImages;
+        private LocalDateTime createAt;
+        private LocalDateTime updateAt;
 
         PostBuilder() {
         }
@@ -131,33 +119,28 @@ public class Post {
             return this;
         }
 
-        public PostBuilder commentCount(Long commentCount) {
-            this.commentCount = commentCount;
-            return this;
-        }
-
         public PostBuilder pathBase(String pathBase) {
             this.pathBase = pathBase;
             return this;
         }
 
-        public PostBuilder images(List<String> images) {
-            this.images = images;
+        public PostBuilder postimages(List<PostImage> postImages) {
+            this.postImages = postImages;
             return this;
         }
 
-        public PostBuilder createAt(Date createAt) {
+        public PostBuilder createAt(LocalDateTime createAt) {
             this.createAt = createAt;
             return this;
         }
 
-        public PostBuilder updateAt(Date updateAt) {
+        public PostBuilder updateAt(LocalDateTime updateAt) {
             this.updateAt = updateAt;
             return this;
         }
 
         public Post build() {
-            return new Post(id, status, writer, devPostUrl, title, content, view, commentCount, pathBase, images, createAt, updateAt);
+            return new Post(id, status, writer, devPostUrl, title, content, view, pathBase, postImages, createAt, updateAt);
         }
     }
 
@@ -166,13 +149,13 @@ public class Post {
         return "Post{" +
                 "id=" + id +
                 ", status=" + status +
+                ", writer=" + writer +
                 ", devPostUrl='" + devPostUrl + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", view=" + view +
-                ", commentCount=" + commentCount +
                 ", pathBase='" + pathBase + '\'' +
-                ", images=" + images +
+                ", postImages=" + postImages +
                 ", createAt=" + createAt +
                 ", updateAt=" + updateAt +
                 '}';
@@ -206,23 +189,19 @@ public class Post {
         return view;
     }
 
-    public Long getCommentCount() {
-        return commentCount;
-    }
-
     public String getPathBase() {
         return pathBase;
     }
 
-    public List<String> getImages() {
-        return images;
+    public List<PostImage> getPostImages() {
+        return postImages;
     }
 
-    public Date getCreateAt() {
+    public LocalDateTime getCreateAt() {
         return createAt;
     }
 
-    public Date getUpdateAt() {
+    public LocalDateTime getUpdateAt() {
         return updateAt;
     }
 }
