@@ -8,6 +8,10 @@ import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static kr.devflix.utils.ApiUtils.ApiResult;
 import static kr.devflix.utils.ApiUtils.error;
@@ -39,5 +43,14 @@ public class GeneralExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<?> handleMethodNotAllowedException(Exception e) {
         return newResponse(e, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ModelAndView handleNullPotinerException(Exception e, HttpServletRequest request, RedirectAttributes attrs) {
+        attrs.addFlashAttribute("errorMessage", e.getMessage());
+
+        String referer = request.getHeader("Referer");
+
+        return new ModelAndView("redirect:" + referer);
     }
 }
