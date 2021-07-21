@@ -8,7 +8,8 @@ import pl.allegro.tech.boot.autoconfigure.handlebars.HandlebarsHelper;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -40,29 +41,22 @@ public class HandlebarHelper {
         }
     }
 
-    public CharSequence isNewPost(final Date date, final Options options) throws IOException {
-        Calendar currentDate = Calendar.getInstance();
-        currentDate.setTime(new Date());
-        currentDate.add(Calendar.DATE, -2);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        if (calendar.compareTo(currentDate) <= 0) {
-            return options.inverse();
-        } else {
-            return options.fn();
-        }
-    }
-
-    public String df(final Date date, final String format) {
+    public String df(Date date, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.ENGLISH);
 
         return dateFormat.format(date);
     }
 
+    public String ldtf(LocalDateTime date, String format) {
+        return date.format(DateTimeFormatter.ofPattern(format));
+    }
+
     public int sub(int arg1, int arg2) {
         return arg1 - arg2;
+    }
+
+    public int plus(int arg1, int arg2) {
+        return arg1 + arg2;
     }
 
     public String unEscape(String arg) {
