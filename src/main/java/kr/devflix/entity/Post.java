@@ -1,6 +1,7 @@
 package kr.devflix.entity;
 
 import kr.devflix.constant.Status;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,7 +38,8 @@ public class Post {
     @Column(name = "path_base")
     private String pathBase;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @BatchSize(size = 50)
     private List<PostImage> images;
 
     @Column(name = "create_at")
