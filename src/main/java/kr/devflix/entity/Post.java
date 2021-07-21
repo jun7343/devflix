@@ -23,8 +23,9 @@ public class Post {
     @JoinColumn(name = "writer_id")
     private Member writer;
 
-    @Column(name = "dev_post_url")
-    private String devPostUrl;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dev_post_id")
+    private DevPost devPost;
 
     @Column
     private String title;
@@ -51,12 +52,12 @@ public class Post {
     protected Post() {
     }
 
-    private Post(Long id, Status status, Member writer, String devPostUrl, String title, String content, Integer view,
+    private Post(Long id, Status status, Member writer, DevPost devPost, String title, String content, Integer view,
                  String pathBase, List<PostImage> images, LocalDateTime createAt, LocalDateTime updateAt) {
         this.id = id;
         this.status = status;
         this.writer = writer;
-        this.devPostUrl = devPostUrl;
+        this.devPost = devPost;
         this.title = title;
         this.content = content;
         this.view = view;
@@ -74,7 +75,7 @@ public class Post {
         private Long id;
         private Status status;
         private Member writer;
-        private String devPostUrl;
+        private DevPost devPost;
         private String title;
         private String content;
         private Integer view;
@@ -101,8 +102,8 @@ public class Post {
             return this;
         }
 
-        public PostBuilder devPostUrl(String devPostUrl) {
-            this.devPostUrl = devPostUrl;
+        public PostBuilder devPost(DevPost devPost) {
+            this.devPost = devPost;
             return this;
         }
 
@@ -142,7 +143,7 @@ public class Post {
         }
 
         public Post build() {
-            return new Post(id, status, writer, devPostUrl, title, content, view, pathBase, images, createAt, updateAt);
+            return new Post(id, status, writer, devPost, title, content, view, pathBase, images, createAt, updateAt);
         }
     }
 
@@ -152,7 +153,6 @@ public class Post {
                 "id=" + id +
                 ", status=" + status +
                 ", writer=" + writer +
-                ", devPostUrl='" + devPostUrl + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", view=" + view +
@@ -174,8 +174,8 @@ public class Post {
         return writer;
     }
 
-    public String getDevPostUrl() {
-        return devPostUrl;
+    public DevPost getDevPost() {
+        return devPost;
     }
 
     public String getTitle() {

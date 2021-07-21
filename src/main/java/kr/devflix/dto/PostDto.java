@@ -18,7 +18,7 @@ public class PostDto {
     private Integer view;
     private String pathBase;
     private List<String> images;
-    private String devPostUrl;
+    private DevPostDto devPost;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
@@ -36,7 +36,7 @@ public class PostDto {
                 .stream()
                 .map(postImage -> {return postImage.getImageName();})
                 .collect(Collectors.toList());
-        devPostUrl = post.getDevPostUrl();
+        devPost = new DevPostDto(post.getDevPost());
         createAt = post.getCreateAt();
         updateAt = post.getUpdateAt();
     }
@@ -52,7 +52,7 @@ public class PostDto {
                 .append("view", view)
                 .append("pathBase", pathBase)
                 .append("images", images)
-                .append("devPostUrl", devPostUrl)
+                .append("devPost", devPost)
                 .append("createAt", createAt)
                 .append("updateAt", updateAt)
                 .toString();
@@ -90,8 +90,8 @@ public class PostDto {
         return images;
     }
 
-    public String getDevPostUrl() {
-        return devPostUrl;
+    public DevPostDto getDevPost() {
+        return devPost;
     }
 
     public LocalDateTime getCreateAt() {
@@ -134,8 +134,8 @@ public class PostDto {
         this.images = images;
     }
 
-    public void setDevPostUrl(String devPostUrl) {
-        this.devPostUrl = devPostUrl;
+    public void setDevPost(DevPostDto devPost) {
+        this.devPost = devPost;
     }
 
     public void setCreateAt(LocalDateTime createAt) {
