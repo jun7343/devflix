@@ -12,10 +12,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,27 +46,7 @@ public class DevPostService {
                                                            Status status,
                                                            final int page,
                                                            final int perPage) {
-        return devPostRepository.findAll((root, query, criteriaBuilder) -> {
-            ArrayList<Predicate> predicates = new ArrayList<>();
-            root.fetch("tags", JoinType.LEFT);
-            query.distinct(true);
-
-            if (StringUtils.isNoneBlank(category)) {
-                predicates.add(criteriaBuilder.equal(root.get("category"), category));
-            }
-
-            if (StringUtils.isNoneBlank(tag)) {
-                predicates.add(criteriaBuilder.equal(root.get("tags").get("tag"), tag));
-            }
-
-            if (StringUtils.isNoneBlank(search)) {
-                predicates.add(criteriaBuilder.like(root.get("title"), "%" + search + "%"));
-            }
-
-            predicates.add(criteriaBuilder.equal(root.get("status"), status));
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        }, PageRequest.of(page, perPage, Sort.by(Sort.Order.desc("uploadAt"))))
+        return devPostRepository.findAllByCategoryOrTagOrLikeTitleAndStatusLimitOffset(category, tag, search, status, page, perPage)
                 .stream()
                 .map(DevPostDto::new)
                 .collect(Collectors.toList());

@@ -2,7 +2,7 @@ package kr.devflix.controller;
 
 import kr.devflix.constant.Status;
 import kr.devflix.dto.DevPostDto;
-import kr.devflix.errors.NotFoundException;
+import kr.devflix.errors.APINotFoundException;
 import kr.devflix.service.DevPostService;
 import kr.devflix.utils.Pagination;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +31,7 @@ public class DevPostRestController {
         List<DevPostDto> findAll = devPostService.findAllByCategoryOrTagOrSearch(c, t, s, Status.POST, page, perPage);
 
         if (findAll.isEmpty()) {
-            throw new NotFoundException("could not found posts");
+            throw new APINotFoundException("could not found posts");
         }
 
         return success(findAll);
@@ -47,10 +47,14 @@ public class DevPostRestController {
         Long totalCount = devPostService.countByCategoryOrTagOrSearch(c, t, s);
 
         if (totalCount == null) {
-            throw new NotFoundException("could not found posts");
+            throw new APINotFoundException("could not found posts");
         }
 
-        return success(new Pagination(page, perPage, totalCount, pageListSize));
+        return success(Pagination.builder(totalCount)
+                .currentPage(page)
+                .size(perPage)
+                .listSize(pageListSize)
+                .build());
     }
 
     @PatchMapping("/{id}")
