@@ -32,7 +32,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: JUnit5을 통한 단위, 통합 테스트를 진행하여 생산성 및 코드 신뢰성 향상 노력.  
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: docker를 사용함으로써 docker 환경 이해와 환경 구성 노력.  
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: prometheus와 grafana를 통해 서버 모니터링을 진행하여 서버 메모리를 효율적으로 관리 및 메모리 사용률 체크.
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - monitering 주소: http://54.180.99.109:82 (2022-01-29 서버 종료)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - monitering 주소: http://54.180.99.109:82 (2022-01-29 서버 종료)  
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: REST 아키텍처 제약 조건을 준수하여 RESTful API 설계 및 구현.  
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: Spring Security를 통해 사용자 인증, 인가 기능 구현.  
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: open souce인 [Lucy XSS Filter Servlet](https://github.com/naver/lucy-xss-servlet-filter)을 통해 filter에서 parmater에 포함된 특수문자를 치환하여 XSS 공격 방지.  
