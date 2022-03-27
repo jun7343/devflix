@@ -16,6 +16,10 @@
 
 ![admin page](./admin-page.gif)
 
+## :pushpin: 프로젝트 후기
+
+- [Devflix 프로젝트 후기](https://jun7343.github.io/projects/2021/08/25/devflix-postscripts/)
+
 ## :pushpin: 개요
 
 &nbsp;&nbsp;&nbsp;&nbsp;:heavy_check_mark: 카카오, 네이버, 라인, 우아한 형제들 등 개발 블로그 포스트 크롤링 하여 Devflix에서 확인.  
